@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.ttProject</groupId>
+    <artifactId>myLib.m2eHelper</artifactId>
+    <version>0.0.1</version>
+  </parent>
+  <groupId>com.ttProject.streaming</groupId>
+  <artifactId>Ozouni</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>Ozouni</name>
+  <description>オシルコシステム
+
+メディアデータをいろいろな形でsupplyするためのシステム
+プログラム
+input: frameデータをシステムに提供するプログラム
+output: frameデータを出力してなにかするプログラム
+library: システムとやりとりするライブラリ
+</description>
+  <modules>
+    <module>library/JedisFrameHandler</module>
+    <module>input/RtmpInput</module>
+    <module>input/FileInput</module>
+    <module>output/StdoutFlvOutput</module>
+  </modules>
+</project>

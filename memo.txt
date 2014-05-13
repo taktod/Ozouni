@@ -1,0 +1,21 @@
+開発メモ
+
+input pluginとoutput pluginを組み合わせていろんな処理します。(fluentdみたいな勢い)
+xuggleによる変換も気が向いたらつくっておきたい
+
+input系
+RtmpInput:rtmpのデータをシステムに取り込む (aac mp3 nellymoser speex adpcm_swf flv1 vp6 h264)
+Red5Input:red5のデータをシステムに取り込む (aac mp3 nellymoser speex adpcm_swf flv1 vp6 h264)
+FileInput:ファイルのデータをシステムに取り込み (なんでも)
+M3u8Input:m3u8のデータをシステムに取り込む (aac mp3 h264)
+StdinFlvInput: flv形式の標準入力データをinput化 (aac mp3 nellymoser speex adpcm_swf flv1 h264)
+StdinMkvInput: mkv形式の標準入力データをinput化 (aac mp3 adpcm_ima_wav mjpeg h264)
+
+output系
+StdoutFlvOutput: ffmpegとかの変換に回すために標準出力としてframeを吐きます flv (aac mp3 nellymoser speex adpcm_swf flv1 vp6 h264)
+IOSLiveTurboOutput: iOSLiveTurbo用の動作 (mjpeg adpcm_ima_wav)
+RtmpOutput: rtmpとして再publishします (aac mp3 nellymoser speex adpcm_swf flv1 h264)
+
+library系
+JedisFrameHandler: redisを媒介にframeデータをやり取りするためのhandler
+他にserver動作として動作するhandlerをつくってもいいなとおもったんだが・・・どうしたもんかな
