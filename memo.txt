@@ -17,5 +17,6 @@ IOSLiveTurboOutput: iOSLiveTurbo用の動作 (mjpeg adpcm_ima_wav)
 RtmpOutput: rtmpとして再publishします (aac mp3 nellymoser speex adpcm_swf flv1 h264)
 
 library系
+OzouniBase: ozouniシステムの根幹用のライブラリ
 JedisFrameHandler: redisを媒介にframeデータをやり取りするためのhandler
-他にserver動作として動作するhandlerをつくってもいいなとおもったんだが・・・どうしたもんかな
+ServerFrameHandler: tcpサーバーを媒介にframeデータをやり取りするためのhandler
