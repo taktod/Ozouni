@@ -1,8 +1,13 @@
 package com.ttProject.ozouni.dataHandler;
 
 import java.nio.ByteBuffer;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
@@ -27,9 +32,10 @@ import redis.clients.jedis.Jedis;
  * ozouni:target:[ID] // ここにはset形式でデータをいれておく。
  * ozouni:buffer:[ID]:[process] // ここにデータをlist形式でいれておく。
  * おくっているbinaryデータを共有する動作はとりあえずできあがり。
+ * 適当なthreadをつくって、blockingpopさせてやることで、データを受け取っておきたいところ。
  * @author taktod
  */
-public class RedisDataHandler {
+public class RedisDataHandler implements IDataHandler {
 	/** ロガー */
 	private Logger logger = Logger.getLogger(RedisDataHandler.class);
 	private static RedisDataHandler instance = new RedisDataHandler();
@@ -38,11 +44,25 @@ public class RedisDataHandler {
 	private String id = null;
 	/** 動作プロセスID */
 	private String processId = null;
+	/** データを受け取ったときに通知する先 */
+	private Set<IDataListener> listeners = new HashSet<IDataListener>();
+	/** threadPoolをつくっておく */
+	private ExecutorService executor = null;
+	private Future<Boolean> workerFuture = null;
 	/**
 	 * コンストラクタ
 	 */
 	private RedisDataHandler() {
+		this(Executors.newFixedThreadPool(1));
+	}
+	/**
+	 * コンストラクタ
+	 * @param executor
+	 */
+	private RedisDataHandler(ExecutorService executor) {
 		jedis = new Jedis("localhost", 6379);
+		this.executor = executor;
+		checkThread();
 	}
 	/**
 	 * インスタンス取得
@@ -57,6 +77,7 @@ public class RedisDataHandler {
 	 */
 	public void setId(String id) {
 		this.id = id;
+		checkThread();
 	}
 	/**
 	 * プロセスIDを登録
@@ -67,6 +88,36 @@ public class RedisDataHandler {
 		StringBuilder key = new StringBuilder("ozouni:target:");
 		key.append(this.id);
 		jedis.sadd(key.toString(), this.processId);
+		checkThread();
+	}
+	private void checkThread() {
+		if(this.id == null || this.processId == null) {
+			return;
+		}
+		if(workerFuture != null && !workerFuture.isDone()) {
+			// 現状動作しているものをとめてしまう。
+			workerFuture.cancel(true);
+		}
+		workerFuture = executor.submit(new Callable<Boolean>() {
+			@Override
+			public Boolean call() throws Exception {
+				ByteBuffer buffer = popData();
+				for(IDataListener listener : listeners) {
+					listener.receiveData(buffer.duplicate());
+				}
+				// redisで応答があったら・・・云々
+				// 次の動作を登録しておく。(このままやるとたぶんメモリーリークが発生するので、クラスをきちんとつくっておきたい。)
+				return false;
+			}
+		});
+	}
+	@Override
+	public void registerListener(IDataListener listener) {
+		listeners.add(listener);
+	}
+	@Override
+	public boolean unregisterListener(IDataListener listener) {
+		return listeners.remove(listener);
 	}
 	/**
 	 * 共有データを登録しておく
@@ -98,7 +149,7 @@ public class RedisDataHandler {
 	 * lpopで登録する
 	 * @return
 	 */
-	public ByteBuffer popData() throws Exception {
+	private ByteBuffer popData() throws Exception {
 		// 取得するべきデータをみつくろう
 		StringBuilder key = new StringBuilder("ozouni:buffer:");
 		key.append(this.id).append(":").append(this.processId);
