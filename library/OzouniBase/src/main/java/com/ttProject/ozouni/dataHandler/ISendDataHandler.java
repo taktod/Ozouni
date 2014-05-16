@@ -3,10 +3,10 @@ package com.ttProject.ozouni.dataHandler;
 import java.nio.ByteBuffer;
 
 /**
- * dataHandlerのインターフェイス
+ * データを送信するhandler
  * @author taktod
  */
-public interface IDataHandler {
+public interface ISendDataHandler {
 	/**
 	 * データをシステムに送り出す
 	 * @param buffer

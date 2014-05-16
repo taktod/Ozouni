@@ -35,7 +35,7 @@ import redis.clients.jedis.Jedis;
  * 適当なthreadをつくって、blockingpopさせてやることで、データを受け取っておきたいところ。
  * @author taktod
  */
-public class RedisDataHandler implements IDataHandler {
+public class RedisDataHandler implements ISendDataHandler {
 	/** ロガー */
 	private Logger logger = Logger.getLogger(RedisDataHandler.class);
 	private static RedisDataHandler instance = new RedisDataHandler();
