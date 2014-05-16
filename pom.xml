@@ -21,8 +21,8 @@ library: システムとやりとりするライブラリ
 </description>
   <modules>
     <module>library/OzouniBase</module>
-    <module>library/JedisFrameHandler</module>
-    <module>library/ServerFrameHandler</module>
+    <module>library/JedisDataHandler</module>
+    <module>library/ServerDataHandler</module>
     <module>input/RtmpInput</module>
     <module>input/FileInput</module>
     <module>output/StdoutFlvOutput</module>

@@ -5,9 +5,14 @@
     <artifactId>Ozouni</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <artifactId>ServerFrameHandler</artifactId>
-  <name>ServerFrameHandler</name>
+  <artifactId>ServerDataHandler</artifactId>
+  <name>ServerDataHandler</name>
   <description>JBossでサーバーを作ってプロセス間データ通信するのに利用します。</description>
   <dependencies>
+  <dependency>
+    <groupId>org.jboss.netty</groupId>
+    <artifactId>netty</artifactId>
+    <version>3.2.10.Final</version>
+  </dependency>
   </dependencies>
 </project>

@@ -5,7 +5,7 @@ import java.nio.ByteBuffer;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 
-import com.ttProject.ozouni.frameHandler.RedisDataHandler;
+import com.ttProject.ozouni.dataHandler.RedisDataHandler;
 import com.ttProject.util.HexUtil;
 
 /**
