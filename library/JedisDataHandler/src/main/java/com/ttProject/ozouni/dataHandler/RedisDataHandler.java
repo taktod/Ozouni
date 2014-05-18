@@ -33,6 +33,7 @@ import redis.clients.jedis.Jedis;
  * ozouni:buffer:[ID]:[process] // ここにデータをlist形式でいれておく。
  * おくっているbinaryデータを共有する動作はとりあえずできあがり。
  * 適当なthreadをつくって、blockingpopさせてやることで、データを受け取っておきたいところ。
+ * この動作はシングルトンではなく、コンストラクタ起因で決めれるようにしておこうと思う。
  * @author taktod
  */
 public class RedisDataHandler implements ISendDataHandler {
@@ -110,14 +111,6 @@ public class RedisDataHandler implements ISendDataHandler {
 				return false;
 			}
 		});
-	}
-	@Override
-	public void registerListener(IDataListener listener) {
-		listeners.add(listener);
-	}
-	@Override
-	public boolean unregisterListener(IDataListener listener) {
-		return listeners.remove(listener);
 	}
 	/**
 	 * 共有データを登録しておく
