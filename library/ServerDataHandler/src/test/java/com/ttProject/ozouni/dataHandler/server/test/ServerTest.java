@@ -30,7 +30,8 @@ public class ServerTest {
 		executor.submit(new Runnable() {
 			@Override
 			public void run() {
-				DataClient dc = new DataClient("localhost", 12345);
+				// クライアントとしてつなぐ(blockするので、別スレッドにしとく。)
+				new DataClient("localhost", 12345);
 			}
 		});
 		ds.sendData(ChannelBuffers.copiedBuffer(ByteBuffer.wrap("test".getBytes())));
