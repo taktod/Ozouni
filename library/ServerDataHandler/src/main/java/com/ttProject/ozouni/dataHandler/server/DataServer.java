@@ -46,6 +46,10 @@ public class DataServer {
 		});
 		serverChannel = bootstrap.bind(new InetSocketAddress(port));
 	}
+	/**
+	 * データを送信する
+	 * @param buffer
+	 */
 	public void sendData(ChannelBuffer buffer) {
 		synchronized(channels) {
 			for(Channel channel : channels) {
@@ -53,6 +57,9 @@ public class DataServer {
 			}
 		}
 	}
+	/**
+	 * サーバーを閉じます
+	 */
 	public void close() {
 		synchronized(channels) {
 			for(Channel channel : channels) {

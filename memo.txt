@@ -20,3 +20,6 @@ library系
 OzouniBase: ozouniシステムの根幹用のライブラリ
 JedisFrameHandler: redisを媒介にframeデータをやり取りするためのhandler
 ServerFrameHandler: tcpサーバーを媒介にframeデータをやり取りするためのhandler
+
+redis経由のデータやりとりはwebsocketのやりとりみたいに応答の数がはっきりしない場合に利用すればよさそう。(接続がredisのみで済む)
+server経由のデータやりとりはLAN内フレームデータ共有で利用すればよい。
