@@ -39,7 +39,6 @@ public class DataServer {
 			@Override
 			public ChannelPipeline getPipeline() throws Exception {
 				ChannelPipeline pipeline = Channels.pipeline();
-				// なにもなしのpipelineってのもめずらしいなw
 				pipeline.addLast("handler", new ServerHandler());
 				return pipeline;
 			}

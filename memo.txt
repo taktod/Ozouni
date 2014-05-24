@@ -3,6 +3,8 @@
 input pluginとoutput pluginを組み合わせていろんな処理します。(fluentdみたいな勢い)
 xuggleによる変換も気が向いたらつくっておきたい
 
+このシステムはredisが必須となります。
+
 input系
 RtmpInput:rtmpのデータをシステムに取り込む (aac mp3 nellymoser speex adpcm_swf flv1 vp6 h264)
 Red5Input:red5のデータをシステムに取り込む (aac mp3 nellymoser speex adpcm_swf flv1 vp6 h264)
@@ -23,3 +25,12 @@ ServerFrameHandler: tcpサーバーを媒介にframeデータをやり取りす�
 
 redis経由のデータやりとりはwebsocketのやりとりみたいに応答の数がはっきりしない場合に利用すればよさそう。(接続がredisのみで済む)
 server経由のデータやりとりはLAN内フレームデータ共有で利用すればよい。
+
+とりあえず、変換の遅延は知りたい。
+ただし、frameにアクセスしたプロセスがframeを再度取り直すという動作は、あまり考慮できない。
+
+やっぱりそれぞれのプロセスが独立して動作している方がいいな・・・
+動作hostName
+pid
+frameの共有方法の記録
+等々をredisのhashとして登録しておきたいところ。
