@@ -105,7 +105,7 @@ public class RedisPoolDataHandler {
 	public void close() {
 		if(pool != null) {
 			pool.destroy();
-			pool = null;
+//			pool = null;
 		}
 	}
 }

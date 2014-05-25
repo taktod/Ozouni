@@ -1,5 +1,7 @@
 package com.ttProject.ozouni.reportHandler;
 
+import com.ttProject.ozouni.base.ReportData;
+
 /**
  * 動作の状態をレポートするhandler
  * 共有しておきたいデータは次のとおり。
@@ -10,4 +12,18 @@ package com.ttProject.ozouni.reportHandler;
  * @author taktod
  */
 public interface IReportHandler {
+	/**
+	 * データのレポートを実施する
+	 * @param uid このプロセスの一意のID
+	 * @param data 共有するデータ
+	 */
+	public void reportData(
+			int uid,
+			ReportData data);
+	/**
+	 * データを参照する
+	 * @param uid 参照するプロセスのuid
+	 * @return ReportData 共有しているデータ
+	 */
+	public ReportData getData(int uid);
 }

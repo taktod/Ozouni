@@ -46,7 +46,7 @@ public class RedisTest {
 	 */
 	@Test
 	public void getData() throws Exception {
-		logger.info("getDataTest");
+/*		logger.info("getDataTest");
 		RedisDataHandler handler = RedisDataHandler.getInstance();
 		handler.setId("test");
 		handler.setProcessId("sub");
@@ -57,6 +57,6 @@ public class RedisTest {
 		else {
 			logger.info("data is null");
 		}
-		logger.info("getDataTestおわり");
+		logger.info("getDataTestおわり");*/
 	}
 }

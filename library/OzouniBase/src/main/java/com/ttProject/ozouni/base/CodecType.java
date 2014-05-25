@@ -8,16 +8,19 @@ public enum CodecType {
 	AAC(0, true),
 	ADPCM_IMA_WAV(1, true),
 	ADPCM_SWF(2, true),
-	FLV1(3, false),
-	H264(4, false),
-	MJPEG(5, false),
 	MP3(6, true),
 	NELLYMOSER(7, true),
 	SPEEX(8, true),
-	THEORA(9, false),
 	VORBIS(10, true),
+	OPUS(15, true),
+	FLV1(3, false),
+	H264(4, false),
+	MJPEG(5, false),
+	THEORA(9, false),
 	VP6(11, false),
-	VP8(12, false);
+	VP8(12, false),
+	VP9(13, false),
+	H265(14, false);
 	private final int value;
 	private final boolean audioFlg;
 	/**
