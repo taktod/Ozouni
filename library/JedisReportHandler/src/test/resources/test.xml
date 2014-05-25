@@ -10,7 +10,7 @@
   <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
     <property name="maxTotal" value="12"/>
   </bean>
-  <bean id="jedisPool" class="redis.clients.jedis.JedisPool">
+  <bean id="jedisPool" class="redis.clients.jedis.JedisPool" scope="singleton">
     <constructor-arg name="poolConfig">
       <ref bean="jedisPoolConfig"/>
     </constructor-arg>
