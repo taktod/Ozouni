@@ -39,6 +39,7 @@ library: システムとやりとりするライブラリ
   <modules>
     <module>library/OzouniBase</module>
     <module>library/JedisDataHandler</module>
+    <module>library/JedisReportHandler</module>
     <module>library/ServerDataHandler</module>
     <module>input/RtmpInput</module>
     <module>input/FileInput</module>
