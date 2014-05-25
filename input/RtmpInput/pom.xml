@@ -9,6 +9,13 @@
   <artifactId>RtmpInput</artifactId>
   <name>RtmpInput</name>
   <description>rtmpのframeデータをシステムに流すInputPlugin</description>
+  <licenses>
+    <license>
+      <name>GNU LESSER GENERAL PUBLIC LICENSE</name>
+      <url>https://www.gnu.org/licenses/lgpl.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
   <dependencies>
     <dependency>
       <groupId>com.ttProject</groupId>

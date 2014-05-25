@@ -8,6 +8,13 @@
   <artifactId>ServerDataHandler</artifactId>
   <name>ServerDataHandler</name>
   <description>JBossでサーバーを作ってプロセス間データ通信するのに利用します。</description>
+  <licenses>
+    <license>
+      <name>The MIT License</name>
+      <url>http://www.opensource.org/licenses/mit-license.php</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
   <dependencies>
   <dependency>
     <groupId>org.jboss.netty</groupId>
