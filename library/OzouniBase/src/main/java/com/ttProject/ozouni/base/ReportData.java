@@ -10,34 +10,34 @@ public class ReportData {
 	private int processId = -1;
 	private DataShareMethod method = null;
 	private long lastUpdateTime = -1;
-	protected long getFramePts() {
+	public long getFramePts() {
 		return framePts;
 	}
-	protected void setFramePts(long framePts) {
+	public void setFramePts(long framePts) {
 		this.framePts = framePts;
 	}
-	protected String getHostName() {
+	public String getHostName() {
 		return hostName;
 	}
-	protected void setHostName(String hostName) {
+	public void setHostName(String hostName) {
 		this.hostName = hostName;
 	}
-	protected int getProcessId() {
+	public int getProcessId() {
 		return processId;
 	}
-	protected void setProcessId(int processId) {
+	public void setProcessId(int processId) {
 		this.processId = processId;
 	}
-	protected DataShareMethod getMethod() {
+	public DataShareMethod getMethod() {
 		return method;
 	}
-	protected void setMethod(DataShareMethod method) {
+	public void setMethod(DataShareMethod method) {
 		this.method = method;
 	}
-	protected long getLastUpdateTime() {
+	public long getLastUpdateTime() {
 		return lastUpdateTime;
 	}
-	protected void setLastUpdateTime(long lastUpdateTime) {
+	public void setLastUpdateTime(long lastUpdateTime) {
 		this.lastUpdateTime = lastUpdateTime;
 	}
 }
