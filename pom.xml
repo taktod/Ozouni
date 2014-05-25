@@ -45,4 +45,11 @@ library: システムとやりとりするライブラリ
     <module>input/FileInput</module>
     <module>output/StdoutFlvOutput</module>
   </modules>
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>4.0.4.RELEASE</version>
+    </dependency>
+  </dependencies>
 </project>
