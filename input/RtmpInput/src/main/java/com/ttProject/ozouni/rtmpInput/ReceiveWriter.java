@@ -17,6 +17,10 @@ import com.ttProject.ozouni.rtmpInput.model.FlvTagOrderModel;
 
 /**
  * rtmp経由でデータをうけとったときのwriter
+ * 再度publishしたときに前の時刻から続きを実施すると助かる。
+ * width x heightやcodec、サンプルレート等が変更になった場合は、データをやり直す必要がある。(特に変換プログラム)
+ * 
+ * あと時間に関するデータも報告する必要あり。
  * @author taktod
  */
 public class ReceiveWriter implements RtmpWriter {

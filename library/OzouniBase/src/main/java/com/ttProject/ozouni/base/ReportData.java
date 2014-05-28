@@ -10,6 +10,7 @@ public class ReportData {
 	private int processId = -1;
 	private DataShareMethod method = null;
 	private long lastUpdateTime = -1;
+	// TODO 共有方法を知るすべをいれておく必要がある。jedisならキーとか
 	public long getFramePts() {
 		return framePts;
 	}
