@@ -24,7 +24,6 @@ public class ReceiveWriter implements RtmpWriter {
 	private final Logger logger = LoggerFactory.getLogger(ReceiveWriter.class);
 	private final MessageManager messageManager = new MessageManager();
 	private final FlvTagOrderModel orderModel = new FlvTagOrderModel();
-	private long timestamp = 0; // 処理済みtimestamp値を保持timestampを連続で並べることで、ずれとかがでないようにしておく。
 	public void publish() {
 		// publishしたとき
 	}
@@ -39,9 +38,11 @@ public class ReceiveWriter implements RtmpWriter {
 			// audioTagのコーデック情報(サンプル数等も含めて)が変更になった場合等にffmpegとかの変換の場合は作り直す必要がある。
 			for(FlvTag t : orderModel.getAudioCompleteTag()) {
 				logger.info("atag:{}", t);
+				// できたデータを登録しておく。
 			}
 			for(FlvTag t : orderModel.getVideoCompleteTag()) {
 				logger.info("vtag:{}", t);
+				// こっちもできたデータを登録しておく。
 			}
 		}
 		catch(Exception e) {
