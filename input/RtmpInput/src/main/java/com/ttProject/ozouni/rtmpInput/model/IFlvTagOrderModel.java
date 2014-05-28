@@ -1,4 +1,4 @@
-package com.ttProject.ozouni.rtmpfeeder.model;
+package com.ttProject.ozouni.rtmpInput.model;
 
 import java.util.List;
 

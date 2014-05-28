@@ -13,7 +13,7 @@ import com.flazr.rtmp.RtmpMessage;
 import com.flazr.rtmp.RtmpWriter;
 import com.ttProject.container.flv.FlvTag;
 import com.ttProject.flazr.unit.MessageManager;
-import com.ttProject.ozouni.rtmpfeeder.model.FlvTagOrderModel;
+import com.ttProject.ozouni.rtmpInput.model.FlvTagOrderModel;
 
 /**
  * rtmp経由でデータをうけとったときのwriter
