@@ -11,6 +11,7 @@ public class ReportData {
 	private DataShareMethod method = null;
 	private long lastUpdateTime = -1;
 	// TODO 共有方法を知るすべをいれておく必要がある。jedisならキーとか
+	private String key = null; // データにアクセスするのに必要となるキー
 	public long getFramePts() {
 		return framePts;
 	}
@@ -40,5 +41,11 @@ public class ReportData {
 	}
 	public void setLastUpdateTime(long lastUpdateTime) {
 		this.lastUpdateTime = lastUpdateTime;
+	}
+	public String getKey() {
+		return key;
+	}
+	public void setKey(String key) {
+		this.key = key;
 	}
 }
