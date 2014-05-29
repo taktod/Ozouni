@@ -44,6 +44,7 @@ library: システムとやりとりするライブラリ
     <module>input/RtmpInput</module>
     <module>input/FileInput</module>
     <module>output/StdoutFlvOutput</module>
+    <module>EasyRestServer</module>
   </modules>
   <dependencies>
     <dependency>
