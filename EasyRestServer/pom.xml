@@ -23,4 +23,16 @@
       <version>8.1.15.v20140411</version>
     </dependency>
   </dependencies>
+  <name>EastRestServer</name>
+  <description>プロセス管理のために、どこかでプロセスの動作状況を管理するサーバーが必要になります。
+
+当初はredisにやらせる予定でしたが、windowsマシン上でredisを走らせたりするのが面倒なので、javaアプリを１つ書いておきたいと思います。
+基本restAPIでコントロールするようにしておけばいいでしょう。</description>
+  <licenses>
+    <license>
+      <name>The MIT License</name>
+      <url>http://www.opensource.org/licenses/mit-license.php</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
 </project>

@@ -1,3 +1,9 @@
+/*
+ * EasyRestServer(Ozouni) - https://github.com/taktod/Ozouni
+ * Copyright (c) 2014 ttProject. All rights reserved.
+ * 
+ * Licensed under GNU LESSER GENERAL PUBLIC LICENSE Version 3.
+ */
 package com.ttProject.ozouni.server;
 
 import java.io.IOException;
