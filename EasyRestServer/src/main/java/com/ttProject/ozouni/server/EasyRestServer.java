@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * 単純なrestAPIで応答するサーバー実装
@@ -27,12 +29,27 @@ public class EasyRestServer {
 	 * @param args
 	 */
 	public static void main(String[] args) throws Exception {
-		Server server = new Server(12345);
+		ConfigurableApplicationContext context = null;
+		try {
+			context = new ClassPathXmlApplicationContext("easyRestServer.xml");
+			ServletHandler handler = context.getBean("handler", ServletHandler.class);
+			handler.addServletWithMapping(RestServlet.class, "/");
+			Server server = context.getBean("server", Server.class);
+			server.start();
+			server.join();
+		}
+		finally {
+			if(context != null) {
+				context.close();
+				context = null;
+			}
+		}
+/*		Server server = new Server(12345);
 		ServletHandler handler = new ServletHandler();
 		handler.addServletWithMapping(RestServlet.class, "/");
 		server.setHandler(handler);
 		server.start();
-		server.join();
+		server.join();*/
 	}
 	@SuppressWarnings("serial")
 	public static class RestServlet extends HttpServlet {
