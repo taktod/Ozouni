@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
+import org.eclipse.jetty.servlet.ServletMapping;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -33,6 +34,7 @@ public class EasyRestServer {
 		try {
 			context = new ClassPathXmlApplicationContext("easyRestServer.xml");
 			ServletHandler handler = context.getBean("handler", ServletHandler.class);
+			ServletMapping sm = new ServletMapping();
 			handler.addServletWithMapping(RestServlet.class, "/");
 			Server server = context.getBean("server", Server.class);
 			server.start();

@@ -22,6 +22,11 @@
       <artifactId>jetty-servlet</artifactId>
       <version>8.1.15.v20140411</version>
     </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.7.7</version>
+    </dependency>
   </dependencies>
   <name>EastRestServer</name>
   <description>プロセス管理のために、どこかでプロセスの動作状況を管理するサーバーが必要になります。
