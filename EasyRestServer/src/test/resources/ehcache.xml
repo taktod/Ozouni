@@ -1,0 +1,26 @@
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    dynamicConfig="false"
+    monitoring="off"
+    updateCheck="false"
+    xsi:noNamespaceSchemaLocation="ehcache.xsd" >
+
+    <cacheManagerPeerProviderFactory
+                        class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
+                        properties="peerDiscovery=automatic, multicastGroupAddress=230.0.0.1,
+                                    multicastGroupPort=4446"/>
+    <cacheManagerPeerListenerFactory
+        class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"
+        properties="hostName=localhost,
+                    port=40001, <!-- このポートだけ変更しないと、うまく動作しない。 -->
+                    socketTimeoutMillis=120000"/>
+
+<cache name="cache"
+      maxEntriesLocalHeap="10"
+      eternal="true"
+      overflowToDisk="false"
+      memoryStoreEvictionPolicy="LFU">
+   <cacheEventListenerFactory
+       class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"/>
+</cache>
+
+</ehcache>
