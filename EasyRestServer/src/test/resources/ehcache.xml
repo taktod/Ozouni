@@ -10,7 +10,7 @@
                                     multicastGroupPort=4446"/>
     <cacheManagerPeerListenerFactory
         class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"
-        properties="hostName=192.168.11.2,
+        properties="hostName=192.168.11.7,
                     port=40002,
                     socketTimeoutMillis=12000"/>
 

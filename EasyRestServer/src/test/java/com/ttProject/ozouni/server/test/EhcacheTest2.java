@@ -1,5 +1,7 @@
 package com.ttProject.ozouni.server.test;
 
+import java.net.BindException;
+
 import org.junit.Test;
 
 import net.sf.ehcache.Cache;
@@ -21,6 +23,7 @@ public class EhcacheTest2 {
 			Thread.sleep(1000);
 		}
 	}
+	@SuppressWarnings("rawtypes")
 	@Test
 	public void test() throws Exception {
 		try {
@@ -29,36 +32,41 @@ public class EhcacheTest2 {
 	 	       .eternal(true)	        	      
 	 	       .diskPersistent(false)
 	 	       .memoryStoreEvictionPolicy("LFU");
-
+		    
 		    Configuration config = new Configuration(); 
 	 		    config.setDynamicConfig(false);
 	 		    config.setMonitoring("off");
 	 		    config.updateCheck(false);
-	 		     FactoryConfiguration factoryConfigforpeerprovider = new FactoryConfiguration();
+	 		     FactoryConfiguration<?> factoryConfigforpeerprovider = new FactoryConfiguration();
 	 		     factoryConfigforpeerprovider.setClass("net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory");
 	 		     factoryConfigforpeerprovider.setProperties("peerDiscovery=automatic, multicastGroupAddress=230.0.0.1,multicastGroupPort=4446");
-	 		    		 
+	 		     
 	 		     config.addCacheManagerPeerProviderFactory(factoryConfigforpeerprovider); // Configuration for PeerProvider
 	 		    
-	 		     FactoryConfiguration factoryConfigforpeerlistener = new FactoryConfiguration();
+	 		     FactoryConfiguration<?> factoryConfigforpeerlistener = new FactoryConfiguration();
 	 		     factoryConfigforpeerlistener.setClass("net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory");
-	 		     factoryConfigforpeerlistener.setProperties("hostName=192.168.11.2,port=40032,socketTimeoutMillis=12000");
-	 		    			
+	 		     factoryConfigforpeerlistener.setProperties("hostName=192.168.11.7,port=53424,socketTimeoutMillis=12000");
+	 		     
 	 		     config.addCacheManagerPeerListenerFactory(factoryConfigforpeerlistener);
 	 		     
 	 		    CacheEventListenerFactoryConfiguration factoryConfig = new CacheEventListenerFactoryConfiguration();	
 	 		     factoryConfig.setClass("net.sf.ehcache.distribution.RMICacheReplicatorFactory"); 
-//	 		     factoryConfig.setProperties("replicateAsynchronously=true, replicatePuts=false, replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true"); 
 	 		   fee.addCacheEventListenerFactory(factoryConfig);
-	 		   //	 FactoryConfiguration factoryConfig = new FactoryConfiguration();		 
-//	 		     factoryConfig.setClass("net.sf.ehcache.distribution.RMICacheReplicatorFactory"); 
-//	 		     factoryConfig.setProperties("replicateAsynchronously=true, replicatePuts=false, replicateUpdates=true, replicateUpdatesViaCopy=false, replicateRemovals=true"); 
-//	 		  config.addCacheManagerEventListenerFactory(factoryConfig);//Configuration for Replicator
 	 		     
-	 		     CacheManager manager = new CacheManager(config);
-	 		     Cache testCache = new Cache(fee);
+	 		   CacheManager manager = new CacheManager(config);
+	 		   Cache testCache = new Cache(fee);
 	 		    
+	 		   try {
 	 		     manager.addCache(testCache);
+	 		     // cacheをつくってaddしようとしたときにわかるので、ここでcacheデータを作り直せばよさそう
+	 		     
+	 		   }
+	 		   catch(Exception e) {
+	 			   System.out.println("例外取得:" + e.getMessage());
+	 		   }
+	 		   finally {
+	 			   System.out.println("ここきた");
+	 		   }
 	 		testCache =     manager.getCache("cache");
 //	 		     testCache.put(new Element("test", "aiueo135"));
 	 		     int i = 0;
