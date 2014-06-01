@@ -1,5 +1,6 @@
 package com.ttProject.ozouni.reportHandler.ehcache;
 
+import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.config.CacheConfiguration.CacheEventListenerFactoryConfiguration;
@@ -12,6 +13,10 @@ import net.sf.ehcache.config.MemoryUnit;
  * @author taktod
  */
 public class DefaultEhcacheFactory {
+	/** 適応したmanager名 */
+	private String managerName;
+	/** 適応したcache名 */
+	private String cacheName;
 	/**
 	 * ehcacheの設定を簡単につくれるようにするためのfactoryメソッド
 	 * @param multicastGroupAddress 接続先共有で利用するUDPのaddress
@@ -20,8 +25,10 @@ public class DefaultEhcacheFactory {
 	 * @param cacheName 作成するcacheName
 	 */
 	@SuppressWarnings("rawtypes")
-	public static void createDefaultEhcache(String multicastGroupAddress, int mulcastGroupPort,
+	public Cache createEhcache(String multicastGroupAddress, int mulcastGroupPort,
 			String managerName, String cacheName) {
+		this.managerName = managerName;
+		this.cacheName = cacheName;
 		Configuration cacheManagerConfig = new Configuration();
 		cacheManagerConfig.setDynamicConfig(false);
 		cacheManagerConfig.setMonitoring("off");
@@ -47,6 +54,21 @@ public class DefaultEhcacheFactory {
 		cacheConfig.addCacheEventListenerFactory(eventListenerFactoryConfig);
 
 		cacheManagerConfig.addCache(cacheConfig);
-		new CacheManager(cacheManagerConfig); // cacheManagerをつくっておく。
+		CacheManager manager = new CacheManager(cacheManagerConfig); // cacheManagerをつくっておく
+		return manager.getCache(cacheName);
+	}
+	/**
+	 * ehcacheのデフォルト設定を簡単に作成できるようにするためのfactoryメソッド
+	 * @return
+	 */
+	public Cache createDefaultEhcache() {
+		return createEhcache("230.0.0.1", 4446, "manager", "cache");
+	}
+	/** 以下getter and setter */
+	public String getManagerName() {
+		return managerName;
+	}
+	public String getCacheName() {
+		return cacheName;
 	}
 }
