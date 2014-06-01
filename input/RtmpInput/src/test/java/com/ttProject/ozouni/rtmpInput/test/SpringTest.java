@@ -19,6 +19,7 @@ public class SpringTest {
 //			System.out.println(context.getBean("b3"));
 			System.out.println(context.getBean("b4"));
 //			System.out.println(context.getBean("b5"));
+			System.out.println(context.getBean("b6"));
 		}
 		catch(Exception e) {
 			e.printStackTrace();

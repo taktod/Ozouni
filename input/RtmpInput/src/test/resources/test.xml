@@ -23,4 +23,9 @@
 <!--   <bean id="b5" class="com.ttProject.ozouni.rtmpInput.test.TestFactory" -->
 <!--     factory-method="create5"> -->
 <!--   </bean> -->
+  <bean id="factory" class="com.ttProject.ozouni.rtmpInput.test.TestFactory"/>
+  <bean id="b6" class="java.lang.String"
+    factory-bean="factory"
+    factory-method="create6">
+  </bean>
 </beans>

@@ -4,7 +4,7 @@ public class TestFactory {
 	/**
 	 * コンストラクタは禁止
 	 */
-	private TestFactory() {
+	public TestFactory() {
 	}
 	/**
 	 * 引数なし、通常のfactory
@@ -48,5 +48,8 @@ public class TestFactory {
 	 */
 	public static void create5() {
 		System.out.println("create5");
+	}
+	public String create6() {
+		return "test";
 	}
 }
