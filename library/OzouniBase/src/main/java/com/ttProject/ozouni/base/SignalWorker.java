@@ -46,6 +46,8 @@ public class SignalWorker {
 			@Override
 			public void run() {
 				// ここでやることは・・・
+				// reportDataをつくる。(reportDataはつくるではなく、つくってあったのを戻すでもいいかも。)
+				// IReportHandlerで応答する。
 			}
 		}, interval, interval, TimeUnit.MILLISECONDS);
 	}
