@@ -43,12 +43,9 @@ public class SignalWorker {
 			future.cancel(true); // 前の処理は破棄する。
 		}
 		future = executor.scheduleAtFixedRate(new Runnable() {
-			private long lastTime = 0;
 			@Override
 			public void run() {
-				long now = System.currentTimeMillis();
-				System.out.println("timerEvent:" + (now - lastTime));
-				lastTime = now;
+				// ここでやることは・・・
 			}
 		}, interval, interval, TimeUnit.MILLISECONDS);
 	}

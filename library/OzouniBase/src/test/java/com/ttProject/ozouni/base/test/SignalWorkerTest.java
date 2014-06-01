@@ -14,7 +14,7 @@ import com.ttProject.ozouni.base.SignalWorker;
 public class SignalWorkerTest {
 	/** ロガー */
 	private Logger logger = Logger.getLogger(SignalWorkerTest.class);
-//	@Test
+	@Test
 	public void test() throws Exception {
 		logger.info("テスト開始");
 		SignalWorker worker = new SignalWorker();
