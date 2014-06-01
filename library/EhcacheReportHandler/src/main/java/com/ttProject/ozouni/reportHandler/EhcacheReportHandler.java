@@ -33,9 +33,7 @@ public class EhcacheReportHandler implements IReportHandler {
 				}
 			}
 		}
-		setupDefaultCache();
-	}
-	private void setupDefaultCache() {
+		// 動作が決定していない場合は、つくっておく。
 		DefaultEhcacheFactory factory = new DefaultEhcacheFactory();
 		// managerが存在していない
 		cache = factory.createDefaultEhcache();
@@ -44,10 +42,14 @@ public class EhcacheReportHandler implements IReportHandler {
 	}
 	@Override
 	public void reportData(int uid, ReportData data) {
+		checkCache();
 		// 接続したときのみイベントを取得したいところだが・・・
+		// uid -> dataという形にしておく。
+		// dataはjsonで持たせておこうか・・・
 	}
 	@Override
 	public ReportData getData(int uid) {
+		checkCache();
 		return null;
 	}
 	/** getter and setter */
