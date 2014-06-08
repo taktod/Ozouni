@@ -4,7 +4,8 @@
     <groupId>com.ttProject.streaming</groupId>
     <artifactId>Ozouni</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-  </parent>
+    <relativePath>../..</relativePath>
+    </parent>
   <artifactId>JedisDataHandler</artifactId>
   <name>JedisDataHandler</name>
   <description>Redisを仲介させてプロセス間データ通信するのに利用します。</description>

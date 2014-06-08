@@ -18,8 +18,8 @@ public class SignalWorker implements Runnable {
 	private ScheduledFuture<?> future = null;
 	/** レポート用オブジェクト */
 	private ReportData reportData = new ReportData();
-	/** このプロセスの一意のID(どうやってつくるかね) */
-	private int uid;
+	/** このプロセスの一意のID(外部から設定してもらうことにする) */
+	private String uid;
 	// 以下beanで設定できるもの
 	/** サーバー名を解決するための動作 */
 	private IServerNameAnalyzer serverNameAnalyzer; // デフォルトはipAddressAnalyzer
@@ -37,7 +37,8 @@ public class SignalWorker implements Runnable {
 		executor = Executors.newSingleThreadScheduledExecutor();
 		serverNameAnalyzer = new IpAddressAnalyzer();
 		interval = 1000;
-		uid = (int)(System.currentTimeMillis() & 0xFFFFFFFF);
+		// TODO UIDって時間からつくっているけど、これだときちんと動作しません。(接続すべき先を指定するのに利用するのに、ランダムでどうするw)
+		uid = System.getProperty("uniqueId");
 	}
 	/**
 	 * タイマー処理の実体
@@ -47,7 +48,9 @@ public class SignalWorker implements Runnable {
 		// host名を更新しておく。
 		reportData.setHostName(serverNameAnalyzer.getServerName());
 		// IReportHandlerで応答する。
-		reportHandler.reportData(uid, reportData);
+		if(reportHandler != null) {
+			reportHandler.reportData(uid, reportData);
+		}
 	}
 	/**
 	 * 保持データでタイマーを再開する

@@ -18,7 +18,7 @@ public interface IReportHandler {
 	 * @param data 共有するデータ
 	 */
 	public void reportData(
-			int uid,
+			String uid,
 			ReportData data);
 	/**
 	 * データを参照する

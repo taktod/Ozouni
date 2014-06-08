@@ -19,7 +19,7 @@ public class RedisTest {
 	 * データの設定動作テスト
 	 * @throws Exception
 	 */
-	@Test
+//	@Test
 	public void setData() throws Exception {
 		logger.info("setDataTest");
 		RedisDataHandler handler = RedisDataHandler.getInstance();
@@ -32,7 +32,7 @@ public class RedisTest {
 	 * データqueue設定動作テスト
 	 * @throws Exception
 	 */
-	@Test
+//	@Test
 	public void registTest() throws Exception {
 		logger.info("registTest");
 		RedisDataHandler handler =RedisDataHandler.getInstance();

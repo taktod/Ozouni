@@ -45,6 +45,7 @@ public class EhcacheRmiTest {
 			e = cache.get("test");
 			logger.info("データ参照テスト:" + e.getObjectValue());
 			Thread.sleep(1000);
+			break;
 		}
 //		logger.info("テスト終わり");
 	}

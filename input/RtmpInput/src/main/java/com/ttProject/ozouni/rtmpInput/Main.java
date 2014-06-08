@@ -22,7 +22,12 @@ public class Main {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// contextを読み込んでエントリーであるrtmpClientを起動する
+		// argument側に-DuniqIdがない場合はここで載せる必要あり。
+		for(String str : args) {
+			if(str.startsWith("-DuniqueId")) {
+				System.setProperty("uniqueId", str.split("=")[1]);
+			}
+		}
 		ConfigurableApplicationContext context = null;
 		try {
 			context = new ClassPathXmlApplicationContext("rtmpInput.xml");
