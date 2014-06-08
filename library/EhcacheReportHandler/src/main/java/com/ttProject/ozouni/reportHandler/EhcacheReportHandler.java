@@ -15,6 +15,7 @@ import com.ttProject.ozouni.reportHandler.ehcache.DefaultEhcacheFactory;
  */
 public class EhcacheReportHandler implements IReportHandler {
 	/** ロガー */
+	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(EhcacheReportHandler.class);
 	/** 利用するehcacheのmanager名 */
 	private String managerName = null;
@@ -51,7 +52,7 @@ public class EhcacheReportHandler implements IReportHandler {
 	@Override
 	public void reportData(String uid, ReportData data) {
 		checkCache();
-		logger.info("レポートを実施します。:" + uid);
+//		logger.info("レポートを実施します。:" + uid);
 		// 接続したときのみイベントを取得したいところだが・・・
 		cache.put(new Element(uid, data));
 		// uid -> dataという形にしておく。
@@ -66,6 +67,9 @@ public class EhcacheReportHandler implements IReportHandler {
 	public ReportData getData(String uid) {
 		checkCache();
 		Element e = cache.get(uid);
+		if(e == null || e.getObjectValue() == null) {
+			return null;
+		}
 		if(e.getObjectValue() instanceof ReportData) {
 			return (ReportData)e.getObjectValue();
 		}

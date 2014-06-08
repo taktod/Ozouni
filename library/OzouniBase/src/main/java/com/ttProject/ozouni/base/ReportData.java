@@ -1,6 +1,8 @@
 package com.ttProject.ozouni.base;
 
 import java.io.Serializable;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 
 /**
  * データをレポートするときに利用するクラス
@@ -10,7 +12,11 @@ public class ReportData implements Serializable {
 	private static final long serialVersionUID = 812521654687321056L;
 	private long framePts = -1;
 	private String hostName = null;
-	private int processId = -1;
+	private static int processId = -1; // プロセス番号は自動的に拾えるはず
+	static {
+		RuntimeMXBean bean = ManagementFactory.getRuntimeMXBean();
+		processId = Integer.parseInt(bean.getName().split("@")[0]);
+	}
 	private DataShareMethod method = null;
 	private long lastUpdateTime = -1;
 	// TODO 共有方法を知るすべをいれておく必要がある。jedisならキーとか
@@ -30,9 +36,9 @@ public class ReportData implements Serializable {
 	public int getProcessId() {
 		return processId;
 	}
-	public void setProcessId(int processId) {
-		this.processId = processId;
-	}
+//	public void setProcessId(int processId) {
+//		this.processId = processId;
+//	}
 	public DataShareMethod getMethod() {
 		return method;
 	}
