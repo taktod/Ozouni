@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 import com.ttProject.ozouni.base.ReportData;
 import com.ttProject.ozouni.reportHandler.ehcache.DefaultEhcacheFactory;
@@ -44,17 +45,30 @@ public class EhcacheReportHandler implements IReportHandler {
 		managerName = factory.getManagerName();
 		cacheName = factory.getCacheName();
 	}
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void reportData(String uid, ReportData data) {
 		checkCache();
 		logger.info("レポートを実施します。:" + uid);
 		// 接続したときのみイベントを取得したいところだが・・・
+		cache.put(new Element(uid, data));
 		// uid -> dataという形にしておく。
 		// dataはjsonで持たせておこうか・・・
+//		Element e = cache.get(uid);
+//		logger.info(e.getObjectValue());
 	}
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public ReportData getData(int uid) {
+	public ReportData getData(String uid) {
 		checkCache();
+		Element e = cache.get(uid);
+		if(e.getObjectValue() instanceof ReportData) {
+			return (ReportData)e.getObjectValue();
+		}
 		return null;
 	}
 	/** getter and setter */

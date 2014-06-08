@@ -1,10 +1,13 @@
 package com.ttProject.ozouni.base;
 
+import java.io.Serializable;
+
 /**
  * データをレポートするときに利用するクラス
  * @author taktod
  */
-public class ReportData {
+public class ReportData implements Serializable {
+	private static final long serialVersionUID = 812521654687321056L;
 	private long framePts = -1;
 	private String hostName = null;
 	private int processId = -1;
@@ -47,5 +50,15 @@ public class ReportData {
 	}
 	public void setKey(String key) {
 		this.key = key;
+	}
+	@Override
+	public String toString() {
+		StringBuilder data = new StringBuilder("recordData:");
+		data.append(" framePts=").append(framePts);
+		data.append(" hostName=").append(hostName);
+		data.append(" processId=").append(processId);
+		data.append(" method=").append(method);
+		data.append(" key=").append(key);
+		return data.toString();
 	}
 }

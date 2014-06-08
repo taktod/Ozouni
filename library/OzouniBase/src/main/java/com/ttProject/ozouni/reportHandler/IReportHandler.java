@@ -25,5 +25,5 @@ public interface IReportHandler {
 	 * @param uid 参照するプロセスのuid
 	 * @return ReportData 共有しているデータ
 	 */
-	public ReportData getData(int uid);
+	public ReportData getData(String uid);
 }

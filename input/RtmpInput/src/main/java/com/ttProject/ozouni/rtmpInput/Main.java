@@ -19,6 +19,7 @@ import com.flazr.rtmp.client.ClientOptions;
 public class Main {
 	/**
 	 * メインエントリー
+	 * TODO このメインエントリーの部分もOzouniBaseにもっていきたいところ。(ほぼ共通動作でいけるはず)
 	 * @param args
 	 */
 	public static void main(String[] args) {

@@ -37,7 +37,7 @@ public class SignalWorker implements Runnable {
 		executor = Executors.newSingleThreadScheduledExecutor();
 		serverNameAnalyzer = new IpAddressAnalyzer();
 		interval = 1000;
-		// TODO UIDって時間からつくっているけど、これだときちんと動作しません。(接続すべき先を指定するのに利用するのに、ランダムでどうするw)
+		// UIDはシステムプロパティー(-DuniqueId=xxx)で設定するものとする。
 		uid = System.getProperty("uniqueId");
 	}
 	/**
