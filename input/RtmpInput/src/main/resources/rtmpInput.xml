@@ -10,6 +10,10 @@
     <property name="objectEncoding" value="3"/>
     <property name="writerToSave" ref="writer"/>
   </bean>
+  <bean class="com.ttProject.ozouni.rtmpInput.RtmpClient">
+    <property name="objectEncoding" value="3"/>
+    <property name="writerToSave" ref="writer"/>
+  </bean>
   <!-- signalWorker設定(一定時間ごとにプロセスの状態をレポートします。) -->
   <bean class="com.ttProject.ozouni.base.SignalWorker">
 <!--     <property name="signalExecutor"/> -->
