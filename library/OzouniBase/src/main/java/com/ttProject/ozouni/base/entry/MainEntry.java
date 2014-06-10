@@ -1,8 +1,6 @@
 package com.ttProject.ozouni.base.entry;
 
-import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
@@ -24,13 +22,13 @@ public class MainEntry {
 	public static void main(String[] args) {
 		// argに-DuniqueIdがある場合は環境変数と同じ扱いにしておきます。
 		// optionを確認しておきます。
-		Options options = createOptions();
-		CommandLineParser parser = new BasicParser();
-		CommandLine commandLine;
 		ConfigurableApplicationContext context = null;
 		try {
+			CommandLine commandLine;
+			ExtendedBasicParser parser = new ExtendedBasicParser();
+			Options options = createOptions();
 			commandLine = parser.parse(options, args);
-			if(commandLine.getArgs().length == 0) {
+			if(commandLine.getOptions().length == 0) {
 				HelpFormatter formatter = new HelpFormatter();
 				formatter.printHelp("test", options);
 				return;
@@ -46,7 +44,7 @@ public class MainEntry {
 			// ここまでこれたら問題ないので、起動します。(classPathで登録されているところにある、ozouni.xmlを読み込むことにします。)
 			context = new ClassPathXmlApplicationContext("ozouni.xml");
 			IEntry entry = context.getBean(IEntry.class);
-			entry.start(args);
+			entry.start(parser.restArgs());
 		}
 		catch(Exception e) {
 			logger.fatal("起動に失敗しました", e);
@@ -64,7 +62,7 @@ public class MainEntry {
 	 */
 	@SuppressWarnings("static-access")
 	private static Options createOptions() {
-		Options options = new Options();
+		final Options options = new Options();
 		// optionを作ります
 //		options.addOption("uniqId", false, "uniqueId33");
 //		options.addOption(new Option("tes2t", "あいうえお"));
@@ -75,8 +73,8 @@ usage: test
  -test3 <test3333>   test3ですよん
  -uniqId             uniqueId33
 		 */
-		options.addOption(OptionBuilder.withArgName("id").hasArg().withDescription("set uniqueId for the process.").create("uniqueId"));
-		options.addOption(OptionBuilder.withArgName("id").hasArg().withDescription("set targetId for connect.").create("targetId"));
+		options.addOption(OptionBuilder.withArgName("id").hasArg(true).withDescription("set uniqueId for the process.").create("uniqueId"));
+		options.addOption(OptionBuilder.withArgName("id").hasArg(true).withDescription("set targetId for connect.").create("targetId"));
 		return options;
 	}
 }

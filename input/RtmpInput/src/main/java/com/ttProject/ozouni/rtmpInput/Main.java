@@ -31,7 +31,7 @@ public class Main {
 		}
 		ConfigurableApplicationContext context = null;
 		try {
-			context = new ClassPathXmlApplicationContext("rtmpInput.xml");
+			context = new ClassPathXmlApplicationContext("ozouni.xml");
 //			System.out.println(context.getBeansOfType(RtmpClient.class));
 			RtmpClient rtmpClient = (RtmpClient)context.getBean("rtmpClient");
 			// 入力パラメーターからargsをつくる
