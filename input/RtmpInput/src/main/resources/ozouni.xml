@@ -10,10 +10,6 @@
     <property name="objectEncoding" value="3"/>
     <property name="writerToSave" ref="writer"/>
   </bean>
-  <bean class="com.ttProject.ozouni.rtmpInput.RtmpClient">
-    <property name="objectEncoding" value="3"/>
-    <property name="writerToSave" ref="writer"/>
-  </bean>
   <!-- entry設定 -->
   <bean class="com.ttProject.ozouni.rtmpInput.RtmpEntry">
     <property name="rtmpClient" ref="rtmpClient"/>
