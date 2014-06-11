@@ -3,7 +3,10 @@ package com.ttProject.ozouni.base;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.log4j.Logger;
 
 import com.ttProject.ozouni.base.analyzer.IServerNameAnalyzer;
 import com.ttProject.ozouni.base.analyzer.IpAddressAnalyzer;
@@ -14,6 +17,9 @@ import com.ttProject.ozouni.reportHandler.IReportHandler;
  * @author taktod
  */
 public class SignalWorker implements Runnable {
+	/** ロガー */
+	@SuppressWarnings("unused")
+	private Logger logger = Logger.getLogger(SignalWorker.class);
 	/** タイマー動作用future */
 	private ScheduledFuture<?> future = null;
 	/** レポート用オブジェクト */
@@ -34,7 +40,14 @@ public class SignalWorker implements Runnable {
 	 * @throws Exception
 	 */
 	public SignalWorker() throws Exception {
-		executor = Executors.newSingleThreadScheduledExecutor();
+		executor = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
+			@Override
+			public Thread newThread(Runnable r) {
+				Thread t = new Thread(r);
+				t.setDaemon(true);
+				return t;
+			}
+		});
 		serverNameAnalyzer = new IpAddressAnalyzer();
 		interval = 1000;
 		// UIDはシステムプロパティー(-DuniqueId=xxx)で設定するものとする。
