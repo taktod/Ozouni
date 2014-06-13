@@ -4,7 +4,9 @@ import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.data.redis.core.StringRedisTemplate;
+
+import com.ttProject.ozouni.base.ReportData;
+import com.ttProject.ozouni.reportHandler.RedisReportHandler;
 
 /**
  * jedisの動作テスト
@@ -23,8 +25,9 @@ public class JedisTest {
 		ConfigurableApplicationContext context = null;
 		try {
 			context = new ClassPathXmlApplicationContext("test.xml");
-			StringRedisTemplate template = (StringRedisTemplate) context.getBean("stringRedisTemplate");
-			template.opsForHash().put("a", "b", "c");
+			RedisReportHandler handler = (RedisReportHandler) context.getBean("handler");
+			handler.reportData("test", new ReportData());
+			System.out.println(handler.getData("test"));
 		}
 		catch(Exception e) {
 			logger.error("例外が発生しました。", e);

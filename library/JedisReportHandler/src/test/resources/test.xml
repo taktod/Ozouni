@@ -6,4 +6,7 @@
   <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"/>
   <bean id="stringRedisTemplate" class="org.springframework.data.redis.core.StringRedisTemplate"
       p:connection-factory-ref="jedisConnectionFactory"/>
+  <bean id="handler" class="com.ttProject.ozouni.reportHandler.RedisReportHandler">
+    <property name="stringRedisTemplate" ref="stringRedisTemplate"/>
+  </bean>
 </beans>
