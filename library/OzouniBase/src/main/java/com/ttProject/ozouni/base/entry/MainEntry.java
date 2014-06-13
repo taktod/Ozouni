@@ -1,5 +1,8 @@
 package com.ttProject.ozouni.base.entry;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.OptionBuilder;
@@ -19,6 +22,7 @@ public class MainEntry {
 	 * エントリー
 	 * @param args
 	 */
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		// argに-DuniqueIdがある場合は環境変数と同じ扱いにしておきます。
 		// optionを確認しておきます。
@@ -44,7 +48,10 @@ public class MainEntry {
 			// ここまでこれたら問題ないので、起動します。(classPathで登録されているところにある、ozouni.xmlを読み込むことにします。)
 			context = new ClassPathXmlApplicationContext("ozouni.xml");
 			IEntry entry = context.getBean(IEntry.class);
-			entry.start(parser.restArgs());
+			List<String> argList = new ArrayList<String>();
+			argList.addAll(parser.restArgs());
+			argList.addAll(commandLine.getArgList());
+			entry.start(argList.toArray(new String[]{}));
 		}
 		catch(Exception e) {
 			logger.fatal("起動に失敗しました", e);
