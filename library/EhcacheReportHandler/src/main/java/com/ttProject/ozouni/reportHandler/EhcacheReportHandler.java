@@ -11,6 +11,7 @@ import com.ttProject.ozouni.reportHandler.ehcache.DefaultEhcacheFactory;
 
 /**
  * ehcache経由でレポートデータをやり取りするプログラム
+ * 本当は接続したときを取得して、キーの重複とかできないようにしておきたい。
  * @author taktod
  */
 public class EhcacheReportHandler implements IReportHandler {
@@ -52,13 +53,7 @@ public class EhcacheReportHandler implements IReportHandler {
 	@Override
 	public void reportData(String uid, ReportData data) {
 		checkCache();
-//		logger.info("レポートを実施します。:" + uid);
-		// 接続したときのみイベントを取得したいところだが・・・
 		cache.put(new Element(uid, data));
-		// uid -> dataという形にしておく。
-		// dataはjsonで持たせておこうか・・・
-//		Element e = cache.get(uid);
-//		logger.info(e.getObjectValue());
 	}
 	/**
 	 * {@inheritDoc}
