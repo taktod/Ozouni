@@ -13,7 +13,9 @@ import com.flazr.rtmp.RtmpMessage;
 import com.flazr.rtmp.RtmpWriter;
 import com.ttProject.container.flv.FlvTag;
 import com.ttProject.flazr.unit.MessageManager;
+import com.ttProject.ozouni.dataHandler.ISendDataHandler;
 import com.ttProject.ozouni.rtmpInput.model.FlvTagOrderModel;
+import com.ttProject.ozouni.rtmpInput.model.IFlvTagOrderModel;
 
 /**
  * rtmp経由でデータをうけとったときのwriter
@@ -26,14 +28,31 @@ import com.ttProject.ozouni.rtmpInput.model.FlvTagOrderModel;
 public class ReceiveWriter implements RtmpWriter {
 	/** ロガー */
 	private final Logger logger = LoggerFactory.getLogger(ReceiveWriter.class);
+	/** flvAtom -> flvTagへの変換用マネージャー */
 	private final MessageManager messageManager = new MessageManager();
-	private final FlvTagOrderModel orderModel = new FlvTagOrderModel();
+	/** データのソートを実施するモデル */
+	private IFlvTagOrderModel orderModel = new FlvTagOrderModel();
+	/** データ共有用のdataHandler */
+	private ISendDataHandler sendDataHandler = null;
+	/**
+	 * publish通知をうけとったときの処理
+	 */
 	public void publish() {
-		// publishしたとき
 	}
+	/**
+	 * unpublish通知をうけとったときの処理
+	 */
 	public void unpublish() {
-		// unpublishしたとき
 	}
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void close() {
+	}
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void write(RtmpMessage message) {
 		try {
@@ -53,7 +72,6 @@ public class ReceiveWriter implements RtmpWriter {
 			logger.error("例外発生", e);
 		}
 	}
-	@Override
-	public void close() {
-	}
+	
+	
 }
