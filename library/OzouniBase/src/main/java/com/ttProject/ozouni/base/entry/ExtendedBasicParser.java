@@ -18,14 +18,12 @@ public class ExtendedBasicParser extends BasicParser {
 			super.processOption(arg, iter);
 		}
 		else {
-			System.out.println(arg);
 			restArgsList.add(arg);
 			Object next = iter.next();
 			if(next.toString().startsWith("-")) {
 				iter.previous();
 			}
 			else {
-				System.out.println(next);
 				restArgsList.add(next.toString());
 			}
 		}
