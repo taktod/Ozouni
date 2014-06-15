@@ -1,4 +1,4 @@
-package com.ttProject.ozouni.base;
+package com.ttProject.ozouni.base.worker;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 
+import com.ttProject.ozouni.base.ReportData;
 import com.ttProject.ozouni.base.analyzer.IServerNameAnalyzer;
 import com.ttProject.ozouni.base.analyzer.IpAddressAnalyzer;
 import com.ttProject.ozouni.reportHandler.IReportHandler;

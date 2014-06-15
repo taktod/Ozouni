@@ -5,7 +5,7 @@ import java.util.concurrent.Executors;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 
-import com.ttProject.ozouni.base.SignalWorker;
+import com.ttProject.ozouni.base.worker.SignalWorker;
 
 /**
  * signalWorkerの動作について確認するテスト

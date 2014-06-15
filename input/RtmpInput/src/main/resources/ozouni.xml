@@ -15,7 +15,7 @@
     <property name="rtmpClient" ref="rtmpClient"/>
   </bean>
   <!-- signalWorker設定(一定時間ごとにプロセスの状態をレポートします。) -->
-  <bean class="com.ttProject.ozouni.base.SignalWorker">
+  <bean class="com.ttProject.ozouni.base.worker.SignalWorker">
 <!--     <property name="signalExecutor"/> -->
     <property name="interval" value="1000"/>
 <!--     <property name="serverNameAnalyzer"/> -->
