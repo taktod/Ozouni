@@ -17,7 +17,7 @@ public class ReportData implements Serializable {
 		RuntimeMXBean bean = ManagementFactory.getRuntimeMXBean();
 		processId = Integer.parseInt(bean.getName().split("@")[0]);
 	}
-	private DataShareMethod method = null;
+	private String method = null;
 	private long lastUpdateTime = -1;
 	// TODO 共有方法を知るすべをいれておく必要がある。jedisならキーとか
 	private String key = null; // データにアクセスするのに必要となるキー
@@ -39,10 +39,10 @@ public class ReportData implements Serializable {
 //	public void setProcessId(int processId) {
 //		this.processId = processId;
 //	}
-	public DataShareMethod getMethod() {
+	public String getMethod() {
 		return method;
 	}
-	public void setMethod(DataShareMethod method) {
+	public void setMethod(String method) {
 		this.method = method;
 	}
 	public long getLastUpdateTime() {

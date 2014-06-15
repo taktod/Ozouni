@@ -6,7 +6,6 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
-import com.ttProject.ozouni.base.DataShareMethod;
 import com.ttProject.ozouni.base.ReportData;
 
 /**
@@ -61,7 +60,7 @@ public class RedisReportHandler implements IReportHandler {
 			}
 		}
 		if(data.get("method") != null && !data.get("method").equals("null")) {
-			result.setMethod(DataShareMethod.getMethod(data.get("method").toString()));
+			result.setMethod(data.get("method").toString());
 		}
 		if(data.get("lastUpdateTime") != null) {
 			try {
