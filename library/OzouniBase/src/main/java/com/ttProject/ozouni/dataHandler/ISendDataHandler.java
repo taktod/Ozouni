@@ -12,4 +12,9 @@ public interface ISendDataHandler {
 	 * @param buffer
 	 */
 	public void pushData(ByteBuffer buffer);
+	/**
+	 * 処理methodを提示します
+	 * @return
+	 */
+	public String getMethod();
 }
