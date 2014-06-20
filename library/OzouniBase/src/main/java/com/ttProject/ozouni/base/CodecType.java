@@ -57,6 +57,13 @@ public enum CodecType {
 		}
 		throw new Exception("未対応のID番号です");
 	}
+	/**
+	 * このやり方はあまりよくないので、使わない方向でいきたいと思います。
+	 * @param frame
+	 * @return
+	 * @throws Exception
+	 */
+	@Deprecated
 	public static CodecType getCodecTypeFromFrame(IFrame frame) throws Exception {
 		Pattern pattern = Pattern.compile(".*frame\\.([^\\.]+)\\..*");
 		Matcher m = pattern.matcher(frame.getClass().getName());
