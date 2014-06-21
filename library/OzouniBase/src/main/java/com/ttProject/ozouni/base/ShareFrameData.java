@@ -31,6 +31,7 @@ import com.ttProject.util.BufferUtil;
  * 以下フレームデータ
  * このデータをやり取りするのはサーバー内部のみだと思うので、まぁサイズがおおきくなったりしても特に問題ないだろう・・・という考えからきています。
  * 
+ * ここにstreamを区別するためのId的なものが必要になりそう。
  * @author taktod
  */
 public class ShareFrameData {

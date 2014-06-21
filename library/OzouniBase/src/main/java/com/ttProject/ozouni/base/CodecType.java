@@ -57,40 +57,4 @@ public enum CodecType {
 		}
 		throw new Exception("未対応のID番号です");
 	}
-	/**
-	 * このやり方はあまりよくないので、使わない方向でいきたいと思います。
-	 * @param frame
-	 * @return
-	 * @throws Exception
-	 */
-	@Deprecated
-	public static CodecType getCodecTypeFromFrame(IFrame frame) throws Exception {
-		Pattern pattern = Pattern.compile(".*frame\\.([^\\.]+)\\..*");
-		Matcher m = pattern.matcher(frame.getClass().getName());
-		if(m.matches() && m.groupCount() == 1) {
-			String typeName = m.group(1).toUpperCase();
-			for(CodecType type : values()) {
-				switch(type) {
-				case ADPCM_IMA_WAV:
-					if(typeName.equals("ADPCMIMAWAV")) {
-						return type;
-					}
-					break;
-				case ADPCM_SWF:
-					if(typeName.equals("ADPCMSWF")) {
-						return type;
-					}
-					break;
-				default:
-					if(typeName.equals(type.toString())) {
-						return type;
-					}
-					break;
-				}
-			}
-			System.out.println(typeName);
-		}
-		// TODO frameのクラスから割り出す必要があるか？
-		throw new Exception("未対応のframeです");
-	}
 }

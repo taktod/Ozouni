@@ -1,8 +1,12 @@
 package com.ttProject.ozouni.base.worker;
 
 import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.ttProject.frame.IAnalyzer;
+import com.ttProject.ozouni.base.CodecType;
+import com.ttProject.ozouni.base.ShareFrameData;
 import com.ttProject.ozouni.base.analyzer.IAnalyzerChecker;
 import com.ttProject.ozouni.dataHandler.IDataListener;
 import com.ttProject.ozouni.dataHandler.IReceiveDataHandler;
@@ -18,7 +22,7 @@ public class ReceiveFrameWorker {
 	private IDataListener listener = new DataListener();
 	private IFrameListener frameListener = null;
 	private IAnalyzerChecker analyzerChecker = null;
-	private IAnalyzer frameAnalyzer = null;
+	private Map<CodecType, IAnalyzer> analyzers = new HashMap<CodecType, IAnalyzer>();
 	/**
 	 * 監視を開始する
 	 */
@@ -35,7 +39,15 @@ public class ReceiveFrameWorker {
 		 */
 		@Override
 		public void receiveData(ByteBuffer buffer) {
-			// dataからframeをつくって応答しておきたい。
+			try {
+				// dataからframeをつくって応答しておきたい。
+				ShareFrameData frameData = new ShareFrameData(buffer);
+				// frameデータがすでに取得したデータと一致するか確認して、しないならAnalyzerを作る必要あり。(でないとframe化できない。ただしサイズ変更とかは加味する必要なし(frame化するだけなので))
+				// この方式だと、h264のトラックが複数あるとかいうときに動作できませんね。
+			}
+			catch(Exception e) {
+				
+			}
 		}
 	}
 }
