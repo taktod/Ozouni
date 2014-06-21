@@ -20,7 +20,7 @@ import com.ttProject.util.BufferUtil;
  * Bit8:codecType
  * Bit64:timestamp
  * Bit32:timebase
- * Bit32:trackNo
+ * Bit32:trackId
  * 音声の場合
  * Bit32:sampleRate
  * Bit32:channels
@@ -39,7 +39,7 @@ public class ShareFrameData {
 	private Bit8 codecType = new Bit8();
 	private Bit64 pts = new Bit64();
 	private Bit32 timebase = new Bit32();
-	private Bit32 trackNo = new Bit32();
+	private Bit32 trackId = new Bit32();
 	private Bit32 sampleRate = null;
 	private Bit32 channels = null;
 	private Bit32 bitNum = null;
@@ -57,7 +57,7 @@ public class ShareFrameData {
 		type = CodecType.getCodecType(codecType.get());
 		pts.setLong(data.getLong());
 		timebase.set(data.getInt());
-		trackNo.set(data.getInt());
+		trackId.set(data.getInt());
 		if(type.isAudio()) {
 			sampleRate = new Bit32(data.getInt());
 			channels = new Bit32(data.getInt());
@@ -81,7 +81,7 @@ public class ShareFrameData {
 		this.type = type;
 		pts.setLong(frame.getPts());
 		timebase.set((int)frame.getTimebase());
-		trackNo.set(trackId);
+		this.trackId.set(trackId);
 		if(type.isAudio()) {
 			IAudioFrame aFrame = (IAudioFrame)frame;
 			sampleRate = new Bit32(aFrame.getSampleRate());
@@ -125,6 +125,13 @@ public class ShareFrameData {
 	 */
 	public int getTimebase() {
 		return timebase.get();
+	}
+	/**
+	 * trackId参照
+	 * @return
+	 */
+	public int getTrackId() {
+		return trackId.get();
 	}
 	/**
 	 * コーデックタイプを応答

@@ -22,7 +22,8 @@ public class ReceiveFrameWorker {
 	private IDataListener listener = new DataListener();
 	private IFrameListener frameListener = null;
 	private IAnalyzerChecker analyzerChecker = null;
-	private Map<CodecType, IAnalyzer> analyzers = new HashMap<CodecType, IAnalyzer>();
+	/** trackId -> analyzer */
+	private Map<Integer, IAnalyzer> analyzers = new HashMap<Integer, IAnalyzer>();
 	/**
 	 * 監視を開始する
 	 */
@@ -33,7 +34,7 @@ public class ReceiveFrameWorker {
 	 * 
 	 * @author taktod
 	 */
-	public static class DataListener implements IDataListener {
+	public class DataListener implements IDataListener {
 		/**
 		 * {@inheritDoc}
 		 */
@@ -43,7 +44,13 @@ public class ReceiveFrameWorker {
 				// dataからframeをつくって応答しておきたい。
 				ShareFrameData frameData = new ShareFrameData(buffer);
 				// frameデータがすでに取得したデータと一致するか確認して、しないならAnalyzerを作る必要あり。(でないとframe化できない。ただしサイズ変更とかは加味する必要なし(frame化するだけなので))
-				// この方式だと、h264のトラックが複数あるとかいうときに動作できませんね。
+				IAnalyzer analyzer = analyzers.get(frameData.getTrackId());
+				if(analyzer == null) {
+					// analyzerが決定していないので、調整する必要あり。
+					analyzer = analyzerChecker.checkAnalyzer(frameData.getCodecType());
+					analyzers.put(frameData.getTrackId(), analyzer);
+				}
+				// あとはframeを取り出してlistenerに渡せばOK
 			}
 			catch(Exception e) {
 				
