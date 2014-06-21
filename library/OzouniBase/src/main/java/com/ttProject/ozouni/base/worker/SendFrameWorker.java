@@ -7,7 +7,7 @@ import com.ttProject.ozouni.base.analyzer.IFrameChecker;
 import com.ttProject.ozouni.dataHandler.ISendDataHandler;
 
 /**
- * データの送信を実施するworker
+ * フレームの送信を実施するworker
  * 特に必要ないんだが、reportDataとの兼ね合いの処理とかをここでやっつけておけば、余計な処理が見えなくなっていい感じになりそうなので、
  * やっぱりつくっておきたい。
  * あと、ISendDataHandlerとは違い、frameを扱うものとする。

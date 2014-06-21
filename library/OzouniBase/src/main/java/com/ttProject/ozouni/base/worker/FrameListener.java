@@ -8,7 +8,7 @@ import com.ttProject.ozouni.dataHandler.IDataListener;
  * receiveDataでうけとったデータをframeとして解釈するリスナー
  * @author taktod
  */
-public abstract class FrameListener implements IDataListener {
+public class FrameListener implements IDataListener {
 	@Override
 	public void receiveData(ByteBuffer buffer) {
 
