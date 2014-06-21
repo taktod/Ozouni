@@ -30,7 +30,7 @@ public class SendFrameWorker {
 	 * frameを他のプロセスに送信する
 	 * @param frame
 	 */
-	public void pushFrame(IFrame frame) throws Exception {
+	public void pushFrame(IFrame frame, int id) throws Exception {
 		// 処理フレームの値を記録する動作が必要
 		ReportData reportData = signalWorker.getReportData();
 		// frameが戻るようなことがあったらこまるが・・・
@@ -40,8 +40,8 @@ public class SendFrameWorker {
 		}
 		// 現在時刻を登録しておく
 		reportData.setLastUpdateTime(System.currentTimeMillis());
-		// frameのtypeを知る必要があるが・・・
-		ShareFrameData shareFrameData = new ShareFrameData(frameChecker.checkCodecType(frame), frame);
+		// trackIdを作成する必要がある。
+		ShareFrameData shareFrameData = new ShareFrameData(frameChecker.checkCodecType(frame), frame, id);
 		sendDataHandler.pushData(shareFrameData.getShareData());
 	}
 }
