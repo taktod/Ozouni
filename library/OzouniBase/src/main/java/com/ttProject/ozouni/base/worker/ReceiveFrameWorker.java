@@ -5,7 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.ttProject.frame.IAnalyzer;
-import com.ttProject.ozouni.base.CodecType;
+import com.ttProject.frame.IFrame;
+import com.ttProject.nio.channels.ByteReadChannel;
 import com.ttProject.ozouni.base.ShareFrameData;
 import com.ttProject.ozouni.base.analyzer.IAnalyzerChecker;
 import com.ttProject.ozouni.dataHandler.IDataListener;
@@ -51,6 +52,9 @@ public class ReceiveFrameWorker {
 					analyzers.put(frameData.getTrackId(), analyzer);
 				}
 				// あとはframeを取り出してlistenerに渡せばOK
+				IFrame frame = analyzer.analyze(new ByteReadChannel(frameData.getFrameData()));
+				// frameを渡して完了(とりあえずは・・・)
+				frameListener.receiveFrame(frame);
 			}
 			catch(Exception e) {
 				
