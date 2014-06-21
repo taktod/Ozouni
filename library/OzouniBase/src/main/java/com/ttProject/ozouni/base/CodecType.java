@@ -1,10 +1,5 @@
 package com.ttProject.ozouni.base;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import com.ttProject.frame.IFrame;
-
 /**
  * やりとりするフレームのcodecID
  * @author taktod
