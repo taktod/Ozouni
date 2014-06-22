@@ -167,4 +167,8 @@ public class RedisDataHandler implements ISendDataHandler {
 	public String getMethod() {
 		return "jedis";
 	}
+	@Override
+	public String getKey() {
+		return null;
+	}
 }

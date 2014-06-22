@@ -68,8 +68,16 @@ public class ServerSendDataHandler implements ISendDataHandler {
 	public void pushData(ByteBuffer buffer) {
 		server.sendData(ChannelBuffers.copiedBuffer(buffer));
 	}
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String getMethod() {
+		// TODO ここではmethod名を応答するのではなく、keyを応答しておきたいところ。
 		return "server";
+	}
+	@Override
+	public String getKey() {
+		return null;
 	}
 }

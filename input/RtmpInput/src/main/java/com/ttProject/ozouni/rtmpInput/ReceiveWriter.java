@@ -13,6 +13,7 @@ import com.flazr.rtmp.RtmpMessage;
 import com.flazr.rtmp.RtmpWriter;
 import com.ttProject.container.flv.FlvTag;
 import com.ttProject.flazr.unit.MessageManager;
+import com.ttProject.ozouni.base.worker.SendFrameWorker;
 import com.ttProject.ozouni.dataHandler.ISendDataHandler;
 import com.ttProject.ozouni.rtmpInput.model.FlvTagOrderModel;
 import com.ttProject.ozouni.rtmpInput.model.IFlvTagOrderModel;
@@ -32,8 +33,8 @@ public class ReceiveWriter implements RtmpWriter {
 	private final MessageManager messageManager = new MessageManager();
 	/** データのソートを実施するモデル */
 	private IFlvTagOrderModel orderModel = new FlvTagOrderModel();
-	/** データ共有用のdataHandler */
-	private ISendDataHandler sendDataHandler = null;
+	/** データ共有用のworker */
+	private SendFrameWorker sendFrameWorker = null;
 	/**
 	 * publish通知をうけとったときの処理
 	 */
@@ -72,6 +73,4 @@ public class ReceiveWriter implements RtmpWriter {
 			logger.error("例外発生", e);
 		}
 	}
-	
-	
 }

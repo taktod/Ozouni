@@ -17,4 +17,9 @@ public interface ISendDataHandler {
 	 * @return
 	 */
 	public String getMethod();
+	/**
+	 * keyを取得します。
+	 * @return
+	 */
+	public String getKey();
 }

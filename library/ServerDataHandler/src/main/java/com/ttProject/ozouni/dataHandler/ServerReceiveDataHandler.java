@@ -34,4 +34,8 @@ public class ServerReceiveDataHandler implements IReceiveDataHandler {
 	public boolean unregisterListener(IDataListener listener) {
 		return client.removeEventListener(listener);
 	}
+	@Override
+	public void setKey() {
+		
+	}
 }
