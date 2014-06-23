@@ -35,7 +35,7 @@ public class ServerReceiveDataHandler implements IReceiveDataHandler {
 		return client.removeEventListener(listener);
 	}
 	@Override
-	public void setKey() {
+	public void setKey(String key) {
 		
 	}
 }
