@@ -17,5 +17,5 @@ public interface IReceiveDataHandler {
 	public boolean unregisterListener(IDataListener listener);
 	// 接続先はreceiveHandlerのkeyをみて勝手に指定するほうがいいのだろうか・・・
 	// こういうのって、自動判別にしておいて、うまく接続できないと腹立つんだよね。
-	public void setKey(String key);
+	public void setKey(String key) throws Exception;
 }

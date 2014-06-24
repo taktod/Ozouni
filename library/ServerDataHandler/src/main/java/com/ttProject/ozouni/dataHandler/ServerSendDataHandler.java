@@ -73,11 +73,19 @@ public class ServerSendDataHandler implements ISendDataHandler {
 	 */
 	@Override
 	public String getMethod() {
-		// TODO ここではmethod名を応答するのではなく、keyを応答しておきたいところ。
+		// ここではmethod名を応答するのではなく、keyを応答しておきたいところ。
+		// →key応答は別のメソッドにしました。
 		return "server";
 	}
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String getKey() {
-		return null;
+		// ここでは、一意に判定するための文字列を応答します。
+		// とりあえずserver:[server]:[port]とでもしておこうか
+		StringBuilder key = new StringBuilder("server");
+		key.append(":").append(server).append(":").append(port);
+		return key.toString();
 	}
 }
