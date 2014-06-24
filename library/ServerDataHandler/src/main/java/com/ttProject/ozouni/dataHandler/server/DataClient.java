@@ -49,7 +49,7 @@ public class DataClient {
 		ChannelFuture future = bootstrap.connect(new InetSocketAddress(server, port));
 		future.awaitUninterruptibly();
 		if(future.isSuccess()) {
-			future.getChannel().getCloseFuture().awaitUninterruptibly();
+			future.getChannel().getCloseFuture().awaitUninterruptibly(); // ここで処理待ちにすると、ずっと応答がかえってこない(threadが１つつぶされる。)
 		}
 		bootstrap.releaseExternalResources();
 		// ここでは応答がかえってこないっぽい。
