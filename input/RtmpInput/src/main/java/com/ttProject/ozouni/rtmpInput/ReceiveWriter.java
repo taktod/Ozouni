@@ -8,6 +8,7 @@ package com.ttProject.ozouni.rtmpInput;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.flazr.rtmp.RtmpMessage;
 import com.flazr.rtmp.RtmpWriter;
@@ -33,10 +34,8 @@ public class ReceiveWriter implements RtmpWriter {
 	/** データのソートを実施するモデル */
 	private IFlvTagOrderModel orderModel = new FlvTagOrderModel();
 	/** データ共有用のworker */
-	private SendFrameWorker sendFrameWorker = null;
-	/** signalWorker外部から設定しておきます */
-//	@Autowired
-//	private SignalWorker signalWorker;
+	@Autowired
+	private SendFrameWorker sendFrameWorker;
 	/**
 	 * publish通知をうけとったときの処理
 	 */
