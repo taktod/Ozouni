@@ -24,7 +24,7 @@ public class EhcacheTest2 {
 		}
 	}
 	@SuppressWarnings("rawtypes")
-	@Test
+//	@Test
 	public void test() throws Exception {
 		try {
 		    CacheConfiguration fee = new CacheConfiguration("cache", 10) 	       

@@ -39,7 +39,7 @@ public class EhcacheTest {
 		manager.addCache(cache);
 		return cache;
 	}
-	@Test
+//	@Test
 	public void ehcacheTest() throws Exception {
 		logger.info("テスト開始");
 		Cache cache = getEhcacheInstance();

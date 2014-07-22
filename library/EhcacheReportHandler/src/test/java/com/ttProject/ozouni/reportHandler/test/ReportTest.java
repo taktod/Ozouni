@@ -9,7 +9,7 @@ import com.ttProject.ozouni.reportHandler.EhcacheReportHandler;
 public class ReportTest {
 	/** ロガー */
 	private Logger logger = Logger.getLogger(ReportTest.class);
-	@Test
+//	@Test
 	public void test() throws Exception {
 		// reportの内容をうけとって確認する
 		EhcacheReportHandler reportHandler = new EhcacheReportHandler();

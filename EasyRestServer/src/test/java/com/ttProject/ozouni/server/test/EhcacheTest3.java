@@ -20,7 +20,7 @@ import org.junit.Test;
 public class EhcacheTest3 {
 	/** ロガー */
 	private Logger logger = Logger.getLogger(EhcacheTest3.class);
-	@Test
+//	@Test
 	public void test() throws Exception {
 		try {
 			logger.info("test開始");
