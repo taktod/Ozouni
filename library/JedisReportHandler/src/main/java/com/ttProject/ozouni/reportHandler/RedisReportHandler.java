@@ -2,6 +2,7 @@ package com.ttProject.ozouni.reportHandler;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -37,6 +38,7 @@ public class RedisReportHandler implements IReportHandler {
 		map.put("lastUpdateTime", Long.toString(data.getLastUpdateTime()));
 		map.put("key", data.getKey() != null ? data.getKey() : "null");
 		template.opsForHash().putAll(uid, map);
+		template.expire(uid, 3, TimeUnit.SECONDS);
 	}
 	@Override
 	public ReportData getData(String uid) {
