@@ -19,12 +19,14 @@ public class SendFrameWorker {
 	/** signalWorkerからreportDataを引っ張り出す形にしておきます。 */
 	@Autowired
 	private SignalWorker signalWorker;
-	/** 送り先を指定するのも複数かくことはなさそうなのでautowiredしちゃおう */
-	@Autowired
-	private ISendDataHandler sendDataHandler;
+	/** 送り先として、server動作を複数することはなさそうなのですが、とりあえず設定ベースにしておきます */
+	private ISendDataHandler sendDataHandler = null;
 	/** frameを確認するためのchecker(1つのサーバーで複数解析しないとだめなことはでてこなさそうなので、autowireやっちゃおう) */
-	@Autowired
 	private IFrameChecker frameChecker;
+	/**
+	 * データ送信handlerは設定します。
+	 * @param sendDataHandler
+	 */
 	public void setSendDataHandler(ISendDataHandler sendDataHandler) {
 		this.sendDataHandler = sendDataHandler;
 		// methodを登録しておく。(本当に登録できるのか？)
