@@ -1,5 +1,7 @@
 package com.ttProject.ozouni.base.worker;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.ttProject.frame.IFrame;
 import com.ttProject.ozouni.base.ReportData;
 import com.ttProject.ozouni.base.ShareFrameData;
@@ -15,16 +17,18 @@ import com.ttProject.ozouni.dataHandler.ISendDataHandler;
  */
 public class SendFrameWorker {
 	/** signalWorkerからreportDataを引っ張り出す形にしておきます。 */
-	private SignalWorker signalWorker = null; // (これは自動にしておきたいね)
-	private ISendDataHandler sendDataHandler = null;
-	private IFrameChecker frameChecker = null;
+	@Autowired
+	private SignalWorker signalWorker;
+	/** 送り先を指定するのも複数かくことはなさそうなのでautowiredしちゃおう */
+	@Autowired
+	private ISendDataHandler sendDataHandler;
+	/** frameを確認するためのchecker(1つのサーバーで複数解析しないとだめなことはでてこなさそうなので、autowireやっちゃおう) */
+	@Autowired
+	private IFrameChecker frameChecker;
 	public void setSendDataHandler(ISendDataHandler sendDataHandler) {
 		this.sendDataHandler = sendDataHandler;
 		// methodを登録しておく。(本当に登録できるのか？)
 		signalWorker.getReportData().setMethod(sendDataHandler.getMethod());
-	}
-	public void setFrameChecker(IFrameChecker checker) {
-		this.frameChecker = checker;
 	}
 	/**
 	 * frameを他のプロセスに送信する
