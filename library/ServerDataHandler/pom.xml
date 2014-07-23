@@ -18,14 +18,14 @@
   </licenses>
   <dependencies>
   <dependency>
-    <groupId>org.jboss.netty</groupId>
-    <artifactId>netty</artifactId>
-    <version>3.2.10.Final</version>
-  </dependency>
-  <dependency>
     <groupId>com.ttProject.streaming</groupId>
     <artifactId>OzouniBase</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+  </dependency>
+  <dependency>
+  	<groupId>org.jboss.netty</groupId>
+  	<artifactId>netty</artifactId>
+  	<version>3.1.5.GA</version>
   </dependency>
   </dependencies>
 </project>
