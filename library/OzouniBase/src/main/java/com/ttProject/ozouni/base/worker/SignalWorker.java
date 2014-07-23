@@ -7,10 +7,10 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.ttProject.ozouni.base.ReportData;
 import com.ttProject.ozouni.base.analyzer.IServerNameAnalyzer;
-import com.ttProject.ozouni.base.analyzer.IpAddressAnalyzer;
 import com.ttProject.ozouni.reportHandler.IReportHandler;
 
 /**
@@ -29,6 +29,7 @@ public class SignalWorker implements Runnable {
 	private String uid;
 	// 以下beanで設定できるもの
 	/** サーバー名を解決するための動作 */
+	@Autowired
 	private IServerNameAnalyzer serverNameAnalyzer; // デフォルトはipAddressAnalyzer
 	/** timer動作用executor */
 	private ScheduledExecutorService executor; // デフォルトはsingleThreadedScheduledExecutor
@@ -49,7 +50,6 @@ public class SignalWorker implements Runnable {
 				return t;
 			}
 		});
-		serverNameAnalyzer = new IpAddressAnalyzer();
 		interval = 1000;
 		// UIDはシステムプロパティー(-DuniqueId=xxx)で設定するものとする。
 		uid = System.getProperty("uniqueId");
@@ -102,13 +102,6 @@ public class SignalWorker implements Runnable {
 	 */
 	public ReportData getReportData() {
 		return reportData;
-	}
-	/**
-	 * serverNameの解析用のプログラムを入れ替えます。
-	 * @param serverNameAnalyzer
-	 */
-	public void setServerNameAnalyzer(IServerNameAnalyzer serverNameAnalyzer) {
-		this.serverNameAnalyzer = serverNameAnalyzer;
 	}
 	/**
 	 * reportDataをレポートする動作

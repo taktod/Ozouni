@@ -6,7 +6,9 @@ import java.nio.ByteBuffer;
 
 import org.apache.log4j.Logger;
 import org.jboss.netty.buffer.ChannelBuffers;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import com.ttProject.ozouni.base.analyzer.IServerNameAnalyzer;
 import com.ttProject.ozouni.dataHandler.server.DataServer;
 
 /**
@@ -19,6 +21,9 @@ public class ServerSendDataHandler implements ISendDataHandler {
 	private final DataServer server;
 	private final int port;
 	private static final String pid;
+	/** server名解決動作 */
+	@Autowired
+	private IServerNameAnalyzer serverNameAnalyzer;
 	static {
 		RuntimeMXBean bean = ManagementFactory.getRuntimeMXBean();
 		pid = bean.getName().split("@")[0]; // プロセス番号保持
@@ -88,7 +93,7 @@ public class ServerSendDataHandler implements ISendDataHandler {
 		// ここでは、一意に判定するための文字列を応答します。
 		// とりあえずserver:[server]:[port]とでもしておこうか
 		StringBuilder key = new StringBuilder("server");
-		key.append(":").append(server).append(":").append(port);
+		key.append(":").append(serverNameAnalyzer.getServerName()).append(":").append(port);
 		return key.toString();
 	}
 }
