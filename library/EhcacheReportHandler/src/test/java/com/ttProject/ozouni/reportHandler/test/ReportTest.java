@@ -1,7 +1,6 @@
 package com.ttProject.ozouni.reportHandler.test;
 
 import org.apache.log4j.Logger;
-import org.junit.Test;
 
 import com.ttProject.ozouni.base.ReportData;
 import com.ttProject.ozouni.reportHandler.EhcacheReportHandler;

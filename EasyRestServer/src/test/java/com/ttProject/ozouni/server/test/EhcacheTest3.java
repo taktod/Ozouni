@@ -12,7 +12,6 @@ import net.sf.ehcache.config.PersistenceConfiguration;
 import net.sf.ehcache.config.PersistenceConfiguration.Strategy;
 
 import org.apache.log4j.Logger;
-import org.junit.Test;
 
 /**
  * ehcacheの動作テスト

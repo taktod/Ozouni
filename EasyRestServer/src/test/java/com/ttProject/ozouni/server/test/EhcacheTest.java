@@ -7,7 +7,6 @@
 package com.ttProject.ozouni.server.test;
 
 import org.apache.log4j.Logger;
-import org.junit.Test;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;

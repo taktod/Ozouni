@@ -1,9 +1,5 @@
 package com.ttProject.ozouni.server.test;
 
-import java.net.BindException;
-
-import org.junit.Test;
-
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
@@ -23,7 +19,7 @@ public class EhcacheTest2 {
 			Thread.sleep(1000);
 		}
 	}
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "deprecation" })
 //	@Test
 	public void test() throws Exception {
 		try {
