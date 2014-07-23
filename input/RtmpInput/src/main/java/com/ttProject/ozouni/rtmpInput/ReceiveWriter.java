@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.flazr.rtmp.RtmpMessage;
 import com.flazr.rtmp.RtmpWriter;
 import com.ttProject.container.flv.FlvTag;
+import com.ttProject.container.flv.type.AudioTag;
+import com.ttProject.container.flv.type.VideoTag;
 import com.ttProject.flazr.unit.MessageManager;
 import com.ttProject.ozouni.base.worker.SendFrameWorker;
 import com.ttProject.ozouni.rtmpInput.model.FlvTagOrderModel;
@@ -61,28 +63,21 @@ public class ReceiveWriter implements RtmpWriter {
 			FlvTag tag = messageManager.getTag(message);
 			orderModel.addTag(tag);
 			// audioTagのコーデック情報(サンプル数等も含めて)が変更になった場合等にffmpegとかの変換の場合は作り直す必要がある。
-//			ReportData reportData = signalWorker.getReportData();
-//			long pts = reportData.getFramePts();
+			// 変更があったとわかったときに、トリガーとして、誰かに処理開始させるものが必要になりそうです。
+			// どうやるかね？(redisのpubsubか？それとも直接phpたたくか？)
+			// とりあえず、直接phpをたたくのがちょうどよさそうだが・・・
 			for(FlvTag t : orderModel.getAudioCompleteTag()) {
-				logger.info("atag:{}", t);
-				// できたデータを登録しておく。
-//				if(pts < t.getPts()) {
-//					pts = t.getPts();
-//				}
+				if(t instanceof AudioTag) {
+					AudioTag aTag = (AudioTag)t;
+					sendFrameWorker.pushFrame(aTag.getFrame(), 0x08);
+				}
 			}
 			for(FlvTag t : orderModel.getVideoCompleteTag()) {
-				logger.info("vtag:{}", t);
-				// こっちもできたデータを登録しておく。
-//				if(pts < t.getPts()) {
-//					pts = t.getPts();
-//				}
+				if(t instanceof VideoTag) {
+					VideoTag vTag = (VideoTag)t;
+					sendFrameWorker.pushFrame(vTag.getFrame(), 0x09);
+				}
 			}
-/*			// とりあえずここにいれるのはおかしいだろう。
-			reportData.setLastUpdateTime(System.currentTimeMillis());
-			if(pts == 0) {
-				return;
-			}
-			reportData.setFramePts(pts);*/
 		}
 		catch(Exception e) {
 			logger.error("例外発生", e);
