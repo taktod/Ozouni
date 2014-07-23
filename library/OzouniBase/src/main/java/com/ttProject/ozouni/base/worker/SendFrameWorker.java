@@ -2,7 +2,11 @@ package com.ttProject.ozouni.base.worker;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.ttProject.frame.IAudioFrame;
 import com.ttProject.frame.IFrame;
+import com.ttProject.frame.IVideoFrame;
+import com.ttProject.frame.extra.AudioMultiFrame;
+import com.ttProject.frame.extra.VideoMultiFrame;
 import com.ttProject.ozouni.base.ReportData;
 import com.ttProject.ozouni.base.ShareFrameData;
 import com.ttProject.ozouni.base.analyzer.IFrameChecker;
@@ -22,6 +26,7 @@ public class SendFrameWorker {
 	/** 送り先として、server動作を複数することはなさそうなのですが、とりあえず設定ベースにしておきます */
 	private ISendDataHandler sendDataHandler = null;
 	/** frameを確認するためのchecker(1つのサーバーで複数解析しないとだめなことはでてこなさそうなので、autowireやっちゃおう) */
+	@Autowired
 	private IFrameChecker frameChecker;
 	/**
 	 * データ送信handlerは設定します。
@@ -30,13 +35,30 @@ public class SendFrameWorker {
 	public void setSendDataHandler(ISendDataHandler sendDataHandler) {
 		this.sendDataHandler = sendDataHandler;
 		// methodを登録しておく。(本当に登録できるのか？)
-		signalWorker.getReportData().setMethod(sendDataHandler.getMethod());
+		ReportData reportData = signalWorker.getReportData();
+		reportData.setMethod(sendDataHandler.getMethod());
+		reportData.setKey(sendDataHandler.getKey());
 	}
 	/**
 	 * frameを他のプロセスに送信する
 	 * @param frame
 	 */
 	public void pushFrame(IFrame frame, int id) throws Exception {
+		if(frame instanceof AudioMultiFrame) {
+			AudioMultiFrame multiFrame = (AudioMultiFrame)frame;
+			for(IAudioFrame audioFrame : multiFrame.getFrameList()) {
+				pushFrame(audioFrame, id);
+			}
+			return;
+		}
+		else if(frame instanceof VideoMultiFrame) {
+			VideoMultiFrame multiFrame = (VideoMultiFrame)frame;
+			for(IVideoFrame videoFrame : multiFrame.getFrameList()) {
+				pushFrame(videoFrame, id);
+			}
+			return;
+		}
+		// この部分でframeがmultiFrameだったら分解しておく必要がある。
 		// 処理フレームの値を記録する動作が必要
 		ReportData reportData = signalWorker.getReportData();
 		// frameが戻るようなことがあったらこまるが・・・
