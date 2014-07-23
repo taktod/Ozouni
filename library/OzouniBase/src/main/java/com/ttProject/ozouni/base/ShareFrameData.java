@@ -2,6 +2,8 @@ package com.ttProject.ozouni.base;
 
 import java.nio.ByteBuffer;
 
+import org.apache.log4j.Logger;
+
 import com.ttProject.frame.AudioSelector;
 import com.ttProject.frame.IAudioFrame;
 import com.ttProject.frame.IFrame;
@@ -36,6 +38,9 @@ import com.ttProject.util.BufferUtil;
  * @author taktod
  */
 public class ShareFrameData {
+	/** ロガー */
+	@SuppressWarnings("unused")
+	private Logger logger = Logger.getLogger(ShareFrameData.class);
 	private Bit8 codecType = new Bit8();
 	private Bit64 pts = new Bit64();
 	private Bit32 timebase = new Bit32();
