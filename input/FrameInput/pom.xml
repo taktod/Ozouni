@@ -16,4 +16,11 @@
   <artifactId>FrameInput</artifactId>
   <name>FrameInput</name>
   <description>FrameServer経由でデータ入力を取得します。</description>
+  <dependencies>
+  	<dependency>
+  		<groupId>com.ttProject.streaming</groupId>
+  		<artifactId>OzouniBase</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+  </dependencies>
 </project>

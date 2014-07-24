@@ -1,8 +1,5 @@
 package com.ttProject.ozouni.entry;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.OptionBuilder;
@@ -10,6 +7,8 @@ import org.apache.commons.cli.Options;
 import org.apache.log4j.Logger;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import com.ttProject.ozouni.base.IInputModule;
 
 /**
  * メインエントリー
@@ -22,7 +21,6 @@ public class MainEntry {
 	 * エントリー
 	 * @param args
 	 */
-	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		// argに-DuniqueIdがある場合は環境変数と同じ扱いにしておきます。
 		// optionを確認しておきます。
@@ -47,11 +45,10 @@ public class MainEntry {
 			}
 			// ここまでこれたら問題ないので、起動します。(classPathで登録されているところにある、ozouni.xmlを読み込むことにします。)
 			context = new ClassPathXmlApplicationContext("ozouni.xml");
-			IEntry entry = context.getBean(IEntry.class);
-			List<String> argList = new ArrayList<String>();
-			argList.addAll(parser.restArgs());
-			argList.addAll(commandLine.getArgList());
-			entry.start(argList.toArray(new String[]{}));
+
+			IInputModule inputModule = context.getBean(IInputModule.class);
+			// モジュールを開始する。
+			inputModule.start();
 		}
 		catch(Exception e) {
 			logger.fatal("起動に失敗しました", e);
