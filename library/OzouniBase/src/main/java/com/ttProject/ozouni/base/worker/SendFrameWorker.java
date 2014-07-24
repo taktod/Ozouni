@@ -7,6 +7,7 @@ import com.ttProject.frame.IFrame;
 import com.ttProject.frame.IVideoFrame;
 import com.ttProject.frame.extra.AudioMultiFrame;
 import com.ttProject.frame.extra.VideoMultiFrame;
+import com.ttProject.ozouni.base.ISignalModule;
 import com.ttProject.ozouni.base.ReportData;
 import com.ttProject.ozouni.base.ShareFrameData;
 import com.ttProject.ozouni.base.analyzer.IFrameChecker;
@@ -22,7 +23,7 @@ import com.ttProject.ozouni.dataHandler.ISendDataHandler;
 public class SendFrameWorker {
 	/** signalWorkerからreportDataを引っ張り出す形にしておきます。 */
 	@Autowired
-	private SignalWorker signalWorker;
+	private ISignalModule signalWorker;
 	/** 送り先として、server動作を複数することはなさそうなのですが、とりあえず設定ベースにしておきます */
 	private ISendDataHandler sendDataHandler = null;
 	/** frameを確認するためのchecker(1つのサーバーで複数解析しないとだめなことはでてこなさそうなので、autowireやっちゃおう) */

@@ -5,5 +5,9 @@ package com.ttProject.ozouni.base;
  * @author taktod
  */
 public interface ISignalModule {
-
+	/**
+	 * レポートデータを参照
+	 * @return
+	 */
+	public ReportData getReportData();
 }
