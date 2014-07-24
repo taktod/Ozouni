@@ -44,7 +44,9 @@ library: システムとやりとりするライブラリ
     <module>library/ServerDataHandler</module>
     <module>input/RtmpInput</module>
     <module>input/FileInput</module>
+    <module>input/FrameServerInput</module>
     <module>output/StdoutFlvOutput</module>
+    <module>output/FrameServerOutput</module>
     <module>EasyRestServer</module>
   </modules>
   <dependencies>
