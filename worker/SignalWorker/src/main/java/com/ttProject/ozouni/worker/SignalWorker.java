@@ -64,7 +64,7 @@ public class SignalWorker implements ISignalModule, Runnable {
 		reportData.setHostName(serverNameAnalyzer.getServerName());
 		// IReportHandlerで応答する。
 		if(reportHandler != null) {
-			ReportData data = reportHandler.getData(uid);
+			ReportData data = reportHandler.getReportData(uid);
 			if(data != null && (data.getProcessId() != reportData.getProcessId()
 					|| !data.getHostName().equals(reportData.getHostName()))) {
 				// processIdかhostNameが一致しない同じuniqueIdのプロセスがある場合は、重複しているので、おかしい。

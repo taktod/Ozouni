@@ -27,7 +27,7 @@ public class JedisTest {
 			context = new ClassPathXmlApplicationContext("test.xml");
 			RedisReportHandler handler = (RedisReportHandler) context.getBean("handler");
 			handler.reportData("test", new ReportData());
-			System.out.println(handler.getData("test"));
+			System.out.println(handler.getReportData("test"));
 		}
 		catch(Exception e) {
 			logger.error("例外が発生しました。", e);

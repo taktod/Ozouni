@@ -59,7 +59,7 @@ public class EhcacheReportHandler implements IReportHandler {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ReportData getData(String uid) {
+	public ReportData getReportData(String uid) {
 		checkCache();
 		Element e = cache.get(uid);
 		if(e == null || e.getObjectValue() == null) {

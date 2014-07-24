@@ -35,7 +35,7 @@ public class RedisReportHandler implements IReportHandler {
 		template.expire(uid, 3, TimeUnit.SECONDS);
 	}
 	@Override
-	public ReportData getData(String uid) {
+	public ReportData getReportData(String uid) {
 		Map<Object, Object> data = template.opsForHash().entries(uid);
 		if(data.size() == 0) {
 			return null;

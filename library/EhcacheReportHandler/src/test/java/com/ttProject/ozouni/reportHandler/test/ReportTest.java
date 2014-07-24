@@ -13,7 +13,7 @@ public class ReportTest {
 		// reportの内容をうけとって確認する
 		EhcacheReportHandler reportHandler = new EhcacheReportHandler();
 		while(true) {
-			ReportData reportData = reportHandler.getData("1234");
+			ReportData reportData = reportHandler.getReportData("1234");
 			logger.info(reportData);
 			Thread.sleep(1000);
 		}
