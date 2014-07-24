@@ -30,7 +30,7 @@ public class SignalWorker implements Runnable {
 	// 以下beanで設定できるもの
 	/** サーバー名を解決するための動作 */
 	@Autowired
-	private IServerNameAnalyzer serverNameAnalyzer; // デフォルトはipAddressAnalyzer
+	private IServerNameAnalyzer serverNameAnalyzer;
 	/** timer動作用executor */
 	private ScheduledExecutorService executor; // デフォルトはsingleThreadedScheduledExecutor
 	/** 動作間隔 */
