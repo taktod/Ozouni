@@ -1,7 +1,7 @@
 package com.ttProject.ozouni.rtmpInput;
 
 import com.flazr.rtmp.client.ClientOptions;
-import com.ttProject.ozouni.base.entry.IEntry;
+import com.ttProject.ozouni.entry.IEntry;
 
 public class RtmpEntry implements IEntry {
 	private RtmpClient client = null;

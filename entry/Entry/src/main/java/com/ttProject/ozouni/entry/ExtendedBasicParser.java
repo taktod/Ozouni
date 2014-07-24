@@ -1,4 +1,4 @@
-package com.ttProject.ozouni.base.entry;
+package com.ttProject.ozouni.entry;
 
 import java.util.ArrayList;
 import java.util.List;

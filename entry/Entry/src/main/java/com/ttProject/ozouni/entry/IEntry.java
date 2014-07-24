@@ -1,4 +1,4 @@
-package com.ttProject.ozouni.base.entry;
+package com.ttProject.ozouni.entry;
 
 /**
  * 動作開始時のentryインターフェイス
