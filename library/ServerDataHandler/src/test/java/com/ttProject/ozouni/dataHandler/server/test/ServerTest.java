@@ -6,7 +6,6 @@ import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
 import org.jboss.netty.buffer.ChannelBuffers;
-import org.junit.Test;
 
 import com.ttProject.ozouni.dataHandler.server.DataClient;
 import com.ttProject.ozouni.dataHandler.server.DataServer;
@@ -18,7 +17,7 @@ public class ServerTest {
 	/**
 	 * 動作テスト
 	 */
-	@Test
+//	@Test
 	public void test() throws Exception {
 		logger.info("test開始");
 		DataServer ds = new DataServer(12345);
