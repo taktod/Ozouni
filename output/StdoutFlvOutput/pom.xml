@@ -14,4 +14,16 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
+  <dependencies>
+  	<dependency>
+  		<groupId>com.ttProject.streaming</groupId>
+  		<artifactId>OzouniBase</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>com.ttProject</groupId>
+  		<artifactId>myLib.container.flv</artifactId>
+  		<version>0.0.2-SNAPSHOT</version>
+  	</dependency>
+  </dependencies>
 </project>
