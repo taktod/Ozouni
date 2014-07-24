@@ -15,6 +15,7 @@ import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelPipelineFactory;
 import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.Channels;
+import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 
@@ -77,6 +78,14 @@ public class DataServer {
 	private class ServerHandler extends SimpleChannelUpstreamHandler {
 		/** ロガー */
 		private Logger logger = Logger.getLogger(ServerHandler.class);
+		/**
+		 * 例外を捕捉しておきます。
+		 */
+		@Override
+		public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e)
+				throws Exception {
+			super.exceptionCaught(ctx, e);
+		}
 		@Override
 		public void channelConnected(ChannelHandlerContext ctx,
 				ChannelStateEvent e) throws Exception {
@@ -87,11 +96,13 @@ public class DataServer {
 		public void channelClosed(ChannelHandlerContext ctx, ChannelStateEvent e)
 				throws Exception {
 			logger.info("close");
+			channels.remove(e.getChannel());
 		}
 		@Override
 		public void channelDisconnected(ChannelHandlerContext ctx,
 				ChannelStateEvent e) throws Exception {
 			logger.info("disconnect");
+			channels.remove(e.getChannel());
 		}
 	}
 }
