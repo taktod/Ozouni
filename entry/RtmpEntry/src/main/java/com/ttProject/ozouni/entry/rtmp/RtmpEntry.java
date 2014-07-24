@@ -12,11 +12,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.flazr.rtmp.client.ClientOptions;
-import com.ttProject.ozouni.base.IInputModule;
 import com.ttProject.ozouni.entry.ExtendedBasicParser;
-import com.ttProject.ozouni.entry.IEntry;
 import com.ttProject.ozouni.input.RtmpInputModule;
-import com.ttProject.ozouni.input.rtmp.RtmpClient;
 
 /**
  * rtmpの起動時の動作補助
@@ -25,15 +22,6 @@ import com.ttProject.ozouni.input.rtmp.RtmpClient;
 public class RtmpEntry {
 	/** ロガー */
 	private static Logger logger = Logger.getLogger(RtmpEntry.class);
-//	@Override
-//	public void start(String[] args) throws Exception {
-//		ClientOptions options = client.getClientOptions();
-//		if(!options.parseCli(args)) {
-//			return;
-//		}
-//		options.setSaveAs("test.flv");
-//		client.start();
-//	}
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		// argに-DuniqueIdがある場合は環境変数と同じ扱いにしておきます。
