@@ -54,6 +54,7 @@ public class SignalWorker implements ISignalModule, Runnable {
 		interval = 1000;
 		// UIDはシステムプロパティー(-DuniqueId=xxx)で設定するものとする。
 		uid = System.getProperty("uniqueId");
+		restartTimer();
 	}
 	/**
 	 * タイマー処理の実体

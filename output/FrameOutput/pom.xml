@@ -6,7 +6,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
-  <artifactId>RtmpEntry</artifactId>
+  <artifactId>FrameOutput</artifactId>
   <licenses>
     <license>
       <name>The MIT License</name>
@@ -14,12 +14,13 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  <name>RtmpEntry</name>
-  <description>Rtmpとしてデータをダウンロードしてくる動作をつくるときに利用できる、エントリー部</description>
+  <name>FrameOutput</name>
+  <description>Frameサーバーとして、出力します。
+他のプロセスにデータを渡すための動作みたいなものです。</description>
   <dependencies>
   	<dependency>
-  		<groupId>com.ttProject.streaming.ozouni</groupId>
-  		<artifactId>RtmpInput</artifactId>
+  		<groupId>com.ttProject.streaming</groupId>
+  		<artifactId>OzouniBase</artifactId>
   		<version>0.0.1-SNAPSHOT</version>
   	</dependency>
   </dependencies>

@@ -4,7 +4,7 @@
  * 
  * Licensed under GNU LESSER GENERAL PUBLIC LICENSE Version 3.
  */
-package com.ttProject.ozouni.rtmpInput;
+package com.ttProject.ozouni.input.rtmp;
 
 import java.util.Map;
 

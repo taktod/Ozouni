@@ -4,21 +4,19 @@
  * 
  * Licensed under GNU LESSER GENERAL PUBLIC LICENSE Version 3.
  */
-package com.ttProject.ozouni.rtmpInput;
+package com.ttProject.ozouni.input.rtmp;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.flazr.rtmp.RtmpMessage;
-import com.flazr.rtmp.RtmpWriter;
 import com.ttProject.container.flv.FlvTag;
 import com.ttProject.container.flv.type.AudioTag;
 import com.ttProject.container.flv.type.VideoTag;
 import com.ttProject.flazr.unit.MessageManager;
-import com.ttProject.ozouni.base.worker.SendFrameWorker;
-import com.ttProject.ozouni.rtmpInput.model.FlvTagOrderModel;
-import com.ttProject.ozouni.rtmpInput.model.IFlvTagOrderModel;
+import com.ttProject.ozouni.base.IOutputModule;
+import com.ttProject.ozouni.input.rtmp.model.FlvTagOrderModel;
+import com.ttProject.ozouni.input.rtmp.model.IFlvTagOrderModel;
 
 /**
  * rtmp経由でデータをうけとったときのwriter
@@ -28,16 +26,22 @@ import com.ttProject.ozouni.rtmpInput.model.IFlvTagOrderModel;
  * あと時間に関するデータも報告する必要あり。
  * @author taktod
  */
-public class ReceiveWriter implements RtmpWriter {
+public class ReceiveWriter implements IReceiveWriter {
 	/** ロガー */
 	private final Logger logger = LoggerFactory.getLogger(ReceiveWriter.class);
 	/** flvAtom -> flvTagへの変換用マネージャー */
 	private final MessageManager messageManager = new MessageManager();
 	/** データのソートを実施するモデル */
 	private IFlvTagOrderModel orderModel = new FlvTagOrderModel();
-	/** データ共有用のworker */
-	@Autowired
-	private SendFrameWorker sendFrameWorker;
+	/** 出力モジュール */
+	private IOutputModule outputModule;
+	/**
+	 * 出力モジュール設定
+	 * @param outputModule
+	 */
+	public void setOutputModule(IOutputModule outputModule) {
+		this.outputModule = outputModule;
+	}
 	/**
 	 * publish通知をうけとったときの処理
 	 */
@@ -69,13 +73,13 @@ public class ReceiveWriter implements RtmpWriter {
 			for(FlvTag t : orderModel.getAudioCompleteTag()) {
 				if(t instanceof AudioTag) {
 					AudioTag aTag = (AudioTag)t;
-					sendFrameWorker.pushFrame(aTag.getFrame(), 0x08);
+					outputModule.pushFrame(aTag.getFrame(), 0x08);
 				}
 			}
 			for(FlvTag t : orderModel.getVideoCompleteTag()) {
 				if(t instanceof VideoTag) {
 					VideoTag vTag = (VideoTag)t;
-					sendFrameWorker.pushFrame(vTag.getFrame(), 0x09);
+					outputModule.pushFrame(vTag.getFrame(), 0x09);
 				}
 			}
 		}

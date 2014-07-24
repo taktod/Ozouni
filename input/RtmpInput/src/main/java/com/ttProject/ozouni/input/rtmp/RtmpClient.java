@@ -4,7 +4,7 @@
  * 
  * Licensed under GNU LESSER GENERAL PUBLIC LICENSE Version 3.
  */
-package com.ttProject.ozouni.rtmpInput;
+package com.ttProject.ozouni.input.rtmp;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executor;
@@ -18,7 +18,6 @@ import org.jboss.netty.channel.ChannelPipelineFactory;
 import org.jboss.netty.channel.Channels;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 
-import com.flazr.rtmp.RtmpWriter;
 import com.flazr.rtmp.client.ClientHandshakeHandler;
 import com.flazr.rtmp.client.ClientOptions;
 import com.ttProject.flazr.client.ClientOptionsEx;
@@ -32,10 +31,6 @@ import com.ttProject.flazr.rtmp.RtmpEncoderEx;
 public class RtmpClient {
 	/** 動作clientOptions */
 	private ClientOptions options = new ClientOptionsEx();
-	/** objectEncodingの値 */
-	private int objectEncoding = -1;
-	/** writerToSave */
-	private RtmpWriter writer = null;
 	/**
 	 * 設定clientOptionsを応答します。
 	 * @return
@@ -51,47 +46,9 @@ public class RtmpClient {
 		this.options = options;
 	}
 	/**
-	 * objectEncodingを設定します。
-	 * @param encoding
-	 */
-	public void setObjectEncoding(int encoding) {
-		this.objectEncoding = encoding;
-	}
-	/**
-	 * 書き出し処理を設定
-	 * @param writer
-	 */
-	public void setWriterToSave(RtmpWriter writer) {
-		// 別の書き出し処理を必要だったら設定できるようにしておく。
-		this.writer = writer;
-	}
-	/**
-	 * 開始処理
-	 * @param args
-	 */
-	public void start() throws Exception {
-		if(options.getLoad() != 1 || options.getClientOptionsList() != null) {
-			throw new Exception("マルチアクセスは禁止されています");
-		}
-		// objectEncodingが追加されている場合はそっちを優先しておく。
-		switch(objectEncoding) {
-		case 0:
-			options.putParam("objectEncoding", 0.0);
-			break;
-		case 3:
-			options.putParam("objectEncoding", 3.0);
-			break;
-		default:
-			break;
-		}
-		options.setWriterToSave(this.writer);
-		// あとは通常の起動動作をつくっておく。
-		connect();
-	}
-	/**
 	 * 接続動作(処理がおわるまで応答は帰ってきません)
 	 */
-	private void connect() {
+	public void connect() {
 		final ClientBootstrap bootstrap = getBootstrap(Executors.newCachedThreadPool());
 		final ChannelFuture future = bootstrap.connect(new InetSocketAddress(options.getHost(), options.getPort()));
 		future.awaitUninterruptibly();

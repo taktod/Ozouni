@@ -10,4 +10,8 @@ public interface IInputModule {
 	 * @param outputModule
 	 */
 	public void setOutputModule(IOutputModule outputModule);
+	/**
+	 * 開始動作
+	 */
+	public void start() throws Exception;
 }

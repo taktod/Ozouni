@@ -1,4 +1,4 @@
-package com.ttProject.ozouni.rtmpInput.model;
+package com.ttProject.ozouni.input.rtmp.model;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.ttProject.ozouni.rtmpInput.analyzer;
+package com.ttProject.ozouni.input.rtmp.analyzer;
 
 import org.apache.log4j.Logger;
 

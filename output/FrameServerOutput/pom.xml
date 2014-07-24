@@ -17,4 +17,11 @@
   <name>FrameServerOutput</name>
   <description>Frameサーバーとして、出力します。
 他のプロセスにデータを渡すための動作みたいなものです。</description>
+  <dependencies>
+  	<dependency>
+  		<groupId>com.ttProject.streaming</groupId>
+  		<artifactId>OzouniBase</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+  </dependencies>
 </project>
