@@ -19,12 +19,6 @@ public class RedisReportHandler implements IReportHandler {
 	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(RedisReportHandler.class);
 	private StringRedisTemplate template = null;
-	/**
-	 * コンストラクタ
-	 */
-	protected RedisReportHandler() {
-		
-	}
 	public void setStringRedisTemplate(StringRedisTemplate template) {
 		this.template = template;
 	}
