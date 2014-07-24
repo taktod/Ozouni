@@ -20,7 +20,6 @@ import com.ttProject.ozouni.reportHandler.IReportHandler;
  */
 public class SignalWorker implements ISignalModule, Runnable {
 	/** ロガー */
-	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(SignalWorker.class);
 	/** タイマー動作用future */
 	private ScheduledFuture<?> future = null;
@@ -65,6 +64,14 @@ public class SignalWorker implements ISignalModule, Runnable {
 		reportData.setHostName(serverNameAnalyzer.getServerName());
 		// IReportHandlerで応答する。
 		if(reportHandler != null) {
+			ReportData data = reportHandler.getData(uid);
+			if(data != null && (data.getProcessId() != reportData.getProcessId()
+					|| !data.getHostName().equals(reportData.getHostName()))) {
+				// processIdかhostNameが一致しない同じuniqueIdのプロセスがある場合は、重複しているので、おかしい。
+				logger.error("uniqueIdが重複して動作しています。");
+				System.exit(0); // 強制終了する。
+				return;
+			}
 			reportHandler.reportData(uid, reportData);
 		}
 	}
@@ -79,6 +86,7 @@ public class SignalWorker implements ISignalModule, Runnable {
 		if(future != null) {
 			future.cancel(true); // 前の処理は破棄する。
 		}
+		// このタイミングで自分のprocessIdとuniqueIdとして登録しているデータが一致するのがある場合はエラーとして、プロセスを殺しておきたいところ。
 		future = executor.scheduleAtFixedRate(this, interval, interval, TimeUnit.MILLISECONDS);
 	}
 	// 以下setter getter
