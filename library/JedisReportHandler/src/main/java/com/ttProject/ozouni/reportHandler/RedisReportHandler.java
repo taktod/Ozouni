@@ -37,6 +37,9 @@ public class RedisReportHandler implements IReportHandler {
 	@Override
 	public ReportData getData(String uid) {
 		Map<Object, Object> data = template.opsForHash().entries(uid);
+		if(data.size() == 0) {
+			return null;
+		}
 		ReportData result = new ReportData();
 		if(data.get("framePts") != null) {
 			try {
@@ -50,7 +53,7 @@ public class RedisReportHandler implements IReportHandler {
 		}
 		if(data.get("processId") != null) {
 			try {
-				result.setFramePts(Integer.parseInt(data.get("processId").toString()));
+				result.setProcessId(Integer.parseInt(data.get("processId").toString()));
 			}
 			catch(Exception e) {
 			}
@@ -60,13 +63,13 @@ public class RedisReportHandler implements IReportHandler {
 		}
 		if(data.get("lastUpdateTime") != null) {
 			try {
-				result.setFramePts(Long.parseLong(data.get("lastUpdateTime").toString()));
+				result.setLastUpdateTime(Long.parseLong(data.get("lastUpdateTime").toString()));
 			}
 			catch(Exception e) {
 			}
 		}
 		if(data.get("key") != null && !data.get("key").equals("null")) {
-			result.setHostName(data.get("key").toString());
+			result.setKey(data.get("key").toString());
 		}
 		return result;
 	}
