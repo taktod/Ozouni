@@ -1,8 +1,13 @@
-package com.ttProject.ozouni.rtmpInput;
+package com.ttProject.ozouni.entry.rtmp;
 
 import com.flazr.rtmp.client.ClientOptions;
 import com.ttProject.ozouni.entry.IEntry;
+import com.ttProject.ozouni.rtmpInput.RtmpClient;
 
+/**
+ * rtmpの起動時の動作補助
+ * @author taktod
+ */
 public class RtmpEntry implements IEntry {
 	private RtmpClient client = null;
 	public void setRtmpClient(RtmpClient client) {
@@ -15,7 +20,6 @@ public class RtmpEntry implements IEntry {
 			return;
 		}
 		options.setSaveAs("test.flv");
-		// 処理開始
 		client.start();
 	}
 }
