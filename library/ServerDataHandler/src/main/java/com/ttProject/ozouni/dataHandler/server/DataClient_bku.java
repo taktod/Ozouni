@@ -23,23 +23,17 @@ import com.ttProject.ozouni.dataHandler.IDataListener;
 /**
  * データをやり取りするクライアント
  */
-public class DataClient {
+public class DataClient_bku {
 	/** ロガー */
-	@SuppressWarnings("unused")
-	private Logger logger = Logger.getLogger(DataClient.class);
-	/** データ転送の結果を受け取るlistener */
+	private Logger logger = Logger.getLogger(DataClient_bku.class);
 	private Set<IDataListener> listeners = new HashSet<IDataListener>();
-	/** 接続bootstrap */
-	private ClientBootstrap bootstrap;
-	/** 接続状況用future */
-	private ChannelFuture future = null;
 	/**
 	 * コンストラクタ
 	 * @param server 接続先サーバー
 	 * @param port 接続先ポート
 	 */
-	public DataClient() {
-		bootstrap = new ClientBootstrap(
+	public DataClient_bku(String server, int port) {
+		ClientBootstrap bootstrap = new ClientBootstrap(
 				new NioClientSocketChannelFactory(Executors.newCachedThreadPool(), Executors.newCachedThreadPool()));
 		bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
 			@Override
@@ -51,52 +45,28 @@ public class DataClient {
 		});
 		bootstrap.setOption("tcpNoDelay", true);
 		bootstrap.setOption("keepAlive", true);
-	}
-	/**
-	 * コネクト実施
-	 */
-	public boolean connect(String server, int port) {
-		future = bootstrap.connect(new InetSocketAddress(server, port));
+		logger.info("コネクト開始します。");
+		ChannelFuture future = bootstrap.connect(new InetSocketAddress(server, port));
 		future.awaitUninterruptibly();
-		return future.isSuccess();
-	}
-	/**
-	 * 処理がおわるまで待機します。
-	 */
-	public void waitForClose() {
-		// 処理がおわるまで待っておく。
-		future.getChannel().getCloseFuture().awaitUninterruptibly();
-		// リソースを解放しておく。
+		if(future.isSuccess()) {
+			future.getChannel().getCloseFuture().awaitUninterruptibly(); // ここで処理待ちにすると、ずっと応答がかえってこない(threadが１つつぶされる。)
+		}
 		bootstrap.releaseExternalResources();
+		// ここでは応答がかえってこないっぽい。
+		logger.info("処理がおわった");
 	}
 	/**
 	 * 閉じる
 	 */
 	public void close() {
-		// その場で接続を閉じます。
-		future.getChannel().close();
-		// リソースを解放しておく。
-		bootstrap.releaseExternalResources();
+		// これいらないかも
 	}
-	/**
-	 * イベントリスナーを追加する
-	 * @param listener
-	 */
 	public synchronized void addEventListener(IDataListener listener) {
 		listeners.add(listener);
 	}
-	/**
-	 * イベントリスナーを削除する
-	 * @param listener
-	 * @return
-	 */
 	public synchronized boolean removeEventListener(IDataListener listener) {
 		return listeners.remove(listener);
 	}
-	/**
-	 * listenerリストを参照
-	 * @return
-	 */
 	private synchronized Set<IDataListener> getListener() {
 		return listeners;
 	}
@@ -108,9 +78,8 @@ public class DataClient {
 		@Override
 		public void messageReceived(ChannelHandlerContext ctx, MessageEvent e)
 				throws Exception {
-			ByteBuffer buffer = ((ChannelBuffer)e.getMessage()).toByteBuffer(); // メッセージをByteBufferに変更
+			ByteBuffer buffer = ((ChannelBuffer)e.getMessage()).toByteBuffer();
 			for(IDataListener listener : getListener()) {
-				// listenerに通知してやる
 				listener.receiveData(buffer.duplicate());
 			}
 		}
