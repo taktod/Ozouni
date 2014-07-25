@@ -78,7 +78,6 @@ public class DataClient {
 		@Override
 		public void messageReceived(ChannelHandlerContext ctx, MessageEvent e)
 				throws Exception {
-			logger.info("データをうけとった");
 			ByteBuffer buffer = ((ChannelBuffer)e.getMessage()).toByteBuffer();
 			for(IDataListener listener : getListener()) {
 				listener.receiveData(buffer.duplicate());
