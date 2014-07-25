@@ -1,14 +1,22 @@
 package com.ttProject.ozouni.input;
 
 import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.ttProject.frame.AudioAnalyzer;
+import com.ttProject.frame.IAnalyzer;
+import com.ttProject.frame.IFrame;
+import com.ttProject.frame.VideoAnalyzer;
+import com.ttProject.nio.channels.ByteReadChannel;
 import com.ttProject.ozouni.base.IInputModule;
 import com.ttProject.ozouni.base.IOutputModule;
 import com.ttProject.ozouni.base.ReportData;
 import com.ttProject.ozouni.base.ShareFrameData;
+import com.ttProject.ozouni.base.analyzer.IAnalyzerChecker;
 import com.ttProject.ozouni.dataHandler.IDataListener;
 import com.ttProject.ozouni.dataHandler.IReceiveDataHandler;
 import com.ttProject.ozouni.reportHandler.IReportHandler;
@@ -27,6 +35,11 @@ public class FrameInputModule implements IInputModule {
 	/** 報告データ動作 */
 	@Autowired
 	private IReportHandler reportHandler;
+	/** Analyzerのmap */
+	private Map<Integer, IAnalyzer> analyzerMap = new HashMap<Integer, IAnalyzer>();
+	/** analyzerがどうなっているか調べる動作 */
+	@Autowired
+	private IAnalyzerChecker analyzerChecker;
 	/**
 	 * 出力モジュールを設定
 	 */
@@ -64,12 +77,30 @@ public class FrameInputModule implements IInputModule {
 				// ここのところで、bufferからSharedFrameDataを作り直さないとだめ
 				try {
 					ShareFrameData shareFrameData = new ShareFrameData(buffer);
-					logger.info(shareFrameData.getCodecType());
-					logger.info(shareFrameData.getTimebase());
-					logger.info(shareFrameData.getPts());
+					// analyzerをいれます。
+					IAnalyzer analyzer = analyzerMap.get(shareFrameData.getTrackId());
+					// frameに戻す
+					if(analyzer == null) {
+						// このframeに対応するanalyzerを取得する必要あり。
+						analyzer = analyzerChecker.checkAnalyzer(shareFrameData.getCodecType());
+						if(analyzer instanceof AudioAnalyzer) {
+							shareFrameData.setupFrameSelector(((AudioAnalyzer) analyzer).getSelector());
+						}
+						else if(analyzer instanceof VideoAnalyzer){
+							shareFrameData.setupFrameSelector(((VideoAnalyzer) analyzer).getSelector());
+						}
+						else {
+							throw new Exception("Analyzerが不明でした。");
+						}
+						analyzerMap.put(shareFrameData.getTrackId(), analyzer);
+					}
+					IFrame frame = analyzer.analyze(new ByteReadChannel(shareFrameData.getFrameData()));
+					logger.info(frame);
+					// 出力モジュールにデータを明け渡します。
+					outputModule.pushFrame(frame, shareFrameData.getTrackId());
 				}
 				catch(Exception e) {
-					; // とりあえず例外は捨てておく
+					e.printStackTrace();
 				}
 			}
 		});
