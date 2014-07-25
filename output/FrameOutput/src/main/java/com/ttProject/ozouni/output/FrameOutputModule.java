@@ -74,5 +74,6 @@ public class FrameOutputModule implements IOutputModule {
 		// trackIdを作成する必要がある。
 		ShareFrameData shareFrameData = new ShareFrameData(frameChecker.checkCodecType(frame), frame, id);
 		sendDataHandler.pushData(shareFrameData.getShareData());
+		// h264やh265、aacみたいな共有項目があるデータは共有項目も送ってやる必要がある。
 	}
 }
