@@ -41,16 +41,16 @@ public class ShareFrameData {
 	/** ロガー */
 	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(ShareFrameData.class);
-	private Bit8 codecType = new Bit8();
-	private Bit64 pts = new Bit64();
-	private Bit32 timebase = new Bit32();
-	private Bit32 trackId = new Bit32();
-	private Bit32 sampleRate = null;
-	private Bit32 channels = null;
-	private Bit32 bitNum = null;
-	private Bit32 width = null;
-	private Bit32 height = null;
-	private CodecType type = null;
+	private Bit8  codecType      = new Bit8();
+	private Bit64 pts            = new Bit64();
+	private Bit32 timebase       = new Bit32();
+	private Bit32 trackId        = new Bit32();
+	private Bit32 sampleRate     = null;
+	private Bit32 channels       = null;
+	private Bit32 bitNum         = null;
+	private Bit32 width          = null;
+	private Bit32 height         = null;
+	private CodecType  type      = null;
 	private ByteBuffer frameData = null;
 	/**
 	 * コンストラクタ
@@ -158,6 +158,6 @@ public class ShareFrameData {
 	 */
 	public ByteBuffer getShareData() {
 		BitConnector connector = new BitConnector();
-		return BufferUtil.connect(connector.connect(codecType, pts, timebase, sampleRate, channels, bitNum, width, height), frameData);
+		return BufferUtil.connect(connector.connect(codecType, pts, timebase, trackId, sampleRate, channels, bitNum, width, height), frameData.duplicate());
 	}
 }
