@@ -13,8 +13,10 @@ import com.ttProject.ozouni.input.rtmp.RtmpClient;
 public class RtmpInputModule implements IInputModule {
 	/** rtmpClient(固定にしておく) */
 	private RtmpClient client = new RtmpClient();
-	private IReceiveWriter writer = null; // データ処理のwriter
-	private IOutputModule outputModule = null; // 出力モジュール
+	/** データ処理のwriter */
+	private IReceiveWriter writer = null;
+	/** 出力モジュール */
+	private IOutputModule outputModule = null;
 	/** objectEncodingの値 */
 	private int objectEncoding = -1;
 	/**
