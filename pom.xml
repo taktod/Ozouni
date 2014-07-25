@@ -42,6 +42,7 @@ library: システムとやりとりするライブラリ
     <module>library/JedisReportHandler</module>
     <module>library/EhcacheReportHandler</module>
     <module>library/ServerDataHandler</module>
+    <module>library/FrameHandler</module>
     <module>entry/Entry</module>
     <module>entry/RtmpEntry</module>
     <module>worker/SignalWorker</module>
