@@ -45,11 +45,11 @@ public class ServerReceiveDataHandler implements IReceiveDataHandler {
 	}
 	@Override
 	public void registerListener(IDataListener listener) {
-		client.addEventListener(listener);
+		listeners.add(listener);
 	}
 	@Override
 	public boolean unregisterListener(IDataListener listener) {
-		return client.removeEventListener(listener);
+		return listeners.remove(listener);
 	}
 	@Override
 	public void setKey(String key) throws Exception {
@@ -61,8 +61,6 @@ public class ServerReceiveDataHandler implements IReceiveDataHandler {
 		}
 		server = data[1];
 		port = Integer.parseInt(data[2]);
-		logger.info(server);
-		logger.info(port);
 	}
 	/**
 	 * 開始トリガー
@@ -71,6 +69,12 @@ public class ServerReceiveDataHandler implements IReceiveDataHandler {
 	@Override
 	public void start() throws Exception {
 		logger.info("動作を開始します。");
-		this.client = new DataClient(server, port);
+		client = new DataClient();
+		for(IDataListener listener : listeners) {
+			client.addEventListener(listener);
+		}
+		client.connect(server, port);
+		logger.info("終わるまで待機します。");
+		client.waitForClose();
 	}
 }

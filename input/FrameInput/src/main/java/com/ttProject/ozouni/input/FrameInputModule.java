@@ -1,11 +1,15 @@
 package com.ttProject.ozouni.input;
 
+import java.nio.ByteBuffer;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.ttProject.ozouni.base.IInputModule;
 import com.ttProject.ozouni.base.IOutputModule;
 import com.ttProject.ozouni.base.ReportData;
+import com.ttProject.ozouni.base.ShareFrameData;
+import com.ttProject.ozouni.dataHandler.IDataListener;
 import com.ttProject.ozouni.dataHandler.IReceiveDataHandler;
 import com.ttProject.ozouni.reportHandler.IReportHandler;
 
@@ -51,6 +55,21 @@ public class FrameInputModule implements IInputModule {
 		logger.info(System.getProperty("targetId"));
 		ReportData reportData = reportHandler.getReportData(System.getProperty("targetId"));
 		logger.info(reportData);
+		receiveDataHandler.registerListener(new IDataListener() {
+			@Override
+			public void receiveData(ByteBuffer buffer) {
+				// ここのところで、bufferからSharedFrameDataを作り直さないとだめ
+				try {
+					ShareFrameData shareFrameData = new ShareFrameData(buffer);
+					logger.info(shareFrameData.getCodecType());
+					logger.info(shareFrameData.getTimebase());
+					logger.info(shareFrameData.getPts());
+				}
+				catch(Exception e) {
+					; // とりあえず例外は捨てておく
+				}
+			}
+		});
 		receiveDataHandler.setKey(reportData.getKey());
 		receiveDataHandler.start(); // 起動します。
 	}
