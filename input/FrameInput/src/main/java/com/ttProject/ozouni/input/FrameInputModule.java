@@ -54,6 +54,9 @@ public class FrameInputModule implements IInputModule {
 		// とりあえず、アクセスキーをつくっておきたい。
 		logger.info(System.getProperty("targetId"));
 		ReportData reportData = reportHandler.getReportData(System.getProperty("targetId"));
+		if(reportData == null) {
+			throw new RuntimeException("接続先が見つかりませんでした。");
+		}
 		logger.info(reportData);
 		receiveDataHandler.registerListener(new IDataListener() {
 			@Override
