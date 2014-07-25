@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.ttProject.frame.AudioAnalyzer;
+import com.ttProject.frame.Frame;
 import com.ttProject.frame.IAnalyzer;
 import com.ttProject.frame.IFrame;
 import com.ttProject.frame.VideoAnalyzer;
@@ -75,6 +76,9 @@ public class FrameInputModule implements IInputModule {
 			@Override
 			public void receiveData(ByteBuffer buffer) {
 				// ここのところで、bufferからSharedFrameDataを作り直さないとだめ
+				// TODO コーデックがかわった場合は、analyzerも書き直す必要がある・・・
+				// 一応可能性としては、ないとはいえない。
+				// frameの内容がかわったら、自分のデータを削除して、別のプロセスを作り直しておきたいところではある。
 				try {
 					ShareFrameData shareFrameData = new ShareFrameData(buffer);
 					// analyzerをいれます。
@@ -95,7 +99,9 @@ public class FrameInputModule implements IInputModule {
 						analyzerMap.put(shareFrameData.getTrackId(), analyzer);
 					}
 					IFrame frame = analyzer.analyze(new ByteReadChannel(shareFrameData.getFrameData()));
-					logger.info(frame);
+					Frame f = (Frame)frame;
+					f.setTimebase(shareFrameData.getTimebase());
+					f.setPts(shareFrameData.getPts());
 					// 出力モジュールにデータを明け渡します。
 					outputModule.pushFrame(frame, shareFrameData.getTrackId());
 				}
