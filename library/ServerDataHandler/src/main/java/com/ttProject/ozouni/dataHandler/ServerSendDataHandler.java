@@ -5,7 +5,6 @@ import java.lang.management.RuntimeMXBean;
 import java.nio.ByteBuffer;
 
 import org.apache.log4j.Logger;
-import org.jboss.netty.buffer.ChannelBuffers;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.ttProject.ozouni.base.analyzer.IServerNameAnalyzer;
@@ -74,7 +73,7 @@ public class ServerSendDataHandler implements ISendDataHandler {
 	 */
 	@Override
 	public void pushData(ByteBuffer buffer) {
-		server.sendData(ChannelBuffers.copiedBuffer(buffer));
+		server.sendData(buffer);
 	}
 	/**
 	 * {@inheritDoc}

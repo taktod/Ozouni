@@ -1,6 +1,7 @@
 package com.ttProject.ozouni.dataHandler.server;
 
 import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -8,6 +9,7 @@ import java.util.concurrent.Executors;
 import org.apache.log4j.Logger;
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.buffer.ChannelBuffer;
+import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelHandlerContext;
@@ -19,13 +21,16 @@ import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 
+import com.ttProject.util.BufferUtil;
+
 /**
  * 他のプロセスにサーバーとしてデータを送信します
  * @author taktod
  */
 public class DataServer {
 	/** ロガー */
-//	private final Logger logger = Logger.getLogger(DataServer.class);
+	@SuppressWarnings("unused")
+	private final Logger logger = Logger.getLogger(DataServer.class);
 	private final Set<Channel> channels = new HashSet<Channel>();
 	private final Channel serverChannel;
 	private final ServerBootstrap bootstrap;
@@ -50,10 +55,15 @@ public class DataServer {
 	 * データを送信する
 	 * @param buffer
 	 */
-	public void sendData(ChannelBuffer buffer) {
+	public void sendData(ByteBuffer buffer) {
+		ByteBuffer size = ByteBuffer.allocate(4);
+		size.putInt(buffer.remaining());
+		size.flip();
+		ChannelBuffer channelBuffer = ChannelBuffers.copiedBuffer(BufferUtil.connect(size, buffer));
 		synchronized(channels) {
 			for(Channel channel : channels) {
-				channel.write(buffer);
+				// データの先頭に通信データ量をいれておく。
+				channel.write(channelBuffer);
 			}
 		}
 	}

@@ -19,6 +19,7 @@ import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 
 import com.ttProject.ozouni.dataHandler.IDataListener;
+import com.ttProject.util.BufferUtil;
 
 /**
  * データをやり取りするクライアント
@@ -105,13 +106,35 @@ public class DataClient {
 	 * @author taktod
 	 */
 	private class ClientHandler extends SimpleChannelUpstreamHandler {
+		private int size = -1; // 処理用のデータサイズ -1だと未設定
+		private ByteBuffer buffer = null; // 処理途上データ用のbuffer
 		@Override
-		public void messageReceived(ChannelHandlerContext ctx, MessageEvent e)
+		public synchronized void messageReceived(ChannelHandlerContext ctx, MessageEvent e)
 				throws Exception {
-			ByteBuffer buffer = ((ChannelBuffer)e.getMessage()).toByteBuffer(); // メッセージをByteBufferに変更
-			for(IDataListener listener : getListener()) {
-				// listenerに通知してやる
-				listener.receiveData(buffer.duplicate());
+			buffer = BufferUtil.connect(buffer, ((ChannelBuffer)e.getMessage()).toByteBuffer());
+			while(buffer.remaining() > 0) {
+				if(size == -1) {
+					// はじめのデータ
+					if(buffer.remaining() < 4) {
+						return; // データが足りない
+					}
+					size = buffer.getInt();
+				}
+				if(buffer.remaining() < size) {
+					return; // データが足りない
+				}
+				// データが足りるので処理する
+				ByteBuffer data = ByteBuffer.allocate(size);
+				byte[] tmp = new byte[size];
+				buffer.get(tmp);
+				data.put(tmp);
+				data.flip();
+				for(IDataListener listener : getListener()) {
+					// listenerに通知してやる
+					listener.receiveData(data.duplicate());
+				}
+				// 次のデータ待ち
+				size = -1;
 			}
 		}
 	}

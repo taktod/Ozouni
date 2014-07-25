@@ -3,7 +3,7 @@ package com.ttProject.ozouni.dataHandler.server.test;
 import java.nio.ByteBuffer;
 
 import org.apache.log4j.Logger;
-import org.jboss.netty.buffer.ChannelBuffers;
+import org.junit.Test;
 
 import com.ttProject.ozouni.dataHandler.IDataListener;
 import com.ttProject.ozouni.dataHandler.server.DataClient;
@@ -15,13 +15,13 @@ public class ServerTest {
 	/**
 	 * 動作テスト
 	 */
-//	@Test
+	@Test
 	public void test() throws Exception {
 		logger.info("test開始");
 		DataServer ds = new DataServer(12345);
 		Thread.sleep(1000);
 		logger.info("send開始");
-		ds.sendData(ChannelBuffers.copiedBuffer("test".getBytes()));
+		ds.sendData(ByteBuffer.wrap("test".getBytes()));
 		Thread.sleep(1000);
 		logger.info("send開始");
 /*
@@ -42,13 +42,13 @@ public class ServerTest {
 				logger.info(new String(buffer.array()).intern());
 			}
 		});
-		ds.sendData(ChannelBuffers.copiedBuffer(ByteBuffer.wrap("test".getBytes())));
+		ds.sendData(ByteBuffer.wrap("test".getBytes()));
 		Thread.sleep(1000);
 		logger.info("send開始");
-		ds.sendData(ChannelBuffers.copiedBuffer(ByteBuffer.wrap("test".getBytes())));
+		ds.sendData(ByteBuffer.wrap("test".getBytes()));
 		Thread.sleep(1000);
 		logger.info("send開始");
-		ds.sendData(ChannelBuffers.copiedBuffer(ByteBuffer.wrap("test".getBytes())));
+		ds.sendData(ByteBuffer.wrap("test".getBytes()));
 		Thread.sleep(1000);
 		dataClient.close();
 		ds.close();
