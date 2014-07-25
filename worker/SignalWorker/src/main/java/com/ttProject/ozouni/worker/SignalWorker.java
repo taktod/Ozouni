@@ -36,6 +36,7 @@ public class SignalWorker implements ISignalModule, Runnable {
 	/** 動作間隔 */
 	private long interval; // デフォルトは1秒ごと
 	/** レポート動作 */
+	@Autowired
 	private IReportHandler reportHandler;
 	/**
 	 * コンストラクタ
@@ -113,12 +114,5 @@ public class SignalWorker implements ISignalModule, Runnable {
 	@Override
 	public ReportData getReportData() {
 		return reportData;
-	}
-	/**
-	 * reportDataをレポートする動作
-	 * @param reportHandler
-	 */
-	public void setReportHandler(IReportHandler reportHandler) {
-		this.reportHandler = reportHandler;
 	}
 }
