@@ -61,6 +61,10 @@ public class FrameOutputModule implements IOutputModule {
 			}
 			return;
 		}
+		if(frame == null) {
+			// frameがnullの場合はほっとく。
+			return;
+		}
 		// この部分でframeがmultiFrameだったら分解しておく必要がある。
 		// 処理フレームの値を記録する動作が必要
 		ReportData reportData = signalWorker.getReportData();
