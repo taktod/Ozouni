@@ -1,6 +1,7 @@
 package com.ttProject.ozouni.frame.analyzer;
 
 import com.ttProject.frame.IAnalyzer;
+import com.ttProject.frame.aac.AacFrameAnalyzer;
 import com.ttProject.frame.adpcmimawav.AdpcmImaWavFrameAnalyzer;
 import com.ttProject.frame.adpcmswf.AdpcmswfFrameAnalyzer;
 import com.ttProject.frame.flv1.Flv1FrameAnalyzer;
@@ -29,7 +30,7 @@ public class AnalyzerChecker implements IAnalyzerChecker {
 	public IAnalyzer checkAnalyzer(CodecType codecType) {
 		switch(codecType) {
 		case AAC:
-			throw new RuntimeException("あとで考えます。たぶんaacのadts形式のデータでくるようにするはずだが・・・");
+			return new AacFrameAnalyzer();
 		case ADPCM_IMA_WAV:
 			return new AdpcmImaWavFrameAnalyzer();
 		case ADPCM_SWF:
