@@ -7,9 +7,9 @@ import java.util.Map;
 import com.ttProject.frame.IAnalyzer;
 import com.ttProject.frame.IFrame;
 import com.ttProject.nio.channels.ByteReadChannel;
-import com.ttProject.ozouni.base.ShareFrameData;
 import com.ttProject.ozouni.dataHandler.IDataListener;
 import com.ttProject.ozouni.dataHandler.IReceiveDataHandler;
+import com.ttProject.ozouni.frame.ShareFrameData;
 import com.ttProject.ozouni.frame.analyzer.IAnalyzerChecker;
 
 /**

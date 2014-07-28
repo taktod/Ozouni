@@ -1,7 +1,7 @@
 package com.ttProject.ozouni.frame.analyzer;
 
 import com.ttProject.frame.IFrame;
-import com.ttProject.ozouni.base.CodecType;
+import com.ttProject.ozouni.frame.CodecType;
 
 /**
  * frameを処理するためのanalyzer

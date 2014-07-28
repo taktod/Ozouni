@@ -1,7 +1,7 @@
 package com.ttProject.ozouni.frame.analyzer;
 
 import com.ttProject.frame.IAnalyzer;
-import com.ttProject.ozouni.base.CodecType;
+import com.ttProject.ozouni.frame.CodecType;
 
 /**
  * SharedFrameDataから対象となるCheckerを決定します

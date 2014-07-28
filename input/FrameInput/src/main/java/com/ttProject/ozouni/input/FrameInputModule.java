@@ -14,13 +14,12 @@ import com.ttProject.frame.IFrame;
 import com.ttProject.frame.VideoAnalyzer;
 import com.ttProject.frame.VideoFrame;
 import com.ttProject.nio.channels.ByteReadChannel;
-import com.ttProject.ozouni.base.CodecType;
 import com.ttProject.ozouni.base.IInputModule;
 import com.ttProject.ozouni.base.IOutputModule;
 import com.ttProject.ozouni.base.ReportData;
-import com.ttProject.ozouni.base.ShareFrameData;
 import com.ttProject.ozouni.dataHandler.IDataListener;
 import com.ttProject.ozouni.dataHandler.IReceiveDataHandler;
+import com.ttProject.ozouni.frame.ShareFrameData;
 import com.ttProject.ozouni.frame.analyzer.IAnalyzerChecker;
 import com.ttProject.ozouni.reportHandler.IReportHandler;
 
@@ -87,9 +86,6 @@ public class FrameInputModule implements IInputModule {
 					IAnalyzer analyzer = analyzerMap.get(shareFrameData.getTrackId());
 					// frameに戻す
 					if(analyzer == null) {
-//						if(shareFrameData.getCodecType() == CodecType.H264) {
-//							return;
-//						}
 						// このframeに対応するanalyzerを取得する必要あり。
 						analyzer = analyzerChecker.checkAnalyzer(shareFrameData.getCodecType());
 						if(analyzer instanceof AudioAnalyzer) {

@@ -1,4 +1,4 @@
-package com.ttProject.ozouni.base;
+package com.ttProject.ozouni.frame;
 
 /**
  * やりとりするフレームのcodecID

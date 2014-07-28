@@ -8,12 +8,12 @@ import com.ttProject.frame.IFrame;
 import com.ttProject.frame.IVideoFrame;
 import com.ttProject.frame.extra.AudioMultiFrame;
 import com.ttProject.frame.extra.VideoMultiFrame;
-import com.ttProject.ozouni.base.CodecType;
 import com.ttProject.ozouni.base.IOutputModule;
 import com.ttProject.ozouni.base.ISignalModule;
 import com.ttProject.ozouni.base.ReportData;
-import com.ttProject.ozouni.base.ShareFrameData;
 import com.ttProject.ozouni.dataHandler.ISendDataHandler;
+import com.ttProject.ozouni.frame.CodecType;
+import com.ttProject.ozouni.frame.ShareFrameData;
 import com.ttProject.ozouni.frame.analyzer.IFrameChecker;
 
 /**
