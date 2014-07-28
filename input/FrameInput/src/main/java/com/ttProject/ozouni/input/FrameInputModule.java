@@ -20,6 +20,7 @@ import com.ttProject.ozouni.base.ReportData;
 import com.ttProject.ozouni.dataHandler.IDataListener;
 import com.ttProject.ozouni.dataHandler.IReceiveDataHandler;
 import com.ttProject.ozouni.frame.ShareFrameData;
+import com.ttProject.ozouni.frame.analyzer.AnalyzerChecker;
 import com.ttProject.ozouni.frame.analyzer.IAnalyzerChecker;
 import com.ttProject.ozouni.reportHandler.IReportHandler;
 
@@ -40,8 +41,7 @@ public class FrameInputModule implements IInputModule {
 	/** Analyzerのmap */
 	private Map<Integer, IAnalyzer> analyzerMap = new HashMap<Integer, IAnalyzer>();
 	/** analyzerがどうなっているか調べる動作 */
-	@Autowired
-	private IAnalyzerChecker analyzerChecker;
+	private IAnalyzerChecker analyzerChecker = new AnalyzerChecker();
 	/**
 	 * 出力モジュールを設定
 	 */
@@ -56,6 +56,13 @@ public class FrameInputModule implements IInputModule {
 	 */
 	public void setReceiveDataHandler(IReceiveDataHandler receiveDataHandler) {
 		this.receiveDataHandler = receiveDataHandler;
+	}
+	/**
+	 * analyzerCheckerを外部から設定できるようにしておきます。
+	 * @param analyzerChecker
+	 */
+	public void setAnalyzerChecker(IAnalyzerChecker analyzerChecker) {
+		this.analyzerChecker = analyzerChecker;
 	}
 	/**
 	 * 開始処理

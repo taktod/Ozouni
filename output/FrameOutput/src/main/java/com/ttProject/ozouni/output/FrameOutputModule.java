@@ -14,6 +14,7 @@ import com.ttProject.ozouni.base.ReportData;
 import com.ttProject.ozouni.dataHandler.ISendDataHandler;
 import com.ttProject.ozouni.frame.CodecType;
 import com.ttProject.ozouni.frame.ShareFrameData;
+import com.ttProject.ozouni.frame.analyzer.FrameChecker;
 import com.ttProject.ozouni.frame.analyzer.IFrameChecker;
 
 /**
@@ -30,8 +31,14 @@ public class FrameOutputModule implements IOutputModule {
 	/** データ送信用のDataHandler設定 */
 	private ISendDataHandler sendDataHandler = null;
 	/** frameを確認するためのchecker */
-	@Autowired
-	private IFrameChecker frameChecker;
+	private IFrameChecker frameChecker = new FrameChecker();
+	/**
+	 * frameの確認モジュールを設定します。
+	 * @param frameChecker
+	 */
+	public void setFrameChecker(IFrameChecker frameChecker) {
+		this.frameChecker = frameChecker;
+	}
 	/**
 	 * データ送信handlerを設定する
 	 * @param sendDataHandler
