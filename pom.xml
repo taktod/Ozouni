@@ -49,6 +49,7 @@ library: システムとやりとりするライブラリ
     <module>input/RtmpInput</module>
     <module>input/FileInput</module>
     <module>input/FrameInput</module>
+    <module>input/StdinMkvInput</module>
     <module>output/StdoutFlvOutput</module>
     <module>output/FrameOutput</module>
     <module>EasyRestServer</module>
