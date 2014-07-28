@@ -16,4 +16,16 @@
   </licenses>
   <name>StdinMkvInput</name>
   <description>matroska形式での標準入力データを扱うinputモジュール</description>
+  <dependencies>
+    <dependency>
+      <groupId>com.ttProject.streaming</groupId>
+      <artifactId>OzouniBase</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+    	<groupId>com.ttProject</groupId>
+    	<artifactId>myLib.container.mkv</artifactId>
+    	<version>0.0.2-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
 </project>
