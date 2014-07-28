@@ -5,6 +5,7 @@ import com.ttProject.frame.aac.AacFrameAnalyzer;
 import com.ttProject.frame.adpcmimawav.AdpcmImaWavFrameAnalyzer;
 import com.ttProject.frame.adpcmswf.AdpcmswfFrameAnalyzer;
 import com.ttProject.frame.flv1.Flv1FrameAnalyzer;
+import com.ttProject.frame.h264.NalAnalyzer;
 import com.ttProject.frame.mjpeg.MjpegFrameAnalyzer;
 import com.ttProject.frame.mp3.Mp3FrameAnalyzer;
 import com.ttProject.frame.nellymoser.NellymoserFrameAnalyzer;
@@ -37,9 +38,9 @@ public class AnalyzerChecker implements IAnalyzerChecker {
 		case FLV1:
 			return new Flv1FrameAnalyzer();
 		case H264:
-			throw new RuntimeException("あとで考えます。DataNalAnalyzerを使うと思う。");
+			return new NalAnalyzer();
 		case H265:
-			throw new RuntimeException("あとで考えます。こっちもH265DataNalAnalyzerを使うと思う。");
+			throw new RuntimeException("あとで考えます。こっちもH265NalAnalyzerを使うと思う。");
 		case MJPEG:
 			return new MjpegFrameAnalyzer();
 		case MP3:

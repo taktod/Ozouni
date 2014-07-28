@@ -11,9 +11,10 @@ import com.ttProject.frame.AudioAnalyzer;
 import com.ttProject.frame.Frame;
 import com.ttProject.frame.IAnalyzer;
 import com.ttProject.frame.IFrame;
+import com.ttProject.frame.NullFrame;
 import com.ttProject.frame.VideoAnalyzer;
-import com.ttProject.frame.VideoFrame;
 import com.ttProject.nio.channels.ByteReadChannel;
+import com.ttProject.nio.channels.IReadChannel;
 import com.ttProject.ozouni.base.IInputModule;
 import com.ttProject.ozouni.base.IOutputModule;
 import com.ttProject.ozouni.base.ReportData;
@@ -106,15 +107,16 @@ public class FrameInputModule implements IInputModule {
 						}
 						analyzerMap.put(shareFrameData.getTrackId(), analyzer);
 					}
-					IFrame frame = analyzer.analyze(new ByteReadChannel(shareFrameData.getFrameData()));
-					Frame f = (Frame)frame;
-					f.setTimebase(shareFrameData.getTimebase());
-					f.setPts(shareFrameData.getPts());
-					if(frame instanceof VideoFrame) {
-						logger.info(frame);
+					// この部分でframeの値をとれるだけとらないとだめ。
+					IFrame frame = null;
+					IReadChannel channel = new ByteReadChannel(shareFrameData.getFrameData());
+					while((frame = analyzer.analyze(channel)) != null) {
+						pushData(frame, shareFrameData);
 					}
-					// 出力モジュールにデータを明け渡します。
-					outputModule.pushFrame(frame, shareFrameData.getTrackId());
+					frame = analyzer.getRemainFrame();
+					if(frame != null && !(frame instanceof NullFrame)) {
+						pushData(frame, shareFrameData);
+					}
 				}
 				catch(Exception e) {
 					e.printStackTrace();
@@ -123,5 +125,16 @@ public class FrameInputModule implements IInputModule {
 		});
 		receiveDataHandler.setKey(reportData.getKey());
 		receiveDataHandler.start(); // 起動します。
+	}
+	private void pushData(IFrame frame, ShareFrameData shareFrameData) throws Exception {
+		Frame f = (Frame)frame;
+		f.setTimebase(shareFrameData.getTimebase());
+		f.setPts(shareFrameData.getPts());
+		if(frame instanceof NullFrame) {
+			// h264とかでnullFrameになることもある、nullFrameの場合はデータを捨てておきます。
+			return;
+		}
+		// 出力モジュールにデータを明け渡します。
+		outputModule.pushFrame(frame, shareFrameData.getTrackId());
 	}
 }

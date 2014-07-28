@@ -1,5 +1,7 @@
 package com.ttProject.ozouni.output;
 
+import java.nio.channels.Channels;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -8,6 +10,7 @@ import com.ttProject.container.flv.FlvTagWriter;
 import com.ttProject.frame.IAudioFrame;
 import com.ttProject.frame.IFrame;
 import com.ttProject.frame.IVideoFrame;
+import com.ttProject.frame.VideoFrame;
 import com.ttProject.frame.extra.AudioMultiFrame;
 import com.ttProject.frame.extra.VideoMultiFrame;
 import com.ttProject.ozouni.base.IOutputModule;
@@ -20,26 +23,29 @@ import com.ttProject.ozouni.base.ReportData;
  */
 public class StdoutFlvOutputModule implements IOutputModule {
 	/** ロガー */
+	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(StdoutFlvOutputModule.class);
 	private final FlvTagWriter writer;
 	/** reportDataを引き出すためのsignalWorker */
 	@Autowired
 	private ISignalModule signalWorker;
+	private boolean start = false;
 	/**
 	 * コンストラクタ
 	 */
 	public StdoutFlvOutputModule() throws Exception {
 		// 標準出力としてデータを出力するwriter(stdoutの場合)
-//		writer = new FlvTagWriter(Channels.newChannel(System.out));
+		writer = new FlvTagWriter(Channels.newChannel(System.out));
 		// 適当なファイルとして出力してみます
-		writer = new FlvTagWriter("hogehoge.flv");
+//		writer = new FlvTagWriter("hogehoge23.flv");
 		FlvHeaderTag headerTag = new FlvHeaderTag();
 		headerTag.setAudioFlag(false);
 		headerTag.setVideoFlag(true);
 		writer.addContainer(headerTag);
-;	}
+	}
 	@Override
 	public void pushFrame(IFrame frame, int id) throws Exception {
+		// ここのところで、一番はじめに映像がくるまで待った方がいい
 		if(frame instanceof AudioMultiFrame) {
 			AudioMultiFrame multiFrame = (AudioMultiFrame)frame;
 			for(IAudioFrame audioFrame : multiFrame.getFrameList()) {
@@ -52,6 +58,18 @@ public class StdoutFlvOutputModule implements IOutputModule {
 			for(IVideoFrame videoFrame : multiFrame.getFrameList()) {
 				pushFrame(videoFrame, id);
 			}
+			return;
+		}
+		if(frame == null) {
+			return;
+		}
+		if(frame instanceof VideoFrame) {
+			VideoFrame vFrame = (VideoFrame)frame;
+			if(!start && vFrame.isKeyFrame()) {
+				start = true;
+			}
+		}
+		if(!start) {
 			return;
 		}
 //		logger.info(frame);

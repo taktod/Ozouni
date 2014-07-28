@@ -20,6 +20,8 @@ import com.ttProject.ozouni.frame.analyzer.IFrameChecker;
 /**
  * frameServerとして、ozouniシステム間でデータを共有するモジュール
  * @author taktod
+ * // クライアントソフトウェアがアクセスした場合には、はじめに、frameデータを送ってやった方がいいかも・・・
+ * できたらkeyFrameデータでないと初回起動がエラーになることがままありそう。
  */
 public class FrameOutputModule implements IOutputModule {
 	/** ロガー */
@@ -85,15 +87,11 @@ public class FrameOutputModule implements IOutputModule {
 		reportData.setLastUpdateTime(System.currentTimeMillis());
 		// h264のframeの場合はちょっと特殊なことをやる必要がある。
 		CodecType codecType = frameChecker.checkCodecType(frame);
+		// trackIdを作成する必要がある。
+		ShareFrameData shareFrameData = new ShareFrameData(codecType, frame, id);
 		if(codecType == CodecType.H264) { // h265でも同じようなことしないとだめかもしれない。
-			// h264の場合は特殊な動作しなければいけない。
-			// sliceIDRの場合は、spsとppsも送る
-			// フレームが単一ではなく、マルチで成立している場合は、全部ばらばらに送る必要がある。
+			shareFrameData.setFrameData(frame.getPackBuffer());
 		}
-		else {
-			// trackIdを作成する必要がある。
-			ShareFrameData shareFrameData = new ShareFrameData(codecType, frame, id);
-			sendDataHandler.pushData(shareFrameData.getShareData());
-		}
+		sendDataHandler.pushData(shareFrameData.getShareData());
 	}
 }
