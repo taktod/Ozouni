@@ -34,6 +34,7 @@ public class EasyRestServer {
 		try {
 			context = new ClassPathXmlApplicationContext("easyRestServer.xml");
 			ServletHandler handler = context.getBean("handler", ServletHandler.class);
+			@SuppressWarnings("unused")
 			ServletMapping sm = new ServletMapping();
 			handler.addServletWithMapping(RestServlet.class, "/");
 			Server server = context.getBean("server", Server.class);
