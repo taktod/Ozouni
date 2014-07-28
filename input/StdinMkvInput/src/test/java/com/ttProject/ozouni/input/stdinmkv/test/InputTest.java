@@ -7,7 +7,6 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 
 import org.apache.log4j.Logger;
-import org.junit.Test;
 
 import com.ttProject.container.IContainer;
 import com.ttProject.container.mkv.MkvBlockTag;
@@ -21,7 +20,7 @@ import com.ttProject.nio.channels.IReadChannel;
 public class InputTest {
 	/** ロガー */
 	private Logger logger = Logger.getLogger(InputTest.class);
-	@Test
+//	@Test
 	public void test() throws Exception {
 		StringBuilder command = new StringBuilder();
 //		command.append("java -Dfile.encoding=UTF-8 -cp Ozouni/input/StdinMkvInput/target/test-classes/ com.ttProject.ozouni.input.stdinmkv.test.UpdateProgram");
