@@ -1,4 +1,4 @@
-package com.ttProject.ozouni.base.worker;
+package com.ttProject.ozouni.frame.worker;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -8,9 +8,9 @@ import com.ttProject.frame.IAnalyzer;
 import com.ttProject.frame.IFrame;
 import com.ttProject.nio.channels.ByteReadChannel;
 import com.ttProject.ozouni.base.ShareFrameData;
-import com.ttProject.ozouni.base.analyzer.IAnalyzerChecker;
 import com.ttProject.ozouni.dataHandler.IDataListener;
 import com.ttProject.ozouni.dataHandler.IReceiveDataHandler;
+import com.ttProject.ozouni.frame.analyzer.IAnalyzerChecker;
 
 /**
  * フレームの受信を実施するworker

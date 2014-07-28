@@ -8,12 +8,13 @@ import com.ttProject.frame.IFrame;
 import com.ttProject.frame.IVideoFrame;
 import com.ttProject.frame.extra.AudioMultiFrame;
 import com.ttProject.frame.extra.VideoMultiFrame;
+import com.ttProject.ozouni.base.CodecType;
 import com.ttProject.ozouni.base.IOutputModule;
 import com.ttProject.ozouni.base.ISignalModule;
 import com.ttProject.ozouni.base.ReportData;
 import com.ttProject.ozouni.base.ShareFrameData;
-import com.ttProject.ozouni.base.analyzer.IFrameChecker;
 import com.ttProject.ozouni.dataHandler.ISendDataHandler;
+import com.ttProject.ozouni.frame.analyzer.IFrameChecker;
 
 /**
  * frameServerとして、ozouniシステム間でデータを共有するモジュール
@@ -75,9 +76,17 @@ public class FrameOutputModule implements IOutputModule {
 		}
 		// 現在時刻を登録しておく
 		reportData.setLastUpdateTime(System.currentTimeMillis());
-		// trackIdを作成する必要がある。
-		ShareFrameData shareFrameData = new ShareFrameData(frameChecker.checkCodecType(frame), frame, id);
-		sendDataHandler.pushData(shareFrameData.getShareData());
-		// h264やh265、aacみたいな共有項目があるデータは共有項目も送ってやる必要がある。
+		// h264のframeの場合はちょっと特殊なことをやる必要がある。
+		CodecType codecType = frameChecker.checkCodecType(frame);
+		if(codecType == CodecType.H264) { // h265でも同じようなことしないとだめかもしれない。
+			// h264の場合は特殊な動作しなければいけない。
+			// sliceIDRの場合は、spsとppsも送る
+			// フレームが単一ではなく、マルチで成立している場合は、全部ばらばらに送る必要がある。
+		}
+		else {
+			// trackIdを作成する必要がある。
+			ShareFrameData shareFrameData = new ShareFrameData(codecType, frame, id);
+			sendDataHandler.pushData(shareFrameData.getShareData());
+		}
 	}
 }

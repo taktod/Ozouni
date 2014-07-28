@@ -1,4 +1,4 @@
-package com.ttProject.ozouni.base.analyzer;
+package com.ttProject.ozouni.frame.analyzer;
 
 import com.ttProject.frame.IAnalyzer;
 import com.ttProject.ozouni.base.CodecType;

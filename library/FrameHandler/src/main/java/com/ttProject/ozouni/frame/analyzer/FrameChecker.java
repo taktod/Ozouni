@@ -18,7 +18,6 @@ import com.ttProject.frame.vp6.Vp6Frame;
 import com.ttProject.frame.vp8.Vp8Frame;
 import com.ttProject.frame.vp9.Vp9Frame;
 import com.ttProject.ozouni.base.CodecType;
-import com.ttProject.ozouni.base.analyzer.IFrameChecker;
 
 public class FrameChecker implements IFrameChecker {
 	@Override

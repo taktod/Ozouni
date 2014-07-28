@@ -16,7 +16,6 @@ import com.ttProject.frame.vp6.Vp6FrameAnalyzer;
 import com.ttProject.frame.vp8.Vp8FrameAnalyzer;
 import com.ttProject.frame.vp9.Vp9FrameAnalyzer;
 import com.ttProject.ozouni.base.CodecType;
-import com.ttProject.ozouni.base.analyzer.IAnalyzerChecker;
 
 /**
  * フレームのAnalyzerが何であるか指定する動作
