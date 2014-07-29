@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 import org.apache.log4j.Logger;
 import org.jboss.netty.bootstrap.ServerBootstrap;
@@ -39,8 +40,16 @@ public class DataServer {
 	 * @param port
 	 */
 	public DataServer(int port) {
+		ThreadFactory factory = new ThreadFactory() {
+			@Override
+			public Thread newThread(Runnable r) {
+				Thread t = new Thread(r);
+				t.setDaemon(true);
+				return t;
+			}
+		};
 		bootstrap = new ServerBootstrap(
-			new NioServerSocketChannelFactory(Executors.newCachedThreadPool(), Executors.newCachedThreadPool()));
+			new NioServerSocketChannelFactory(Executors.newCachedThreadPool(factory), Executors.newCachedThreadPool(factory)));
 		bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
 			@Override
 			public ChannelPipeline getPipeline() throws Exception {
