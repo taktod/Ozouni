@@ -17,7 +17,6 @@ import com.ttProject.ozouni.base.IOutputModule;
  */
 public class MkvInputModule implements IInputModule {
 	/** ロガー */
-	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(MkvInputModule.class);
 	/** 出力モジュール */
 	private IOutputModule outputModule = null;
@@ -55,7 +54,7 @@ public class MkvInputModule implements IInputModule {
 		while((container = reader.read(channel)) != null) {
 			if(container instanceof MkvBlockTag) {
 				MkvBlockTag blockTag = (MkvBlockTag) container;
-				blockTag.getFrame();
+				logger.info(blockTag.getFrame());
 				outputModule.pushFrame(blockTag.getFrame(), blockTag.getTrackId().get());
 			}
 		}
