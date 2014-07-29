@@ -34,10 +34,8 @@ public class ServerSendDataHandler implements ISendDataHandler {
 		DataServer server = null;
 		// ポート番号候補として、pidから適当につくることにする
 		int portNumber = Integer.parseInt(pid) % 1000;
-		System.out.println("portNumber:" + portNumber);
 		portNumber += 1000;
 		for(;portNumber < 65535;portNumber += 1000) {
-			System.out.println("portNumber:" + portNumber);
 			try {
 				server = new DataServer(portNumber);
 				break; // break入れないとサーバーが決定しない。
