@@ -47,10 +47,9 @@ library: システムとやりとりするライブラリ
     <module>entry/RtmpEntry</module>
     <module>worker/SignalWorker</module>
     <module>input/RtmpInput</module>
-    <module>input/FileInput</module>
     <module>input/FrameInput</module>
     <module>input/StdinMkvInput</module>
-    <module>output/StdoutFlvOutput</module>
+    <module>input/MkvInput</module>
     <module>output/FlvOutput</module>
     <module>output/FrameOutput</module>
     <module>EasyRestServer</module>
