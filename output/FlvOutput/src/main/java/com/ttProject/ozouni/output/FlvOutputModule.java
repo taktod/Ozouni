@@ -87,6 +87,18 @@ public class FlvOutputModule implements IOutputModule {
 			headerTag.setAudioFlag(audioFlg);
 			headerTag.setVideoFlag(videoFlg);
 			writer.addContainer(headerTag);
+			// writerのcloseを実施したいので、ShutdownHookでcloseするようにしておこうと思います。
+			Runtime.getRuntime().addShutdownHook(new Thread() {
+				@Override
+				public void run() {
+					try {
+						// writerの終端動作をshutdown時に実行しておく。
+						writer.prepareTailer();
+					}
+					catch(Exception e) {
+					}
+				}
+			});
 		}
 		sortModel.addFrame(frame, id);
 		ReportData reportData = signalWorker.getReportData();
