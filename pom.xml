@@ -51,6 +51,7 @@ library: システムとやりとりするライブラリ
     <module>input/FrameInput</module>
     <module>input/StdinMkvInput</module>
     <module>output/StdoutFlvOutput</module>
+    <module>output/FlvOutput</module>
     <module>output/FrameOutput</module>
     <module>EasyRestServer</module>
   </modules>
