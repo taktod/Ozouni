@@ -79,6 +79,7 @@ usage: test
 		 */
 		options.addOption(OptionBuilder.withArgName("id").hasArg(true).withDescription("set uniqueId for the process.").create("uniqueId"));
 		options.addOption(OptionBuilder.withArgName("id").hasArg(true).withDescription("set targetId for connect.").create("targetId"));
+		options.addOption(OptionBuilder.withArgName("xml").hasArg(true).withDescription("set xml path").create("xml"));
 		return options;
 	}
 }

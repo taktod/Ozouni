@@ -31,6 +31,7 @@ public class RtmpEntry {
 			CommandLine commandLine;
 			ExtendedBasicParser parser = new ExtendedBasicParser();
 			Options options = createOptions();
+			String targetXml = "ozouni.xml";
 			commandLine = parser.parse(options, args);
 			if(commandLine.getOptions().length == 0) {
 				HelpFormatter formatter = new HelpFormatter();
@@ -45,12 +46,15 @@ public class RtmpEntry {
 			if(commandLine.hasOption("targetId")) {
 				System.setProperty("targetId", commandLine.getOptionValue("targetId"));
 			}
+			if(commandLine.hasOption("xml")) {
+				targetXml = commandLine.getOptionValue("xml");
+			}
 			List<String> argList = new ArrayList<String>();
 			argList.addAll(parser.restArgs());
 			argList.addAll(commandLine.getArgList());
 			
 			// ここまでこれたら問題ないので、起動します。(classPathで登録されているところにある、ozouni.xmlを読み込むことにします。)
-			context = new ClassPathXmlApplicationContext("ozouni.xml");
+			context = new ClassPathXmlApplicationContext(targetXml);
 			
 			RtmpInputModule rtmpInputModule = context.getBean(RtmpInputModule.class);
 			ClientOptions clientOptions = rtmpInputModule.getClientOptions();
@@ -90,6 +94,7 @@ usage: test
 		 */
 		options.addOption(OptionBuilder.withArgName("id").hasArg(true).withDescription("set uniqueId for the process.").create("uniqueId"));
 		options.addOption(OptionBuilder.withArgName("id").hasArg(true).withDescription("set targetId for connect.").create("targetId"));
+		options.addOption(OptionBuilder.withArgName("xml").hasArg(true).withDescription("set xml path").create("xml"));
 		return options;
 	}
 }
