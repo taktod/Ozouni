@@ -1,5 +1,7 @@
 package com.ttProject.ozouni.input;
 
+import org.apache.log4j.Logger;
+
 import com.flazr.rtmp.client.ClientOptions;
 import com.ttProject.ozouni.base.IInputModule;
 import com.ttProject.ozouni.base.IOutputModule;
@@ -11,6 +13,9 @@ import com.ttProject.ozouni.input.rtmp.RtmpClient;
  * @author taktod
  */
 public class RtmpInputModule implements IInputModule {
+	/** ロガー */
+	@SuppressWarnings("unused")
+	private Logger logger = Logger.getLogger(RtmpInputModule.class);
 	/** rtmpClient(固定にしておく) */
 	private RtmpClient client = new RtmpClient();
 	/** データ処理のwriter */
