@@ -20,6 +20,7 @@ import com.ttProject.ozouni.base.ReportData;
 /**
  * 標準出力としてflvデータを出力するモジュール
  * @author taktod
+ * ここに追加データをいれます。
  */
 public class StdoutFlvOutputModule implements IOutputModule {
 	/** ロガー */
@@ -39,7 +40,7 @@ public class StdoutFlvOutputModule implements IOutputModule {
 		// 適当なファイルとして出力してみます
 //		writer = new FlvTagWriter("hogehoge23.flv");
 		FlvHeaderTag headerTag = new FlvHeaderTag();
-		headerTag.setAudioFlag(false);
+		headerTag.setAudioFlag(true);
 		headerTag.setVideoFlag(true);
 		writer.addContainer(headerTag);
 	}
