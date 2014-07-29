@@ -18,6 +18,7 @@ import com.ttProject.frame.IVideoFrame;
  */
 public class FlvFrameSortModel {
 	/** ロガー */
+	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(FlvFrameSortModel.class);
 	private final boolean videoFlg;
 	private final boolean audioFlg;
@@ -59,7 +60,6 @@ public class FlvFrameSortModel {
 			if(!videoFlg) {
 				return;
 			}
-			logger.info("videoAdd:" + frame.getPts());
 			if(videoId != -1 && videoId != id) {
 				throw new Exception("videoFrameIdがかわっています。");
 			}
@@ -72,7 +72,6 @@ public class FlvFrameSortModel {
 					while(audioFrameList.size() != 0) {
 						IAudioFrame aFrame = audioFrameList.get(0);
 						double apos = 1D * aFrame.getPts() / aFrame.getTimebase();
-						logger.info("apos:" + apos + " pos:" + pos);
 						if(apos > pos) {
 							break;
 						}
@@ -94,7 +93,6 @@ public class FlvFrameSortModel {
 			if(!audioFlg) {
 				return;
 			}
-			logger.info("audioAdd:" + frame.getPts());
 			if(audioId != -1 && audioId != id) {
 				throw new Exception("audioFrameIdがかわっています。");
 			}
@@ -102,11 +100,10 @@ public class FlvFrameSortModel {
 				audioFrameList.add((IAudioFrame)frame);
 				while(audioFrameList.size() != 0) {
 					IAudioFrame aFrame = audioFrameList.get(0);
-					double pos = 1D * frame.getPts() / frame.getTimebase();
+					double pos = 1D * aFrame.getPts() / aFrame.getTimebase();
 					while(videoFrameList.size() != 0) {
 						IVideoFrame vFrame = videoFrameList.get(0);
 						double vpos = 1D * vFrame.getPts() / vFrame.getTimebase();
-						logger.info("vpos:" + vpos + " pos:" + pos);
 						if(vpos > pos) {
 							break;
 						}
@@ -122,8 +119,6 @@ public class FlvFrameSortModel {
 				completeFrameList.add(frame);
 			}
 		}
-		logger.info("vls:" + videoFrameList.size());
-		logger.info("sls:" + audioFrameList.size());
 	}
 	/**
 	 * ソート済みのtagを参照します。
