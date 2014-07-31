@@ -98,7 +98,7 @@ public class ShareFrameData {
 			width = new Bit32(vFrame.getWidth());
 			height = new Bit32(vFrame.getHeight());
 		}
-		frameData = frame.getData(); // ここのところ、h264だけgetPackBufferにしたいところ・・・
+//		frameData = frame.getData(); // ここのところ、h264だけgetPackBufferにしたいところ・・・
 	}
 	/**
 	 * frameのデフォルト値をselectorにいれておきます
