@@ -25,6 +25,17 @@ public class FlvTagOrderModel implements IFlvTagOrderModel {
 	/** 処理済みaudioTagのpts値 */
 	private long passedAudioPts = -1;
 	/**
+	 * 内部のデータをリセットする
+	 * 主にunpublishしたときの処理
+	 */
+	@Override
+	public void reset() {
+		videoTags.clear();
+		audioTags.clear();
+		passedVideoPts = -1;
+		passedAudioPts = -1;
+	}
+	/**
 	 * tagを追加する
 	 */
 	@Override
@@ -51,6 +62,9 @@ public class FlvTagOrderModel implements IFlvTagOrderModel {
 			audioTags.add(tag);
 		}
 	}
+	/**
+	 * 音声のソート済みデータを取得する
+	 */
 	@Override
 	public List<FlvTag> getAudioCompleteTag() {
 		Collections.sort(audioTags, comparator);
@@ -62,6 +76,9 @@ public class FlvTagOrderModel implements IFlvTagOrderModel {
 		}
 		return result;
 	}
+	/**
+	 * 映像のソート済みデータを取得する
+	 */
 	@Override
 	public List<FlvTag> getVideoCompleteTag() {
 		Collections.sort(videoTags, comparator);

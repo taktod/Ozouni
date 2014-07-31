@@ -25,4 +25,8 @@ public interface IFlvTagOrderModel {
 	 * @return
 	 */
 	public List<FlvTag> getVideoCompleteTag();
+	/**
+	 * 内部データをリセットする
+	 */
+	public void reset();
 }

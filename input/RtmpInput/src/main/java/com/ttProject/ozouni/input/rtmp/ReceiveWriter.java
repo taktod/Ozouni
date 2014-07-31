@@ -8,6 +8,7 @@ package com.ttProject.ozouni.input.rtmp;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.flazr.rtmp.RtmpMessage;
 import com.ttProject.container.flv.FlvTag;
@@ -15,6 +16,7 @@ import com.ttProject.container.flv.type.AudioTag;
 import com.ttProject.container.flv.type.VideoTag;
 import com.ttProject.flazr.unit.MessageManager;
 import com.ttProject.ozouni.base.IOutputModule;
+import com.ttProject.ozouni.base.ISignalModule;
 import com.ttProject.ozouni.input.rtmp.model.FlvTagOrderModel;
 import com.ttProject.ozouni.input.rtmp.model.IFlvTagOrderModel;
 
@@ -35,6 +37,9 @@ public class ReceiveWriter implements IReceiveWriter {
 	private IFlvTagOrderModel orderModel = new FlvTagOrderModel();
 	/** 出力モジュール */
 	private IOutputModule outputModule;
+	/** アクセスシグナルモジュール */
+	@Autowired
+	private ISignalModule signalWorker;
 	/**
 	 * 出力モジュール設定
 	 * @param outputModule
@@ -51,6 +56,10 @@ public class ReceiveWriter implements IReceiveWriter {
 	 * unpublish通知をうけとったときの処理
 	 */
 	public void unpublish() {
+		// unpublishしたときに、orderModelをクリアしておかないとだめ(クリアしないと、orderModel用に次のデータがこないため、処理が進まない)
+		orderModel.reset();
+		// このタイミングでreportDataにアクセスしてframePtsをリセットしておく
+		signalWorker.getReportData().setFramePts(0);
 	}
 	/**
 	 * {@inheritDoc}
