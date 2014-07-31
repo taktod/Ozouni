@@ -48,7 +48,6 @@ library: システムとやりとりするライブラリ
     <module>worker/SignalWorker</module>
     <module>input/RtmpInput</module>
     <module>input/FrameInput</module>
-    <module>input/StdinMkvInput</module>
     <module>input/MkvInput</module>
     <module>output/FlvOutput</module>
     <module>output/FrameOutput</module>
