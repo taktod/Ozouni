@@ -29,6 +29,7 @@ public class MainEntry {
 			CommandLine commandLine;
 			ExtendedBasicParser parser = new ExtendedBasicParser();
 			Options options = createOptions();
+			String targetXml = "ozouni.xml";
 			commandLine = parser.parse(options, args);
 			if(commandLine.getOptions().length == 0) {
 				HelpFormatter formatter = new HelpFormatter();
@@ -43,8 +44,11 @@ public class MainEntry {
 			if(commandLine.hasOption("targetId")) {
 				System.setProperty("targetId", commandLine.getOptionValue("targetId"));
 			}
+			if(commandLine.hasOption("xml")) {
+				targetXml = commandLine.getOptionValue("xml");
+			}
 			// ここまでこれたら問題ないので、起動します。(classPathで登録されているところにある、ozouni.xmlを読み込むことにします。)
-			context = new ClassPathXmlApplicationContext("ozouni.xml");
+			context = new ClassPathXmlApplicationContext(targetXml);
 
 			IInputModule inputModule = context.getBean(IInputModule.class);
 			// モジュールを開始する。
