@@ -90,6 +90,9 @@ public class FrameOutputModule implements IOutputModule {
 		// trackIdを作成する必要がある。
 		ShareFrameData shareFrameData = new ShareFrameData(codecType, frame, id);
 		if(codecType == CodecType.H264) { // h265でも同じようなことしないとだめかもしれない。
+			if(frame.getPackBuffer() == null) {
+				return;
+			}
 			shareFrameData.setFrameData(frame.getPackBuffer());
 		}
 		sendDataHandler.pushData(shareFrameData.getShareData());
