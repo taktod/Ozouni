@@ -1,5 +1,7 @@
 package com.ttProject.ozouni.output;
 
+import java.nio.ByteBuffer;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -89,12 +91,18 @@ public class FrameOutputModule implements IOutputModule {
 		CodecType codecType = frameChecker.checkCodecType(frame);
 		// trackIdを作成する必要がある。
 		ShareFrameData shareFrameData = new ShareFrameData(codecType, frame, id);
+		ByteBuffer buffer = null;
 		if(codecType == CodecType.H264) { // h265でも同じようなことしないとだめかもしれない。
-			if(frame.getPackBuffer() == null) {
-				return;
-			}
-			shareFrameData.setFrameData(frame.getPackBuffer());
+			buffer = frame.getPackBuffer();
 		}
+		else {
+			buffer = frame.getData();
+		}
+		// データ実態が取得できない場合は処理しない。
+		if(buffer == null) {
+			return;
+		}
+		shareFrameData.setFrameData(buffer);
 		sendDataHandler.pushData(shareFrameData.getShareData());
 	}
 }
