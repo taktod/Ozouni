@@ -43,6 +43,14 @@ public class FrameInputModule implements IInputModule {
 	private Map<Integer, IAnalyzer> analyzerMap = new HashMap<Integer, IAnalyzer>();
 	/** analyzerがどうなっているか調べる動作 */
 	private IAnalyzerChecker analyzerChecker = new AnalyzerChecker();
+	/** 接続先targetId */
+	private String targetId = null;
+	/**
+	 * コンストラクタ
+	 */
+	public FrameInputModule() {
+		targetId = System.getProperty("targetId");
+	}
 	/**
 	 * 出力モジュールを設定
 	 */
@@ -66,17 +74,20 @@ public class FrameInputModule implements IInputModule {
 		this.analyzerChecker = analyzerChecker;
 	}
 	/**
+	 * targetIdを変更する(startする前に変更する必要あり)
+	 * @param targetId
+	 */
+	public void setTargetId(String targetId) {
+		this.targetId = targetId;
+	}
+	/**
 	 * 開始処理
 	 */
 	@Override
 	public void start() throws Exception {
 		logger.info("開始します。");
 		// このタイミングでserverClientHandlerを起動してデータを取得するようにしないとだめ
-		// サーバーの受けての方にreportDataのkeyをいれてアクセス先をつくらないとだめ、
-		// ここから明日やる。
-		// とりあえず、アクセスキーをつくっておきたい。
-		logger.info(System.getProperty("targetId"));
-		ReportData reportData = reportHandler.getReportData(System.getProperty("targetId"));
+		ReportData reportData = reportHandler.getReportData(targetId);
 		if(reportData == null) {
 			throw new RuntimeException("接続先が見つかりませんでした。");
 		}
