@@ -72,15 +72,6 @@ public class MainEntry {
 	private static Options createOptions() {
 		final Options options = new Options();
 		// optionを作ります
-//		options.addOption("uniqId", false, "uniqueId33");
-//		options.addOption(new Option("tes2t", "あいうえお"));
-//		options.addOption(OptionBuilder.withArgName("test3333").hasArg().withDescription("test3ですよん").create("test3"));
-		/*
-usage: test
- -tes2t              あいうえお
- -test3 <test3333>   test3ですよん
- -uniqId             uniqueId33
-		 */
 		options.addOption(OptionBuilder.withArgName("id").hasArg(true).withDescription("set uniqueId for the process.").create("uniqueId"));
 		options.addOption(OptionBuilder.withArgName("id").hasArg(true).withDescription("set targetId for connect.").create("targetId"));
 		options.addOption(OptionBuilder.withArgName("xml").hasArg(true).withDescription("set xml path").create("xml"));
