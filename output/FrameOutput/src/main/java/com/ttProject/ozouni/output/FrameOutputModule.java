@@ -47,6 +47,7 @@ public class FrameOutputModule implements IOutputModule {
 	 * データ送信handlerを設定する
 	 * @param sendDataHandler
 	 */
+	@Override
 	public void setSendDataHandler(ISendDataHandler sendDataHandler) {
 		this.sendDataHandler = sendDataHandler;
 		ReportData reportData = signalWorker.getReportData();

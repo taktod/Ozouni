@@ -15,6 +15,7 @@ import com.ttProject.frame.extra.VideoMultiFrame;
 import com.ttProject.ozouni.base.IOutputModule;
 import com.ttProject.ozouni.base.ISignalModule;
 import com.ttProject.ozouni.base.ReportData;
+import com.ttProject.ozouni.dataHandler.ISendDataHandler;
 import com.ttProject.ozouni.output.flv.model.FlvFrameSortModel;
 
 /**
@@ -40,6 +41,9 @@ public class FlvOutputModule implements IOutputModule {
 	private boolean start = false; // 開始フラグ
 	/** flvの書き込みwriter */
 	private FlvTagWriter writer = null;
+	/** 出力handlerを定義(とりあえず設定はつくっておくけど、当面つかわない) */
+	@SuppressWarnings("unused")
+	private ISendDataHandler sendDataHandler = null;
 	/**
 	 * 出力ファイル設定
 	 * デフォルトは標準出力
@@ -63,6 +67,13 @@ public class FlvOutputModule implements IOutputModule {
 	 */
 	public void setEnableVideo(boolean flg) {
 		videoFlg = flg;
+	}
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setSendDataHandler(ISendDataHandler sendDataHandler) {
+		
 	}
 	/**
 	 * {@inheritDoc}
