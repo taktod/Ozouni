@@ -6,10 +6,10 @@ package com.ttProject.ozouni.base;
  */
 public interface IInputModule {
 	/**
-	 * 出力モジュールの設定
-	 * @param outputModule
+	 * 中間動作モジュールを設定(直接出力モジュールをいれてもOK)
+	 * @param workModule
 	 */
-	public void setOutputModule(IOutputModule outputModule);
+	public void setOutputModule(IWorkModule workModule);
 	/**
 	 * 開始動作
 	 */

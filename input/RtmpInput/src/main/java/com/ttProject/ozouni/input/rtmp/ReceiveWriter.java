@@ -15,8 +15,8 @@ import com.ttProject.container.flv.FlvTag;
 import com.ttProject.container.flv.type.AudioTag;
 import com.ttProject.container.flv.type.VideoTag;
 import com.ttProject.flazr.unit.MessageManager;
-import com.ttProject.ozouni.base.IOutputModule;
 import com.ttProject.ozouni.base.ISignalModule;
+import com.ttProject.ozouni.base.IWorkModule;
 import com.ttProject.ozouni.input.rtmp.model.FlvTagOrderModel;
 import com.ttProject.ozouni.input.rtmp.model.IFlvTagOrderModel;
 
@@ -36,16 +36,16 @@ public class ReceiveWriter implements IReceiveWriter {
 	/** データのソートを実施するモデル */
 	private IFlvTagOrderModel orderModel = new FlvTagOrderModel();
 	/** 出力モジュール */
-	private IOutputModule outputModule;
+	private IWorkModule workModule;
 	/** アクセスシグナルモジュール */
 	@Autowired
 	private ISignalModule signalWorker;
 	/**
 	 * 出力モジュール設定
-	 * @param outputModule
+	 * @param workModule
 	 */
-	public void setOutputModule(IOutputModule outputModule) {
-		this.outputModule = outputModule;
+	public void setOutputModule(IWorkModule workModule) {
+		this.workModule = workModule;
 	}
 	/**
 	 * publish通知をうけとったときの処理
@@ -82,13 +82,13 @@ public class ReceiveWriter implements IReceiveWriter {
 			for(FlvTag t : orderModel.getAudioCompleteTag()) {
 				if(t instanceof AudioTag) {
 					AudioTag aTag = (AudioTag)t;
-					outputModule.pushFrame(aTag.getFrame(), 0x08);
+					workModule.pushFrame(aTag.getFrame(), 0x08);
 				}
 			}
 			for(FlvTag t : orderModel.getVideoCompleteTag()) {
 				if(t instanceof VideoTag) {
 					VideoTag vTag = (VideoTag)t;
-					outputModule.pushFrame(vTag.getFrame(), 0x09);
+					workModule.pushFrame(vTag.getFrame(), 0x09);
 				}
 			}
 		}

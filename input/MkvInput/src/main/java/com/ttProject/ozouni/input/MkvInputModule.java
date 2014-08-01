@@ -9,7 +9,7 @@ import com.ttProject.nio.channels.FileReadChannel;
 import com.ttProject.nio.channels.IReadChannel;
 import com.ttProject.nio.channels.StdinReadChannel;
 import com.ttProject.ozouni.base.IInputModule;
-import com.ttProject.ozouni.base.IOutputModule;
+import com.ttProject.ozouni.base.IWorkModule;
 
 /**
  * matroska形式の入力モジュール
@@ -19,8 +19,8 @@ public class MkvInputModule implements IInputModule {
 	/** ロガー */
 	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(MkvInputModule.class);
-	/** 出力モジュール */
-	private IOutputModule outputModule = null;
+	/** 作業モジュール */
+	private IWorkModule workModule = null;
 	/** 該当ファイル名 */
 	private String targetFile = null;
 	/**
@@ -35,8 +35,8 @@ public class MkvInputModule implements IInputModule {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setOutputModule(IOutputModule outputModule) {
-		this.outputModule = outputModule;
+	public void setOutputModule(IWorkModule workModule) {
+		this.workModule = workModule;
 	}
 	/**
 	 * {@inheritDoc}
@@ -55,7 +55,7 @@ public class MkvInputModule implements IInputModule {
 		while((container = reader.read(channel)) != null) {
 			if(container instanceof MkvBlockTag) {
 				MkvBlockTag blockTag = (MkvBlockTag) container;
-				outputModule.pushFrame(blockTag.getFrame(), blockTag.getTrackId().get());
+				workModule.pushFrame(blockTag.getFrame(), blockTag.getTrackId().get());
 			}
 		}
 	}

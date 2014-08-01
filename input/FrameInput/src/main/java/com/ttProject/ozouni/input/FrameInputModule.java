@@ -16,7 +16,7 @@ import com.ttProject.frame.VideoAnalyzer;
 import com.ttProject.nio.channels.ByteReadChannel;
 import com.ttProject.nio.channels.IReadChannel;
 import com.ttProject.ozouni.base.IInputModule;
-import com.ttProject.ozouni.base.IOutputModule;
+import com.ttProject.ozouni.base.IWorkModule;
 import com.ttProject.ozouni.base.ReportData;
 import com.ttProject.ozouni.dataHandler.IDataListener;
 import com.ttProject.ozouni.dataHandler.IReceiveDataHandler;
@@ -32,8 +32,8 @@ import com.ttProject.ozouni.reportHandler.IReportHandler;
 public class FrameInputModule implements IInputModule {
 	/** ロガー */
 	private Logger logger = Logger.getLogger(FrameInputModule.class);
-	/** 出力モジュール */
-	private IOutputModule outputModule = null;
+	/** 作業モジュール */
+	private IWorkModule workModule = null;
 	/** データ取得用handler設定 */
 	private IReceiveDataHandler receiveDataHandler = null;
 	/** 報告データ動作 */
@@ -55,9 +55,9 @@ public class FrameInputModule implements IInputModule {
 	 * 出力モジュールを設定
 	 */
 	@Override
-	public void setOutputModule(IOutputModule outputModule) {
+	public void setOutputModule(IWorkModule workModule) {
 		// このoutputModuleにデータを送りつける必要あり。
-		this.outputModule = outputModule;
+		this.workModule = workModule;
 	}
 	/**
 	 * データ受信動作を設定
@@ -146,6 +146,6 @@ public class FrameInputModule implements IInputModule {
 			return;
 		}
 		// 出力モジュールにデータを明け渡します。
-		outputModule.pushFrame(frame, shareFrameData.getTrackId());
+		workModule.pushFrame(frame, shareFrameData.getTrackId());
 	}
 }

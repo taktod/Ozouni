@@ -4,7 +4,7 @@ import org.apache.log4j.Logger;
 
 import com.flazr.rtmp.client.ClientOptions;
 import com.ttProject.ozouni.base.IInputModule;
-import com.ttProject.ozouni.base.IOutputModule;
+import com.ttProject.ozouni.base.IWorkModule;
 import com.ttProject.ozouni.input.rtmp.IReceiveWriter;
 import com.ttProject.ozouni.input.rtmp.RtmpClient;
 
@@ -21,16 +21,16 @@ public class RtmpInputModule implements IInputModule {
 	/** データ処理のwriter */
 	private IReceiveWriter writer = null;
 	/** 出力モジュール */
-	private IOutputModule outputModule = null;
+	private IWorkModule workModule = null;
 	/** objectEncodingの値 */
 	private int objectEncoding = -1;
 	/**
 	 * 出力モジュールを設定する。(bean用)
 	 */
 	@Override
-	public void setOutputModule(IOutputModule outputModule) {
+	public void setOutputModule(IWorkModule workModule) {
 		// この出力モジュールをreceiveWriterに紐づけないとだめ・・・面倒だな
-		this.outputModule = outputModule;
+		this.workModule = workModule;
 	}
 	/**
 	 * objectEncodingを設定する
@@ -58,7 +58,7 @@ public class RtmpInputModule implements IInputModule {
 	@Override
 	public void start() throws Exception {
 		// writerと出力モジュールを紐づけておく
-		writer.setOutputModule(outputModule);
+		writer.setOutputModule(workModule);
 		// optionsの調整
 		ClientOptions options = getClientOptions();
 		if(options.getLoad() != 1 || options.getClientOptionsList() != null) {
