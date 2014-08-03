@@ -13,5 +13,5 @@ public interface IReceiveWriter extends RtmpWriter {
 	 * 出力モジュールを設定する(beanでは設定しません。)
 	 * @param outputModule
 	 */
-	public void setOutputModule(IWorkModule workModule);
+	public void setWorkModule(IWorkModule workModule);
 }

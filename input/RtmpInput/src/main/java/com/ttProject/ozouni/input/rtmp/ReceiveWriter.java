@@ -44,7 +44,7 @@ public class ReceiveWriter implements IReceiveWriter {
 	 * 出力モジュール設定
 	 * @param workModule
 	 */
-	public void setOutputModule(IWorkModule workModule) {
+	public void setWorkModule(IWorkModule workModule) {
 		this.workModule = workModule;
 	}
 	/**

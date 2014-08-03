@@ -28,7 +28,7 @@ public class RtmpInputModule implements IInputModule {
 	 * 出力モジュールを設定する。(bean用)
 	 */
 	@Override
-	public void setOutputModule(IWorkModule workModule) {
+	public void setWorkModule(IWorkModule workModule) {
 		// この出力モジュールをreceiveWriterに紐づけないとだめ・・・面倒だな
 		this.workModule = workModule;
 	}
@@ -58,7 +58,7 @@ public class RtmpInputModule implements IInputModule {
 	@Override
 	public void start() throws Exception {
 		// writerと出力モジュールを紐づけておく
-		writer.setOutputModule(workModule);
+		writer.setWorkModule(workModule);
 		// optionsの調整
 		ClientOptions options = getClientOptions();
 		if(options.getLoad() != 1 || options.getClientOptionsList() != null) {

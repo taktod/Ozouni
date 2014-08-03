@@ -9,7 +9,7 @@ public interface IInputModule {
 	 * 中間動作モジュールを設定(直接出力モジュールをいれてもOK)
 	 * @param workModule
 	 */
-	public void setOutputModule(IWorkModule workModule);
+	public void setWorkModule(IWorkModule workModule);
 	/**
 	 * 開始動作
 	 */
