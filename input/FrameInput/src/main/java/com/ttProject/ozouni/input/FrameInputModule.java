@@ -7,6 +7,8 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.ttProject.convertprocess.frame.AnalyzerChecker;
+import com.ttProject.convertprocess.frame.ShareFrameData;
 import com.ttProject.frame.AudioAnalyzer;
 import com.ttProject.frame.Frame;
 import com.ttProject.frame.IAnalyzer;
@@ -20,9 +22,6 @@ import com.ttProject.ozouni.base.IWorkModule;
 import com.ttProject.ozouni.base.ReportData;
 import com.ttProject.ozouni.dataHandler.IDataListener;
 import com.ttProject.ozouni.dataHandler.IReceiveDataHandler;
-import com.ttProject.ozouni.frame.ShareFrameData;
-import com.ttProject.ozouni.frame.analyzer.AnalyzerChecker;
-import com.ttProject.ozouni.frame.analyzer.IAnalyzerChecker;
 import com.ttProject.ozouni.reportHandler.IReportHandler;
 
 /**
@@ -42,7 +41,7 @@ public class FrameInputModule implements IInputModule {
 	/** Analyzerのmap */
 	private Map<Integer, IAnalyzer> analyzerMap = new HashMap<Integer, IAnalyzer>();
 	/** analyzerがどうなっているか調べる動作 */
-	private IAnalyzerChecker analyzerChecker = new AnalyzerChecker();
+	private AnalyzerChecker analyzerChecker = new AnalyzerChecker();
 	/** 接続先targetId */
 	private String targetId = null;
 	/**
@@ -70,7 +69,7 @@ public class FrameInputModule implements IInputModule {
 	 * analyzerCheckerを外部から設定できるようにしておきます。
 	 * @param analyzerChecker
 	 */
-	public void setAnalyzerChecker(IAnalyzerChecker analyzerChecker) {
+	public void setAnalyzerChecker(AnalyzerChecker analyzerChecker) {
 		this.analyzerChecker = analyzerChecker;
 	}
 	/**

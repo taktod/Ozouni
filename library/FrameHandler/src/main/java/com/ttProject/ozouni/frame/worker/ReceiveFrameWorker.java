@@ -4,13 +4,13 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.ttProject.convertprocess.frame.AnalyzerChecker;
+import com.ttProject.convertprocess.frame.ShareFrameData;
 import com.ttProject.frame.IAnalyzer;
 import com.ttProject.frame.IFrame;
 import com.ttProject.nio.channels.ByteReadChannel;
 import com.ttProject.ozouni.dataHandler.IDataListener;
 import com.ttProject.ozouni.dataHandler.IReceiveDataHandler;
-import com.ttProject.ozouni.frame.ShareFrameData;
-import com.ttProject.ozouni.frame.analyzer.IAnalyzerChecker;
 
 /**
  * フレームの受信を実施するworker
@@ -22,7 +22,7 @@ public class ReceiveFrameWorker {
 	private IReceiveDataHandler receiveDataHandler = null;
 	private IDataListener listener = new DataListener();
 	private IFrameListener frameListener = null;
-	private IAnalyzerChecker analyzerChecker = null;
+	private AnalyzerChecker analyzerChecker = null;
 	/** trackId -> analyzer */
 	private Map<Integer, IAnalyzer> analyzers = new HashMap<Integer, IAnalyzer>();
 	/**
