@@ -55,7 +55,7 @@ public class FrameInputModule implements IInputModule {
 	 * 出力モジュールを設定
 	 */
 	@Override
-	public void setOutputModule(IWorkModule workModule) {
+	public void setWorkModule(IWorkModule workModule) {
 		// このoutputModuleにデータを送りつける必要あり。
 		this.workModule = workModule;
 	}

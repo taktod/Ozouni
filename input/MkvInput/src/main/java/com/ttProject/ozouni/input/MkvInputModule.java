@@ -35,7 +35,7 @@ public class MkvInputModule implements IInputModule {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setOutputModule(IWorkModule workModule) {
+	public void setWorkModule(IWorkModule workModule) {
 		this.workModule = workModule;
 	}
 	/**
