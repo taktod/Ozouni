@@ -21,6 +21,27 @@
       <artifactId>OzouniBase</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
+    <dependency>
+    	<groupId>com.ttProject</groupId>
+    	<artifactId>myLib.convertprocess</artifactId>
+    	<version>0.0.2-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+    	<groupId>com.ttProject</groupId>
+    	<artifactId>myLib.container.flv</artifactId>
+    	<version>0.0.2-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+    	<groupId>com.ttProject</groupId>
+    	<artifactId>myLib.container.mkv</artifactId>
+    	<version>0.0.2-SNAPSHOT</version>
+    </dependency>
   </dependencies>
-  <description>変換動作を実施するworkModuleです。</description>
+  <description>変換動作を実施するworkModuleです。
+正確にいうとこのモジュールでは、
+flvで扱うことができるデータ特化した、ffmpegで変換を実施する(標準入力で追記型のデータをうけいれれば変換できるというプログラムならなんでも動作可能)
+モジュールとなります。
+
+追加でいろいろな改良をいれておきたいところです。
+</description>
 </project>
