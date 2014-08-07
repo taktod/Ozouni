@@ -9,7 +9,7 @@
   <context:annotation-config />
   <!-- jedisの接続設定 -->
   <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
-    p:host-name="192.168.20.19" p:database="2"/>
+    p:host-name="localhost" p:database="0"/>
   <!-- serverの名称を確定するanalyzer -->
   <bean class="com.ttProject.ozouni.base.analyzer.IpAddressAnalyzer"/>
   

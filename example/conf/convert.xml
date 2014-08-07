@@ -9,7 +9,7 @@
   <context:annotation-config />
   <!-- jedisの接続設定 -->
   <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
-    p:host-name="192.168.20.19" p:database="2"/>
+    p:host-name="localhost" p:database="0"/>
   <!-- serverの名称を確定するanalyzer -->
   <bean class="com.ttProject.ozouni.base.analyzer.IpAddressAnalyzer"/>
   
@@ -22,18 +22,13 @@
   </bean>
   <!-- 一定時間ごとのレポート動作 -->
   <bean class="com.ttProject.ozouni.worker.SignalWorker"/>
-  <!-- 出力モジュール -->
-  <bean id="outputModule" class="com.ttProject.ozouni.output.FrameOutputModule">
-    <property name="sendDataHandler">
-      <bean class="com.ttProject.ozouni.dataHandler.ServerSendDataHandler"/>
-    </property>
-  </bean>
+  <!-- 作業モジュール -->
+  <bean id="workModule" class="com.ttProject.ozouni.work.ConvertWorkModule"/>
   <!-- 入力モジュール -->
-  <bean class="com.ttProject.ozouni.input.RtmpInputModule">
-    <property name="objectEncoding" value="3"/>
-    <property name="WriterToSave">
-      <bean class="com.ttProject.ozouni.input.rtmp.ReceiveWriter"/>
+  <bean class="com.ttProject.ozouni.input.FrameInputModule">
+    <property name="receiveDataHandler">
+      <bean class="com.ttProject.ozouni.dataHandler.ServerReceiveDataHandler"/>
     </property>
-    <property name="WorkModule" ref="outputModule"/>
+    <property name="WorkModule" ref="workModule"/>
   </bean>
 </beans>
