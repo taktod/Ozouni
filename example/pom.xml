@@ -1,9 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>com.ttProject.streaming</groupId>
-    <artifactId>Ozouni</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <groupId>com.ttProject</groupId>
+    <artifactId>myLib.productHelper</artifactId>
+    <version>0.0.2-SNAPSHOT</version>
   </parent>
   <artifactId>example</artifactId>
   <name>example</name>
@@ -15,38 +15,6 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  <dependencies>
-    <dependency>
-      <groupId>com.ttProject.streaming</groupId>
-      <artifactId>OzouniBase</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>com.ttProject.streaming</groupId>
-      <artifactId>SignalWorker</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>com.ttProject.streaming</groupId>
-      <artifactId>EhcacheReportHandler</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>com.ttProject.streaming.ozouni</groupId>
-      <artifactId>RtmpInput</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>com.ttProject.streaming</groupId>
-      <artifactId>RtmpEntry</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>com.ttProject.streaming</groupId>
-      <artifactId>ConvertWork</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-  </dependencies>
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -56,4 +24,51 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>com.ttProject.streaming</groupId>
+      <artifactId>ConvertWork</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.ttProject.streaming</groupId>
+      <artifactId>Entry</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.ttProject.streaming</groupId>
+      <artifactId>RtmpEntry</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.ttProject.streaming</groupId>
+      <artifactId>FrameInput</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.ttProject.streaming</groupId>
+      <artifactId>FrameOutput</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.ttProject.streaming</groupId>
+      <artifactId>JedisReportHandler</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.ttProject.streaming</groupId>
+      <artifactId>ServerDataHandler</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.ttProject.streaming.ozouni</groupId>
+      <artifactId>RtmpInput</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.ttProject.streaming</groupId>
+      <artifactId>SignalWorker</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
 </project>
