@@ -90,7 +90,6 @@ public class FrameInputModule implements IInputModule {
 		if(reportData == null) {
 			throw new RuntimeException("接続先が見つかりませんでした。");
 		}
-		logger.info(reportData);
 		receiveDataHandler.registerListener(new IDataListener() {
 			@Override
 			public void receiveData(ByteBuffer buffer) {
@@ -121,7 +120,7 @@ public class FrameInputModule implements IInputModule {
 					IFrame frame = null;
 					IReadChannel channel = new ByteReadChannel(shareFrameData.getFrameData());
 					while((frame = analyzer.analyze(channel)) != null) {
-						pushData(frame, shareFrameData);
+						pushData(frame, shareFrameData); // これが1つであるという確証がないな・・・
 					}
 					frame = analyzer.getRemainFrame();
 					if(frame != null && !(frame instanceof NullFrame)) {
@@ -137,13 +136,13 @@ public class FrameInputModule implements IInputModule {
 		receiveDataHandler.start(); // 起動します。
 	}
 	private void pushData(IFrame frame, ShareFrameData shareFrameData) throws Exception {
-		Frame f = (Frame)frame;
-		f.setTimebase(shareFrameData.getTimebase());
-		f.setPts(shareFrameData.getPts());
 		if(frame instanceof NullFrame) {
 			// h264とかでnullFrameになることもある、nullFrameの場合はデータを捨てておきます。
 			return;
 		}
+		Frame f = (Frame)frame;
+		f.setTimebase(shareFrameData.getTimebase());
+		f.setPts(shareFrameData.getPts());
 		// 出力モジュールにデータを明け渡します。
 		workModule.pushFrame(frame, shareFrameData.getTrackId());
 	}
