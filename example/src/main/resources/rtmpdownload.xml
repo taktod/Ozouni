@@ -7,12 +7,17 @@
     "http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
      http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
   <context:annotation-config />
-  <!-- jedisの接続設定 -->
-  <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
-    p:host-name="192.168.20.19" p:database="2"/>
+
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="location" value="classpath:/ozouni.properties" />
+  </bean>
+
   <!-- serverの名称を確定するanalyzer -->
   <bean class="com.ttProject.ozouni.base.analyzer.IpAddressAnalyzer"/>
-  
+
+  <!-- jedisの接続設定 -->
+  <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
+    p:host-name="${redis.server}" p:port="${redis.port}" p:database="${redis.db}"/>
   <!-- プロセスのレポート動作の設定 -->
   <bean class="com.ttProject.ozouni.reportHandler.RedisReportHandler">
     <property name="stringRedisTemplate">
@@ -20,14 +25,19 @@
         p:connection-factory-ref="jedisConnectionFactory"/>
     </property>
   </bean>
+
   <!-- 一定時間ごとのレポート動作 -->
   <bean class="com.ttProject.ozouni.worker.SignalWorker"/>
+
   <!-- 出力モジュール -->
   <bean id="outputModule" class="com.ttProject.ozouni.output.FrameOutputModule">
     <property name="sendDataHandler">
       <bean class="com.ttProject.ozouni.dataHandler.ServerSendDataHandler"/>
     </property>
   </bean>
+
+  <!-- 中間モジュール -->
+
   <!-- 入力モジュール -->
   <bean class="com.ttProject.ozouni.input.RtmpInputModule">
     <property name="objectEncoding" value="3"/>
