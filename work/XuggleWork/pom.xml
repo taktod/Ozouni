@@ -22,4 +22,11 @@ flvで扱うことができるデータ特化した、ffmpegで変換を実施�
 
 追加でいろいろな改良をいれておきたいところです。
 </description>
+  <dependencies>
+    <dependency>
+      <groupId>com.ttProject.streaming</groupId>
+      <artifactId>OzouniBase</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
 </project>

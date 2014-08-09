@@ -1,0 +1,58 @@
+package com.ttProject.ozouni.work;
+
+import org.apache.log4j.Logger;
+
+import com.ttProject.frame.Frame;
+import com.ttProject.frame.IAudioFrame;
+import com.ttProject.frame.IFrame;
+import com.ttProject.frame.extra.AudioMultiFrame;
+import com.ttProject.ozouni.base.IWorkModule;
+import com.ttProject.ozouni.work.ffmpeg.AudioWorkerModule;
+import com.ttProject.ozouni.work.ffmpeg.VideoWorkerModule;
+
+/**
+ * ffmpegを使ってframeを変換する動作
+ * @author taktod
+ */
+public class FfmpegWorkModule implements IWorkModule {
+	/** ロガー */
+	private Logger logger = Logger.getLogger(FfmpegWorkModule.class);
+	private long passedPts = 0; // 処理済みpts値
+	private long ptsDiff = 0; // 再生やり直しとかでずれた場合の補完するptsの差分値
+	private long resetInterval = 1000L;
+	private VideoWorkerModule videoWorkerModule = new VideoWorkerModule();
+	private AudioWorkerModule audioWorkerModule = new AudioWorkerModule();
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void pushFrame(IFrame frame, int id) throws Exception {
+		if(frame instanceof AudioMultiFrame) {
+			AudioMultiFrame multiFrame = (AudioMultiFrame)frame;
+			for(IAudioFrame aFrame : multiFrame.getFrameList()) {
+				pushFrame(aFrame, id);
+			}
+			return;
+		}
+		// フレームのデータが巻き戻った場合は、そのデータは前のデータになったと見るべき
+		long pts = 1000L * frame.getPts() / frame.getTimebase() + ptsDiff;
+		if(pts < passedPts - resetInterval) {
+			// これだけ離れている場合は、ストリームがリセットされたと判定する。
+			logger.info("リセットされた");
+			// 今回のpts値が開始位置であると判定する。
+			ptsDiff = passedPts - 1000L * frame.getPts() / frame.getTimebase();
+			pts = passedPts;
+		}
+		if(pts > passedPts) {
+			passedPts = pts;
+		}
+		// flvしか扱わないつもりなので、このタイミングでptsを強制的に直してしまう。
+		Frame f = (Frame) frame;
+		f.setPts(pts);
+		f.setTimebase(1000);
+		// h264のdtsについては、あとで考えることにしよう。
+		// この時点でptsをいじっておけばよさそう
+//		videoWorkerModule.pushFrame(frame, id);
+		audioWorkerModule.pushFrame(frame, id);
+	}
+}
