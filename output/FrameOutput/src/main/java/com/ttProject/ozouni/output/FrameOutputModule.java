@@ -5,9 +5,7 @@ import java.nio.ByteBuffer;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.ttProject.convertprocess.frame.CodecChecker;
-import com.ttProject.convertprocess.frame.CodecType;
-import com.ttProject.convertprocess.frame.ShareFrameData;
+import com.ttProject.frame.CodecType;
 import com.ttProject.frame.IAudioFrame;
 import com.ttProject.frame.IFrame;
 import com.ttProject.frame.IVideoFrame;
@@ -17,6 +15,7 @@ import com.ttProject.ozouni.base.IOutputModule;
 import com.ttProject.ozouni.base.ISignalModule;
 import com.ttProject.ozouni.base.ReportData;
 import com.ttProject.ozouni.dataHandler.ISendDataHandler;
+import com.ttProject.ozouni.frame.ShareFrameData;
 
 /**
  * frameServerとして、ozouniシステム間でデータを共有するモジュール
@@ -33,15 +32,6 @@ public class FrameOutputModule implements IOutputModule {
 	private ISignalModule signalWorker;
 	/** データ送信用のDataHandler設定 */
 	private ISendDataHandler sendDataHandler = null;
-	/** frameを確認するためのchecker */
-	private CodecChecker codecChecker = new CodecChecker();
-	/**
-	 * frameの確認モジュールを設定します。
-	 * @param frameChecker
-	 */
-	public void setCodecChecker(CodecChecker codecChecker) {
-		this.codecChecker = codecChecker;
-	}
 	/**
 	 * データ送信handlerを設定する
 	 * @param sendDataHandler
@@ -88,7 +78,7 @@ public class FrameOutputModule implements IOutputModule {
 		// 現在時刻を登録しておく
 		reportData.setLastUpdateTime(System.currentTimeMillis());
 		// h264のframeの場合はちょっと特殊なことをやる必要がある。
-		CodecType codecType = codecChecker.checkCodecType(frame);
+		CodecType codecType = frame.getCodecType();
 		// trackIdを作成する必要がある。
 		ShareFrameData shareFrameData = new ShareFrameData(codecType, frame, id);
 		ByteBuffer buffer = null;

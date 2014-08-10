@@ -51,7 +51,8 @@ library: システムとやりとりするライブラリ
     <module>input/MkvInput</module>
     <module>output/FlvOutput</module>
     <module>output/FrameOutput</module>
-    <module>work/ConvertWork</module>
+    <module>work/FfmpegWork</module>
+    <module>work/XuggleWork</module>
     <module>EasyRestServer</module>
   </modules>
   <dependencies>

@@ -9,18 +9,18 @@
   <artifactId>RtmpEntry</artifactId>
   <licenses>
     <license>
-      <name>The MIT License</name>
-      <url>http://www.opensource.org/licenses/mit-license.php</url>
+      <name>GNU LESSER GENERAL PUBLIC LICENSE</name>
+      <url>https://www.gnu.org/licenses/lgpl.txt</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
   <name>RtmpEntry</name>
   <description>Rtmpとしてデータをダウンロードしてくる動作をつくるときに利用できる、エントリー部</description>
   <dependencies>
-  	<dependency>
-  		<groupId>com.ttProject.streaming.ozouni</groupId>
-  		<artifactId>RtmpInput</artifactId>
-  		<version>0.0.1-SNAPSHOT</version>
-  	</dependency>
+    <dependency>
+      <groupId>com.ttProject.streaming.ozouni</groupId>
+      <artifactId>RtmpInput</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
   </dependencies>
 </project>

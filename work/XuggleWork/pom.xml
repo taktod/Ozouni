@@ -1,0 +1,37 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.ttProject.streaming</groupId>
+    <artifactId>Ozouni</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <relativePath>../..</relativePath>
+  </parent>
+  <artifactId>XuggleWork</artifactId>
+  <licenses>
+    <license>
+      <name>GNU GENERAL PUBLIC LICENSE</name>
+      <url>https://www.gnu.org/licenses/gpl.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <name>XuggleWork</name>
+  <description>変換動作を実施するworkModuleです。
+正確にいうとこのモジュールでは、
+flvで扱うことができるデータ特化した、ffmpegで変換を実施する(標準入力で追記型のデータをうけいれれば変換できるというプログラムならなんでも動作可能)
+モジュールとなります。
+
+追加でいろいろな改良をいれておきたいところです。
+</description>
+  <dependencies>
+    <dependency>
+      <groupId>com.ttProject.streaming</groupId>
+      <artifactId>OzouniBase</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.ttProject</groupId>
+      <artifactId>myLib.xuggle.frame</artifactId>
+      <version>0.0.2-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+</project>

@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import com.ttProject.container.flv.AggregateTag;
 import com.ttProject.container.flv.FlvTag;
 import com.ttProject.container.flv.type.AudioTag;
@@ -13,9 +15,16 @@ import com.ttProject.container.flv.type.VideoTag;
 /**
  * flvのtagの整列を実施するモデル
  * 単純に２つ以上タグがある場合に新しいものになっているとして扱っておく。
+ * TODO 無音フレームのあとみたいに久しくデータをうけとった場合にptsの小さなデータが送り出される可能性があるので、注意が必要
+ * とりあえず送信済みpts値未満のデータがあったら送らないようにしたけど、h264の前方参照がある場合とかちょっと心配
+ * 音声については、sampleNumから次のデータの予測位置が割り出せるのでデータドロップなしでも動作可能なはず。
+ * このあたりは今後の課題
  * @author taktod
  */
 public class FlvTagOrderModel implements IFlvTagOrderModel {
+	/** ロガー */
+	@SuppressWarnings("unused")
+	private Logger logger = Logger.getLogger(FlvTagOrderModel.class);
 	/** ソート用比較オブジェクト */
 	private static final FlvTagComparator comparator = new FlvTagComparator();
 	private List<FlvTag> videoTags = new ArrayList<FlvTag>();
@@ -71,7 +80,13 @@ public class FlvTagOrderModel implements IFlvTagOrderModel {
 		List<FlvTag> result = new ArrayList<FlvTag>();
 		while(audioTags.size() > 1) {
 			FlvTag tag = audioTags.remove(0);
+			if(tag.getPts() < passedAudioPts) {
+				continue;
+			}
 			passedAudioPts = tag.getPts();
+			if(passedVideoPts < passedAudioPts - 1000) {
+				passedVideoPts = passedAudioPts - 1000;
+			}
 			result.add(tag);
 		}
 		return result;
@@ -85,7 +100,13 @@ public class FlvTagOrderModel implements IFlvTagOrderModel {
 		List<FlvTag> result = new ArrayList<FlvTag>();
 		while(videoTags.size() > 1) {
 			FlvTag tag = videoTags.remove(0);
+			if(tag.getPts() < passedVideoPts) {
+				continue;
+			}
 			passedVideoPts = tag.getPts();
+			if(passedAudioPts < passedVideoPts - 1000) {
+				passedAudioPts = passedVideoPts - 1000;
+			}
 			result.add(tag);
 		}
 		return result;
