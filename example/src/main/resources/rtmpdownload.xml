@@ -36,7 +36,8 @@
     </property>
   </bean>
 
-  <!-- 中間モジュール -->
+  <!-- 作業モジュール -->
+  <bean id="workModule" class="com.ttProject.ozouni.work.FfmpegWorkModule"/>
 
   <!-- 入力モジュール -->
   <bean class="com.ttProject.ozouni.input.RtmpInputModule">
