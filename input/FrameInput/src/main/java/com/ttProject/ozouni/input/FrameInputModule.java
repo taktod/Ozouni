@@ -7,8 +7,6 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.ttProject.convertprocess.frame.AnalyzerChecker;
-import com.ttProject.convertprocess.frame.ShareFrameData;
 import com.ttProject.frame.AudioAnalyzer;
 import com.ttProject.frame.Frame;
 import com.ttProject.frame.IAnalyzer;
@@ -22,6 +20,8 @@ import com.ttProject.ozouni.base.IWorkModule;
 import com.ttProject.ozouni.base.ReportData;
 import com.ttProject.ozouni.dataHandler.IDataListener;
 import com.ttProject.ozouni.dataHandler.IReceiveDataHandler;
+import com.ttProject.ozouni.frame.AnalyzerChecker;
+import com.ttProject.ozouni.frame.ShareFrameData;
 import com.ttProject.ozouni.reportHandler.IReportHandler;
 
 /**

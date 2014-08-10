@@ -5,7 +5,6 @@ import java.nio.ByteBuffer;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.ttProject.convertprocess.frame.ShareFrameData;
 import com.ttProject.frame.CodecType;
 import com.ttProject.frame.IAudioFrame;
 import com.ttProject.frame.IFrame;
@@ -16,6 +15,7 @@ import com.ttProject.ozouni.base.IOutputModule;
 import com.ttProject.ozouni.base.ISignalModule;
 import com.ttProject.ozouni.base.ReportData;
 import com.ttProject.ozouni.dataHandler.ISendDataHandler;
+import com.ttProject.ozouni.frame.ShareFrameData;
 
 /**
  * frameServerとして、ozouniシステム間でデータを共有するモジュール
