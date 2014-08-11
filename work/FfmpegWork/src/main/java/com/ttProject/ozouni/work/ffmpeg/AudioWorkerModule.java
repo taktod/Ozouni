@@ -1,10 +1,29 @@
 package com.ttProject.ozouni.work.ffmpeg;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 import org.apache.log4j.Logger;
 
+import com.ttProject.container.IContainer;
+import com.ttProject.container.flv.FlvHeaderTag;
+import com.ttProject.container.flv.FlvTagWriter;
+import com.ttProject.container.mkv.MkvBlockTag;
+import com.ttProject.container.mkv.MkvTagReader;
+import com.ttProject.frame.AudioFrame;
 import com.ttProject.frame.IAudioFrame;
 import com.ttProject.frame.IFrame;
 import com.ttProject.frame.IVideoFrame;
+import com.ttProject.frame.aac.AacFrame;
+import com.ttProject.frame.mp3.Mp3Frame;
+import com.ttProject.frame.nellymoser.NellymoserFrame;
+import com.ttProject.frame.speex.SpeexFrame;
+import com.ttProject.nio.channels.IReadChannel;
+import com.ttProject.pipe.PipeHandler;
+import com.ttProject.pipe.PipeManager;
 
 /**
  * 音声の動作について実行しておく
@@ -34,12 +53,32 @@ public class AudioWorkerModule {
 	private final long allowedDelayForVideo = 500;
 	/** 最後に処理したaudioFrame */
 	private IAudioFrame lastAudioFrame = null;
+	private FlvTagWriter writer = null;
+	private int counter = 0;
+	private PipeManager pipeManager = new PipeManager();
+	private PipeHandler handler = null;
+	private ExecutorService exec = Executors.newCachedThreadPool();
+	/**
+	 * コンストラクタ
+	 */
+	public AudioWorkerModule() {
+		try {
+			handler = pipeManager.getPipeHandler("audioConvert");
+			Map<String, String> envExtra = new HashMap<String, String>();
+			envExtra.put("LD_LIBRARY_PATH", "/usr/local/lib");
+			handler.setCommand("avconv -copyts -i ${pipe} -acodec adpcm_ima_wav -ar 22050 -ac 1 -f matroska -");
+			handler.setEnvExtra(envExtra);
+			openFlvTagWriter();
+		}
+		catch(Exception e) {
+		}
+	}
 	/**
 	 * 動画フレームだった場合に動作を調整する
 	 * @param frame
 	 * @return false 処理すべきでない true 処理すべき
 	 */
-	private boolean checkVideoFrame(IFrame frame) {
+	private boolean checkVideoFrame(IFrame frame) throws Exception {
 		// 映像フレームでなかったら関係ない
 		if(!(frame instanceof IVideoFrame)) {
 			return true;
@@ -52,7 +91,34 @@ public class AudioWorkerModule {
 			// frameのptsが経過pts + 許容delayよりも大きい場合
 			// こっちでは挿入する必要あり、ffmpegでは、フレームを適当に挿入してやると、変換を強制することが可能なため
 			passedPts = frame.getPts() - allowedDelayForVideo;
-			logger.info("無音frameが必要:" + passedPts);
+//			logger.info("無音frameが必要:" + passedPts);
+			AudioFrame aFrame = null;
+			switch(lastAudioFrame.getCodecType()) {
+			case AAC:
+				aFrame = AacFrame.getMutedFrame(lastAudioFrame.getSampleRate(), lastAudioFrame.getChannel(), lastAudioFrame.getBit());
+				break;
+			case ADPCM_SWF:
+//				aFrame = AdpcmswfFrame.getMutedFrame(lastAudioFrame.getSampleRate(), lastAudioFrame.getChannel(), lastAudioFrame.getBit());
+				throw new Exception("adpcmSwfの無音frameは未確認です。");
+//				break;
+			case MP3:
+				aFrame = Mp3Frame.getMutedFrame(lastAudioFrame.getSampleRate(), lastAudioFrame.getChannel(), lastAudioFrame.getBit());
+				break;
+			case NELLYMOSER:
+				aFrame = NellymoserFrame.getMutedFrame(lastAudioFrame.getSampleRate(), lastAudioFrame.getChannel(), lastAudioFrame.getBit());
+				break;
+			case SPEEX:
+				aFrame = SpeexFrame.getMutedFrame(lastAudioFrame.getSampleRate(), lastAudioFrame.getChannel(), lastAudioFrame.getBit());
+				break;
+			case ADPCM_IMA_WAV:
+			case OPUS:
+			case VORBIS:
+			default:
+				throw new Exception("flvでは関係のないフレームでした。");
+			}
+			aFrame.setPts(passedPts);
+			aFrame.setTimebase(1000);
+			writeFrame(aFrame, 0x08);
 		}
 		return false;
 	}
@@ -62,7 +128,7 @@ public class AudioWorkerModule {
 	 * @param pts
 	 * @return true 処理すべき false 処理すべきでない
 	 */
-	private boolean checkAudioFrame(IFrame frame) {
+	private boolean checkAudioFrame(IFrame frame) throws Exception {
 		// 音声フレームでなかったら関係ない
 		if(!(frame instanceof IAudioFrame)) {
 			return false;
@@ -70,6 +136,14 @@ public class AudioWorkerModule {
 		IAudioFrame aFrame = (IAudioFrame)frame;
 		if(lastAudioFrame != null) {
 			// フレームデータが入れ替わっていないか確認する必要あり
+			if(lastAudioFrame.getCodecType() != aFrame.getCodecType()
+			|| lastAudioFrame.getChannel() != aFrame.getChannel()
+			|| lastAudioFrame.getSampleRate() != aFrame.getSampleRate()
+			|| lastAudioFrame.getBit() != aFrame.getBit()) {
+				logger.info("データが変更になっているので、なんとかしておかないとだめ。");
+				// 今までの接続があったら切っておく
+				openFlvTagWriter();
+			}
 		}
 		// あとは問題ないので、frameを追記しておく。
 		// 音声フレームだった場合
@@ -78,11 +152,11 @@ public class AudioWorkerModule {
 			return false;
 		}
 		// ここの30はframeデータを確認してきめる
-		if(frame.getPts() - 30 > passedPts) {
+/*		if(frame.getPts() - 30 > passedPts) {
 			// ffmpegの動作では挿入する必要ない。
 			// xuggleでは必要あり(無音部を自動的に埋める方法がわからないため。)
 			logger.info("無音frameが必要その２:" + (frame.getPts() - 30));
-		}
+		}*/
 		return true;
 	}
 	/**
@@ -99,11 +173,47 @@ public class AudioWorkerModule {
 			return;
 		}
 		// 特に問題ないので、このframeを書き込む
-		logger.info("普通に書き込む:" + frame.getPts());
 		passedPts = frame.getPts();
+		writeFrame(frame, id);
 		lastAudioFrame = (IAudioFrame)frame;
 	}
-	private void writeFrame() throws Exception {
-		
+	private Future<?> future = null;
+	private void openFlvTagWriter() throws Exception {
+		if(writer != null) {
+			writer.prepareTailer();
+			future.cancel(true);
+			handler.close();
+		}
+		handler.executeProcess();
+		future = exec.submit(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					IReadChannel channel = handler.getReadChannel();
+					MkvTagReader reader = new MkvTagReader();
+					IContainer container = null;
+					while((container = reader.read(channel)) != null) {
+						if(container instanceof MkvBlockTag) {
+							MkvBlockTag blockTag = (MkvBlockTag)container;
+							IFrame frame = blockTag.getFrame();
+							logger.info(frame + " pts:" + frame.getPts());
+						}
+					}
+				}
+				catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		writer = new FlvTagWriter(handler.getPipeTarget().getAbsolutePath());
+		counter ++;
+		FlvHeaderTag headerTag = new FlvHeaderTag();
+		headerTag.setAudioFlag(true);
+		headerTag.setVideoFlag(false);
+		writer.addContainer(headerTag);
+	}
+	private void writeFrame(IFrame frame, int id) throws Exception {
+		logger.info(frame + " pts:" + frame.getPts());
+		writer.addFrame(id, frame);
 	}
 }
