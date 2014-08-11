@@ -54,7 +54,6 @@ public class AudioWorkerModule {
 	/** 最後に処理したaudioFrame */
 	private IAudioFrame lastAudioFrame = null;
 	private FlvTagWriter writer = null;
-	private int counter = 0;
 	private PipeManager pipeManager = new PipeManager();
 	private PipeHandler handler = null;
 	private ExecutorService exec = Executors.newCachedThreadPool();
@@ -66,7 +65,7 @@ public class AudioWorkerModule {
 			handler = pipeManager.getPipeHandler("audioConvert");
 			Map<String, String> envExtra = new HashMap<String, String>();
 			envExtra.put("LD_LIBRARY_PATH", "/usr/local/lib");
-			handler.setCommand("avconv -copyts -i ${pipe} -acodec adpcm_ima_wav -ar 22050 -ac 1 -f matroska -");
+			handler.setCommand("avconv -copyts -i ${pipe} -acodec adpcm_ima_wav -ar 22050 -ac 1 -async 2 -f matroska -");
 			handler.setEnvExtra(envExtra);
 			openFlvTagWriter();
 		}
@@ -206,7 +205,6 @@ public class AudioWorkerModule {
 			}
 		});
 		writer = new FlvTagWriter(handler.getPipeTarget().getAbsolutePath());
-		counter ++;
 		FlvHeaderTag headerTag = new FlvHeaderTag();
 		headerTag.setAudioFlag(true);
 		headerTag.setVideoFlag(false);
