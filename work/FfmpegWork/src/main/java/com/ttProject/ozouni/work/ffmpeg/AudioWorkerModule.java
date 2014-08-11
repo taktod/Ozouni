@@ -42,6 +42,9 @@ import com.ttProject.pipe.PipeManager;
  * passedPts < pts → 抜けている部分に無音frame挿入して追記する
  * 
  * 面倒なので、無音frameを1つだけ挿入する形でごまかして、asyncで無音を埋めておく
+ * 
+ * 一番初めに音声データとしてなにがくるかわからない状態ができるのがちとこまった感じ。
+ * (iOSLiveTurboの動作では、音声データの連続が動作の起点になるため、ぬけている部分があると困る。)
  * @author taktod
  */
 public class AudioWorkerModule {
@@ -66,7 +69,7 @@ public class AudioWorkerModule {
 			handler = pipeManager.getPipeHandler("audioConvert");
 			Map<String, String> envExtra = new HashMap<String, String>();
 			envExtra.put("LD_LIBRARY_PATH", "/usr/local/lib");
-			handler.setCommand("avconv -copyts -i ${pipe} -acodec adpcm_ima_wav -ar 22050 -ac 1 -async 2 -f matroska -");
+			handler.setCommand("avconv -copyts -i ${pipe} -acodec adpcm_ima_wav -ar 22050 -ac 1 -async 2 -f matroska - 2>avconv.audio.log");
 			handler.setEnvExtra(envExtra);
 			openFlvTagWriter();
 		}
@@ -194,9 +197,8 @@ public class AudioWorkerModule {
 					while((container = reader.read(channel)) != null) {
 						if(container instanceof MkvBlockTag) {
 							MkvBlockTag blockTag = (MkvBlockTag)container;
-							@SuppressWarnings("unused")
 							IFrame frame = blockTag.getFrame();
-//							logger.info(frame + " pts:" + frame.getPts());
+							logger.info(frame + " pts:" + frame.getPts());
 						}
 					}
 				}

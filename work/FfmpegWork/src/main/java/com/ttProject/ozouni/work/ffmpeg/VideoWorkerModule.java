@@ -44,7 +44,7 @@ public class VideoWorkerModule {
 			handler = pipeManager.getPipeHandler("videoConvert");
 			Map<String, String> envExtra = new HashMap<String, String>();
 			envExtra.put("LD_LIBRARY_PATH", "/usr/local/lib");
-			handler.setCommand("avconv -copyts -i ${pipe} -vcodec mjpeg -s 320x240 -q 10 -r 10 -f matroska output.mkv");
+			handler.setCommand("avconv -copyts -i ${pipe} -vcodec mjpeg -s 320x240 -q 10 -r 10 -f matroska - 2>avconv.video.log");
 			handler.setEnvExtra(envExtra);
 			openFlvTagWriter();
 		}
@@ -61,7 +61,6 @@ public class VideoWorkerModule {
 		if(!(frame instanceof IAudioFrame)) {
 			return true;
 		}
-		IAudioFrame aFrame = (IAudioFrame)frame;
 		// 特になにもしない、変換が遅れても特にやることはない
 		return false;
 	}
@@ -81,6 +80,8 @@ public class VideoWorkerModule {
 			|| lastVideoFrame.getWidth() != vFrame.getWidth()
 			|| lastVideoFrame.getHeight() != vFrame.getHeight()) {
 				logger.info("データが変更になっているので、なんとかしておかないとだめ");
+				// 今までの接続があったら切っておく
+				openFlvTagWriter();
 			}
 		}
 		if(frame.getPts() < passedPts) {
@@ -125,9 +126,8 @@ public class VideoWorkerModule {
 					while((container = reader.read(channel)) != null) {
 						if(container instanceof MkvBlockTag) {
 							MkvBlockTag blockTag = (MkvBlockTag)container;
-							@SuppressWarnings("unused")
 							IFrame frame = blockTag.getFrame();
-//							logger.info(frame + " pts:" + frame.getPts());
+							logger.info(frame + " pts:" + frame.getPts());
 						}
 					}
 				}
