@@ -22,6 +22,7 @@ import com.ttProject.frame.mp3.Mp3Frame;
 import com.ttProject.frame.nellymoser.NellymoserFrame;
 import com.ttProject.frame.speex.SpeexFrame;
 import com.ttProject.nio.channels.IReadChannel;
+import com.ttProject.ozouni.base.IWorkModule;
 import com.ttProject.pipe.PipeHandler;
 import com.ttProject.pipe.PipeManager;
 
@@ -61,6 +62,13 @@ public class AudioWorkerModule {
 	private PipeHandler handler = null;
 	private ExecutorService exec = Executors.newCachedThreadPool();
 	private Future<?> future = null;
+	private IWorkModule workModule = null;
+	/**
+	 * @param workModule
+	 */
+	public void setWorkModule(IWorkModule workModule) {
+		this.workModule = workModule;
+	}
 	/**
 	 * コンストラクタ
 	 */
@@ -198,7 +206,9 @@ public class AudioWorkerModule {
 						if(container instanceof MkvBlockTag) {
 							MkvBlockTag blockTag = (MkvBlockTag)container;
 							IFrame frame = blockTag.getFrame();
-							logger.info(frame + " pts:" + frame.getPts());
+//							logger.info(frame + " pts:" + frame.getPts());
+//							logger.info(blockTag.getTrackId().get());
+							workModule.pushFrame(frame, 0x08);
 						}
 					}
 				}

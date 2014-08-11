@@ -13,6 +13,7 @@ import com.ttProject.frame.extra.AudioMultiFrame;
 import com.ttProject.frame.extra.VideoMultiFrame;
 import com.ttProject.ozouni.base.IOutputModule;
 import com.ttProject.ozouni.base.ISignalModule;
+import com.ttProject.ozouni.base.IWorkModule;
 import com.ttProject.ozouni.base.ReportData;
 import com.ttProject.ozouni.dataHandler.ISendDataHandler;
 import com.ttProject.ozouni.frame.ShareFrameData;
@@ -32,6 +33,13 @@ public class FrameOutputModule implements IOutputModule {
 	private ISignalModule signalWorker;
 	/** データ送信用のDataHandler設定 */
 	private ISendDataHandler sendDataHandler = null;
+	/**
+	 * これ、ここにあるの・・・おかしいなぁ・・・まぁ、いいけど
+	 */
+	@Override
+	public void setWorkModule(IWorkModule workModule) {
+		
+	}
 	/**
 	 * データ送信handlerを設定する
 	 * @param sendDataHandler

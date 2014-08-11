@@ -12,6 +12,12 @@ public class XuggleWorkModule implements IWorkModule {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void setWorkModule(IWorkModule workModule) {
+	}
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void pushFrame(IFrame frame, int id) throws Exception {
 		
 	}

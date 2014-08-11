@@ -12,16 +12,34 @@ import com.ttProject.ozouni.work.ffmpeg.VideoWorkerModule;
 
 /**
  * ffmpegを使ってframeを変換する動作
+ * h264のdtsがある場合の動作に大いに問題があるはず。(いまのところそんなデータは見たことないので問題視しないけど)
  * @author taktod
  */
 public class FfmpegWorkModule implements IWorkModule {
 	/** ロガー */
 	private Logger logger = Logger.getLogger(FfmpegWorkModule.class);
+	/** 処理済みpts値 */
 	private long passedPts = 0; // 処理済みpts値
+	/** 再生のやり直し等で追加される、ptsの差分値 */
 	private long ptsDiff = 0; // 再生やり直しとかでずれた場合の補完するptsの差分値
+	/** リセット判定のinterval、この値以上、過去のデータがきた場合は、ストリームが再開されていると判定しておきます */
 	private long resetInterval = 1000L;
+	/** 映像の処理module */
 	private VideoWorkerModule videoWorkerModule = new VideoWorkerModule();
+	/** 音声の処理module */
 	private AudioWorkerModule audioWorkerModule = new AudioWorkerModule();
+	/** 出力モジュール */
+	private IWorkModule workModule = null;
+	/**
+	 * 出力モジュールを設定
+	 * @param outputModule
+	 */
+	@Override
+	public void setWorkModule(IWorkModule workModule) {
+		this.workModule = workModule;
+		videoWorkerModule.setWorkModule(workModule);
+		audioWorkerModule.setWorkModule(workModule);
+	}
 	/**
 	 * {@inheritDoc}
 	 */
@@ -50,13 +68,11 @@ public class FfmpegWorkModule implements IWorkModule {
 		if(pts > passedPts) {
 			passedPts = pts;
 		}
-//		logger.info("orgPts:" + orgPts + " fixed:" + pts);
 		// flvしか扱わないつもりなので、このタイミングでptsを強制的に直してしまう。
 		Frame f = (Frame)frame;
 		f.setPts(pts);
 		f.setTimebase(1000);
 		// h264のdtsについては、あとで考えることにしよう。
-		// この時点でptsをいじっておけばよさそう
 		videoWorkerModule.pushFrame(frame, id);
 		audioWorkerModule.pushFrame(frame, id);
 	}

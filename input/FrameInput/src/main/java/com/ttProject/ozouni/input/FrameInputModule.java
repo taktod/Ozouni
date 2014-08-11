@@ -51,7 +51,7 @@ public class FrameInputModule implements IInputModule {
 		targetId = System.getProperty("targetId");
 	}
 	/**
-	 * 出力モジュールを設定
+	 * 処理モジュールを設定
 	 */
 	@Override
 	public void setWorkModule(IWorkModule workModule) {
