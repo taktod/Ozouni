@@ -14,6 +14,7 @@ import com.ttProject.frame.extra.AudioMultiFrame;
 import com.ttProject.frame.extra.VideoMultiFrame;
 import com.ttProject.ozouni.base.IOutputModule;
 import com.ttProject.ozouni.base.ISignalModule;
+import com.ttProject.ozouni.base.IWorkModule;
 import com.ttProject.ozouni.base.ReportData;
 import com.ttProject.ozouni.dataHandler.ISendDataHandler;
 import com.ttProject.ozouni.output.flv.model.FlvFrameSortModel;
@@ -163,5 +164,10 @@ public class FlvOutputModule implements IOutputModule {
 			return false;
 		}
 		return true;
+	}
+	@Override
+	public void setWorkModule(IWorkModule workModule) {
+		// TODO Auto-generated method stub
+		
 	}
 }
