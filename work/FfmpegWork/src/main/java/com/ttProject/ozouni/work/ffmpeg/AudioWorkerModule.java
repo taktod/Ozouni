@@ -57,6 +57,7 @@ public class AudioWorkerModule {
 	private PipeManager pipeManager = new PipeManager();
 	private PipeHandler handler = null;
 	private ExecutorService exec = Executors.newCachedThreadPool();
+	private Future<?> future = null;
 	/**
 	 * コンストラクタ
 	 */
@@ -176,7 +177,6 @@ public class AudioWorkerModule {
 		writeFrame(frame, id);
 		lastAudioFrame = (IAudioFrame)frame;
 	}
-	private Future<?> future = null;
 	private void openFlvTagWriter() throws Exception {
 		if(writer != null) {
 			writer.prepareTailer();
@@ -194,8 +194,9 @@ public class AudioWorkerModule {
 					while((container = reader.read(channel)) != null) {
 						if(container instanceof MkvBlockTag) {
 							MkvBlockTag blockTag = (MkvBlockTag)container;
+							@SuppressWarnings("unused")
 							IFrame frame = blockTag.getFrame();
-							logger.info(frame + " pts:" + frame.getPts());
+//							logger.info(frame + " pts:" + frame.getPts());
 						}
 					}
 				}
@@ -211,7 +212,7 @@ public class AudioWorkerModule {
 		writer.addContainer(headerTag);
 	}
 	private void writeFrame(IFrame frame, int id) throws Exception {
-		logger.info(frame + " pts:" + frame.getPts());
+//		logger.info(frame + " pts:" + frame.getPts());
 		writer.addFrame(id, frame);
 	}
 }

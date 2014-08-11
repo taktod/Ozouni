@@ -57,7 +57,7 @@ public class FfmpegWorkModule implements IWorkModule {
 		f.setTimebase(1000);
 		// h264のdtsについては、あとで考えることにしよう。
 		// この時点でptsをいじっておけばよさそう
-//		videoWorkerModule.pushFrame(frame, id);
+		videoWorkerModule.pushFrame(frame, id);
 		audioWorkerModule.pushFrame(frame, id);
 	}
 }
