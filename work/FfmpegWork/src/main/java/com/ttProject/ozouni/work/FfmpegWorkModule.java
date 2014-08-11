@@ -28,15 +28,13 @@ public class FfmpegWorkModule implements IWorkModule {
 	private VideoWorkerModule videoWorkerModule = new VideoWorkerModule();
 	/** 音声の処理module */
 	private AudioWorkerModule audioWorkerModule = new AudioWorkerModule();
-	/** 出力モジュール */
-	private IWorkModule workModule = null;
 	/**
 	 * 出力モジュールを設定
 	 * @param outputModule
 	 */
 	@Override
 	public void setWorkModule(IWorkModule workModule) {
-		this.workModule = workModule;
+//		this.workModule = workModule;
 		videoWorkerModule.setWorkModule(workModule);
 		audioWorkerModule.setWorkModule(workModule);
 	}
