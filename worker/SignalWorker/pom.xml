@@ -17,10 +17,10 @@
   <name>SignalWorker</name>
   <description>一定時間ごとにレポートする動作の基本worker</description>
   <dependencies>
-  	<dependency>
-  		<groupId>com.ttProject.streaming</groupId>
-  		<artifactId>OzouniBase</artifactId>
-  		<version>0.0.1-SNAPSHOT</version>
-  	</dependency>
+    <dependency>
+      <groupId>com.ttProject.streaming</groupId>
+      <artifactId>OzouniBase</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
   </dependencies>
 </project>
