@@ -1,16 +1,17 @@
 package com.ttProject.ozouni.jetty;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.apache.log4j.Logger;
+
+import com.ttProject.ozouni.base.IInputModule;
+import com.ttProject.ozouni.input.FrameInputModule;
 
 /**
  * アプリケーション
@@ -19,73 +20,130 @@ import org.apache.log4j.Logger;
 public class Application implements IApplication {
 	/** 動作ロガー */
 	private static Logger logger = Logger.getLogger(Application.class);
-	private static Map<String, IApplication> applications = new ConcurrentHashMap<String, IApplication>();
-	private Set<IClient> clients = new CopyOnWriteArraySet<IClient>();
-	private final String path;
-	private final Map<String, Object> properties = new ConcurrentHashMap<String, Object>();
-	private long expire = 10000L; // 10秒たったらexpireになったものとして扱う(最終ユーザーがアクセスしてから)
-	private long lastClientRemoveTime = -1; // クライアントが最後にアクセスしていた時刻保持
+	private static ApplicationMonitor appMonitor = new ApplicationMonitor();
 	public static IApplication getInstance(String path) {
-		IApplication app = applications.get(path);
-		if(app == null) {
-			app = new Application(path);
-			applications.put(path, app);
-			// アプリケーション作成時イベント
-		}
-		return app;
-	}
-	public static synchronized void removeApplication(IApplication app) {
-		applications.remove(app.getPath());
+		return appMonitor.getApplication(path);
 	}
 	public static synchronized List<IApplication> getApplications() {
-		List<IApplication> result = new ArrayList<IApplication>();
-		for(Entry<String, IApplication> entry : applications.entrySet()) {
-			result.add(entry.getValue());
-		}
-		return result;
+		return appMonitor.getApplications();
 	}
+
+	private final String path;
+	private final Map<String, Object> properties = new ConcurrentHashMap<String, Object>();
+	private Set<IClient> clients = new CopyOnWriteArraySet<IClient>();
+	private long expire = 10000L; // 10秒たったらexpireになったものとして扱う(最終ユーザーがアクセスしてから)
+	private long lastClientRemoveTime = -1; // クライアントが最後にアクセスしていた時刻保持
+	private boolean closed = false;
 	/**
 	 * コンストラクタ
 	 * @param path
 	 */
-	private Application(String path) {
+	protected Application(String path) {
 		this.path = path;
+		// このタイミングでIInputModuleをつかって、データを問い合わせる必要あり。
+		String[] paths = path.split("/"); // とりあえず、/123というパスであることを期待したい。
+		if(paths.length >= 2) {
+			logger.info("データを取得しなければいけない相手は・・・" + paths[1]);
+			IInputModule frameInputModule = new FrameInputModule();
+			frameInputModule.setWorkModule(null); // workModuleとして、jettyにデータを送るworkModuleをかかないとだめ
+		}
 	}
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void close() {
+		appMonitor.removeApplication(this);
+		closed = true;
+		for(IClient client : clients) {
+			client.close();
+		}
+		clients.clear();
 		properties.clear();
 	}
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Set<IClient> getClientSet() {
 		return new HashSet<IClient>(clients);
 	}
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String getPath() {
 		return path;
 	}
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setProperty(String key, Object value) {
 		properties.put(key, value);
 	}
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object getProperty(String key) {
 		return properties.get(key);
 	}
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void sendMessage(ByteBuffer buffer) {
+	public void sendMessage(ByteBuffer buffer) throws Exception {
 		// 接続しているclientすべてにメッセージ
+		for(IClient client : clients) {
+			client.sendMessage(buffer);
+		}
 	}
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void sendMessage(String data) {
+	public void sendMessage(String data) throws Exception {
 		// 接続しているclientすべてにメッセージ
+		for(IClient client : clients) {
+			client.sendMessage(data);
+		}
 	}
-	public void addClient(IClient client) {
+	/**
+	 * クライアントを追加
+	 * @param client
+	 */
+	protected void addClient(IClient client) {
 		clients.add(client);
 	}
-	public void removeClient(IClient client) {
+	/**
+	 * クライアントを削除
+	 * @param client
+	 */
+	protected void removeClient(IClient client) {
 		clients.remove(client);
 		if(clients.size() == 0) {
 			lastClientRemoveTime = System.currentTimeMillis();
 		}
+	}
+	/**
+	 * アプリケーションが閉じられているか確認
+	 * @return
+	 */
+	protected boolean isClosed() {
+		return closed;
+	}
+	/**
+	 * アプリケーションがexpireしているか確認
+	 * @return
+	 */
+	protected boolean isExpired() {
+		if(isClosed()) {
+			return true;
+		}
+		if(lastClientRemoveTime == -1 || System.currentTimeMillis() - lastClientRemoveTime < expire) {
+			return false;
+		}
+		return true;
 	}
 }

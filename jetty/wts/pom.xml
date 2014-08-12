@@ -32,6 +32,11 @@
       <artifactId>servlet-api</artifactId>
       <version>3.0-alpha-1</version>
     </dependency>
+    <dependency>
+    	<groupId>com.ttProject.streaming</groupId>
+    	<artifactId>FrameInput</artifactId>
+    	<version>0.0.1-SNAPSHOT</version>
+    </dependency>
   </dependencies>
   <packaging>war</packaging>
   <build>

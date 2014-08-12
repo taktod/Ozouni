@@ -32,7 +32,7 @@ public class Client implements IClient {
 	 */
 	@Override
 	public void onClose(int closeCode, String message) {
-		System.out.println("切断したよ");
+		logger.info("切断した");
 		// 切断時イベント発行
 		((Application)app).removeClient(this);
 		properties.clear();
@@ -42,59 +42,97 @@ public class Client implements IClient {
 	 */
 	@Override
 	public void onOpen(Connection connection) {
+		if(((Application)app).isClosed()) { // なんらかの原因でapplicationがすでに終了済みだったら
+			connection.close(); // 強制切断しておわらせる
+			return;
+		}
 		this.connection = new WeakReference<Connection>(connection);
-		System.out.println("接続したよ");
 		((Application)app).addClient(this);
-		close();
 		// 接続時イベント発行
+		logger.info("接続した");
 	}
 	/**
 	 * binaryメッセージをうけとったときの動作(クライアント側から取得することはないはず)
 	 */
 	@Override
 	public void onMessage(byte[] data, int offset, int length) {
-		System.out.println("binaryMessageうけとった");
+		logger.info("binaryメッセージを取得");
 	}
 	/**
 	 * textメッセージをうけとったときの動作
 	 */
 	@Override
 	public void onMessage(String data) {
-		System.out.println("textMessageうけとった:" + data);
+		logger.info("textメッセージを取得:" + data);
 	}
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public IApplication getApplication() {
 		return app;
 	}
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int getClentId() {
 		return hashCode();
 	}
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setProperty(String key, Object value) {
 		properties.put(key, value);
 	}
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Object getProperty(String key) {
 		return properties.get(key);
 	}
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void sendMessage(ByteBuffer buffer) {
-		// TODO Auto-generated method stub
-		
+	public void sendMessage(ByteBuffer buffer) throws Exception {
+		Connection conn = getConnection();
+		if(conn != null) {
+			int length = buffer.remaining();
+			byte[] data = buffer.array();
+			conn.sendMessage(data, 0, length);
+		}
 	}
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void sendMessage(String data) {
-		// TODO Auto-generated method stub
-		
+	public void sendMessage(String data) throws Exception {
+		Connection conn = getConnection();
+		if(conn != null) {
+			conn.sendMessage(data);
+		}
 	}
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void close() {
+		Connection conn = getConnection();
+		if(conn != null) {
+			conn.close(); // 強制的に切断しておく。
+		}
+	}
+	/**
+	 * 接続オブジェクトを参照する
+	 */
+	private Connection getConnection() {
 		if(connection != null) {
 			Connection conn = connection.get();
-			if(conn != null) {
-				conn.close(); // 強制的に切断しておく。
-			}
+			return conn;
 		}
+		return null;
 	}
 }
