@@ -17,11 +17,9 @@ public class WtsServlet extends WebSocketServlet {
 	 */
 	@Override
 	public WebSocket doWebSocketConnect(HttpServletRequest request, String protocol) {
-		// アクセスしてもいいクライアントであるかの判定等、面倒なものがいっぱいあるけど
-		// そういうのはなしにして、アクセスしたら見れるという体でいきたいと思う。
-		// 内部データ的には、targetIdのデータをうけとって動作するという形になるので、
 		IApplication app = Application.getInstance(request.getRequestURI());
 		IClient client = new Client(app);
+		// 接続してもいいか確認
 		return client;
 	}
 }

@@ -10,9 +10,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.apache.log4j.Logger;
 
-import com.ttProject.ozouni.base.IInputModule;
-import com.ttProject.ozouni.input.FrameInputModule;
-
 /**
  * アプリケーション
  * @author taktod
@@ -43,9 +40,11 @@ public class Application implements IApplication {
 		// このタイミングでIInputModuleをつかって、データを問い合わせる必要あり。
 		String[] paths = path.split("/"); // とりあえず、/123というパスであることを期待したい。
 		if(paths.length >= 2) {
-			logger.info("データを取得しなければいけない相手は・・・" + paths[1]);
-			IInputModule frameInputModule = new FrameInputModule();
-			frameInputModule.setWorkModule(null); // workModuleとして、jettyにデータを送るworkModuleをかかないとだめ
+//			logger.info("データを取得しなければいけない相手は・・・" + paths[1]);
+//			IInputModule frameInputModule = new FrameInputModule();
+//			frameInputModule.setWorkModule(null); // workModuleとして、jettyにデータを送るworkModuleをかかないとだめ
+			// ここでframeInputModuleをつくって、このアプリ用のInputModuleをひもづけておきたい。
+			// で、そのデータを接続しているクライアントに送りつける動作をさせておきたいところ。
 		}
 	}
 	/**
