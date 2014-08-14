@@ -88,7 +88,7 @@ public class AudioWorkerModule {
 			handler = pipeManager.getPipeHandler("audioConvert");
 			Map<String, String> envExtra = new HashMap<String, String>();
 			envExtra.put("LD_LIBRARY_PATH", "/usr/local/lib");
-			handler.setCommand("avconv -copyts -i ${pipe} -acodec adpcm_ima_wav -ar 22050 -ac 1 -async 2 -f matroska - 2>avconv.audio.log");
+			handler.setCommand("avconv -copyts -i ${pipe} -acodec adpcm_ima_wav -ar 44100 -ac 1 -async 2 -f matroska - 2>avconv.audio.log");
 			handler.setEnvExtra(envExtra);
 			openFlvTagWriter();
 		}
