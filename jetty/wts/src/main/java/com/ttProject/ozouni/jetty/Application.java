@@ -9,6 +9,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.apache.log4j.Logger;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import com.ttProject.ozouni.input.FrameInputModule;
+import com.ttProject.ozouni.work.FeederWorkModule;
+import com.ttProject.ozouni.wts.AppConfig;
 
 /**
  * アプリケーション
@@ -31,6 +37,7 @@ public class Application implements IApplication {
 	private long expire = 10000L; // 10秒たったらexpireになったものとして扱う(最終ユーザーがアクセスしてから)
 	private long lastClientRemoveTime = -1; // クライアントが最後にアクセスしていた時刻保持
 	private boolean closed = false;
+	private ConfigurableApplicationContext context = null;
 	/**
 	 * コンストラクタ
 	 * @param path
@@ -40,11 +47,19 @@ public class Application implements IApplication {
 		// このタイミングでIInputModuleをつかって、データを問い合わせる必要あり。
 		String[] paths = path.split("/"); // とりあえず、/123というパスであることを期待したい。
 		if(paths.length >= 2) {
-//			logger.info("データを取得しなければいけない相手は・・・" + paths[1]);
-//			IInputModule frameInputModule = new FrameInputModule();
-//			frameInputModule.setWorkModule(null); // workModuleとして、jettyにデータを送るworkModuleをかかないとだめ
-			// ここでframeInputModuleをつくって、このアプリ用のInputModuleをひもづけておきたい。
-			// で、そのデータを接続しているクライアントに送りつける動作をさせておきたいところ。
+			// このタイミングでxmlのデータをロードして、動作しなければいけない感じか？
+			// uniqueIdは、決定できません。
+			logger.info("ターゲットpath:" + paths[paths.length - 1]);
+			context = new AnnotationConfigApplicationContext(AppConfig.class);
+			FeederWorkModule workModule = context.getBean(FeederWorkModule.class);
+			workModule.setApplication(this);
+			FrameInputModule inputModule = context.getBean(FrameInputModule.class);
+			inputModule.setTargetId(paths[paths.length - 1]);
+			try {
+				inputModule.start();
+			}
+			catch(Exception e) {
+			}
 		}
 	}
 	/**

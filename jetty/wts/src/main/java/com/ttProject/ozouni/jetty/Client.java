@@ -32,7 +32,6 @@ public class Client implements IClient {
 	 */
 	@Override
 	public void onClose(int closeCode, String message) {
-		logger.info("切断した");
 		// 切断時イベント発行
 		((Application)app).removeClient(this);
 		properties.clear();
@@ -46,10 +45,10 @@ public class Client implements IClient {
 			connection.close(); // 強制切断しておわらせる
 			return;
 		}
+		logger.info("ここまできましたけど・・・");
 		this.connection = new WeakReference<Connection>(connection);
 		((Application)app).addClient(this);
 		// 接続時イベント発行
-		logger.info("接続した");
 	}
 	/**
 	 * binaryメッセージをうけとったときの動作(クライアント側から取得することはないはず)

@@ -71,6 +71,7 @@ public class FeederWorkModule implements IWorkModule {
 				connector.connect(timestamp, type),
 				frame.getData()
 		);
+//		logger.info(frame + ":" + pts);
 		app.sendMessage(sendData);
 	}
 }
