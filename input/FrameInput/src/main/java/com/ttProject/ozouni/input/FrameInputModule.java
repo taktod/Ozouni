@@ -51,7 +51,7 @@ public class FrameInputModule implements IInputModule {
 		targetId = System.getProperty("targetId");
 	}
 	/**
-	 * 出力モジュールを設定
+	 * 処理モジュールを設定
 	 */
 	@Override
 	public void setWorkModule(IWorkModule workModule) {
@@ -97,34 +97,14 @@ public class FrameInputModule implements IInputModule {
 				// TODO コーデックがかわった場合は、analyzerも書き直す必要がある・・・
 				// 一応可能性としては、ないとはいえない。
 				// frameの内容がかわったら、自分のデータを削除して、別のプロセスを作り直しておきたいところではある。
+				// いままでのデータと違う形になったら、なんとかしないとだめ。
 				try {
 					ShareFrameData shareFrameData = new ShareFrameData(buffer);
-					// analyzerをいれます。
-					IAnalyzer analyzer = analyzerMap.get(shareFrameData.getTrackId());
-					// frameに戻す
-					if(analyzer == null) {
-						// このframeに対応するanalyzerを取得する必要あり。
-						analyzer = analyzerChecker.checkAnalyzer(shareFrameData.getCodecType());
-						if(analyzer instanceof AudioAnalyzer) {
-							shareFrameData.setupFrameSelector(((AudioAnalyzer) analyzer).getSelector());
-						}
-						else if(analyzer instanceof VideoAnalyzer){
-							shareFrameData.setupFrameSelector(((VideoAnalyzer) analyzer).getSelector());
-						}
-						else {
-							throw new Exception("Analyzerが不明でした。");
-						}
-						analyzerMap.put(shareFrameData.getTrackId(), analyzer);
+					if(shareFrameData.getCodecType().isAudio()) {
+						audioReceiveData(shareFrameData);
 					}
-					// この部分でframeの値をとれるだけとらないとだめ。
-					IFrame frame = null;
-					IReadChannel channel = new ByteReadChannel(shareFrameData.getFrameData());
-					while((frame = analyzer.analyze(channel)) != null) {
-						pushData(frame, shareFrameData); // これが1つであるという確証がないな・・・
-					}
-					frame = analyzer.getRemainFrame();
-					if(frame != null && !(frame instanceof NullFrame)) {
-						pushData(frame, shareFrameData);
+					else if(shareFrameData.getCodecType().isVideo()) {
+						videoReceiveData(shareFrameData);
 					}
 				}
 				catch(Exception e) {
@@ -135,6 +115,57 @@ public class FrameInputModule implements IInputModule {
 		receiveDataHandler.setKey(reportData.getKey());
 		receiveDataHandler.start(); // 起動します。
 	}
+	/**
+	 * 音声データの処理をつづける
+	 * @return
+	 */
+	private void audioReceiveData(ShareFrameData shareFrameData) throws Exception {
+		IAnalyzer analyzer = analyzerMap.get(shareFrameData.getTrackId());
+		// analyzerがない場合、もしくは、codecTypeが一致しない場合は作り直す必要がある
+		if(analyzer == null || analyzer.getCodecType() != shareFrameData.getCodecType()) {
+			analyzer = analyzerChecker.checkAnalyzer(shareFrameData.getCodecType());
+			// selectorをセットアップしておく
+			shareFrameData.setupFrameSelector(((AudioAnalyzer)analyzer).getSelector());
+			analyzerMap.put(shareFrameData.getTrackId(), analyzer);
+		}
+		IFrame frame = null;
+		IReadChannel channel = new ByteReadChannel(shareFrameData.getFrameData());
+		while((frame = analyzer.analyze(channel)) != null) {
+			pushData(frame, shareFrameData);
+		}
+		frame = analyzer.getRemainFrame();
+		if(frame != null) {
+			pushData(frame, shareFrameData);
+		}
+	}
+	/**
+	 * 映像データの処理をつづける
+	 * @param shareFrameData
+	 * @return
+	 */
+	private void videoReceiveData(ShareFrameData shareFrameData) throws Exception {
+		IAnalyzer analyzer = analyzerMap.get(shareFrameData.getTrackId());
+		if(analyzer == null || analyzer.getCodecType() != shareFrameData.getCodecType()) {
+			analyzer = analyzerChecker.checkAnalyzer(shareFrameData.getCodecType());
+			shareFrameData.setupFrameSelector(((VideoAnalyzer)analyzer).getSelector());
+			analyzerMap.put(shareFrameData.getTrackId(), analyzer);
+		}
+		IFrame frame = null;
+		IReadChannel channel = new ByteReadChannel(shareFrameData.getFrameData());
+		while((frame = analyzer.analyze(channel)) != null) {
+			pushData(frame, shareFrameData);
+		}
+		frame = analyzer.getRemainFrame();
+		if(frame != null) {
+			pushData(frame, shareFrameData);
+		}
+	}
+	/**
+	 * 実際の送信処理
+	 * @param frame
+	 * @param shareFrameData
+	 * @throws Exception
+	 */
 	private void pushData(IFrame frame, ShareFrameData shareFrameData) throws Exception {
 		if(frame instanceof NullFrame) {
 			// h264とかでnullFrameになることもある、nullFrameの場合はデータを捨てておきます。
