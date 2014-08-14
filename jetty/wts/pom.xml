@@ -15,7 +15,9 @@
     </license>
   </licenses>
   <name>wts</name>
-  <description>websocketをつかって、mjpeg + adpcmデータを送信し、クライアント側でライブ視聴するためのサーバー側動作</description>
+  <description>websocketをつかって、mjpeg + adpcmデータを送信し、クライアント側でライブ視聴するためのサーバー側動作
+
+とりあえず、動作したけど、xuggleでは、順番に送信されていたものの、ffmpegでは、chunkの形で一期にながれてくるので(mkvの性か？)動作が微妙になっているみたいだ。</description>
   <dependencies>
     <dependency>
       <groupId>com.ttProject.streaming</groupId>
@@ -33,9 +35,24 @@
       <version>3.0-alpha-1</version>
     </dependency>
     <dependency>
-    	<groupId>com.ttProject.streaming</groupId>
-    	<artifactId>FrameInput</artifactId>
-    	<version>0.0.1-SNAPSHOT</version>
+      <groupId>com.ttProject.streaming</groupId>
+      <artifactId>FrameInput</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.ttProject.streaming</groupId>
+      <artifactId>JedisReportHandler</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.ttProject.streaming</groupId>
+      <artifactId>SignalWorker</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.ttProject.streaming</groupId>
+      <artifactId>ServerDataHandler</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
     </dependency>
   </dependencies>
   <packaging>war</packaging>
