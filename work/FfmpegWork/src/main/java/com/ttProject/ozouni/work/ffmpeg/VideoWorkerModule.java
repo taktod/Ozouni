@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
 
 import org.apache.log4j.Logger;
 
@@ -35,7 +36,7 @@ public class VideoWorkerModule {
 	private FlvTagWriter writer = null;
 	private PipeManager pipeManager = new PipeManager();
 	private PipeHandler handler = null;
-	private ExecutorService exec = Executors.newCachedThreadPool();
+	private final ExecutorService exec;
 	private Future<?> future = null;
 	private IWorkModule workModule = null;
 	/**
@@ -48,6 +49,16 @@ public class VideoWorkerModule {
 	 * コンストラクタ
 	 */
 	public VideoWorkerModule() {
+		ThreadFactory factory = new ThreadFactory() {
+			@Override
+			public Thread newThread(Runnable r) {
+				Thread t = new Thread(r);
+				t.setName("VideoWorkerThread:" + t.hashCode());
+				t.setDaemon(true);
+				return t;
+			}
+		};
+		exec = Executors.newCachedThreadPool(factory);
 		try {
 			handler = pipeManager.getPipeHandler("videoConvert");
 			Map<String, String> envExtra = new HashMap<String, String>();

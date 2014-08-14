@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
 
 import org.apache.log4j.Logger;
 
@@ -60,7 +61,7 @@ public class AudioWorkerModule {
 	private FlvTagWriter writer = null;
 	private PipeManager pipeManager = new PipeManager();
 	private PipeHandler handler = null;
-	private ExecutorService exec = Executors.newCachedThreadPool();
+	private final ExecutorService exec;
 	private Future<?> future = null;
 	private IWorkModule workModule = null;
 	/**
@@ -73,6 +74,16 @@ public class AudioWorkerModule {
 	 * コンストラクタ
 	 */
 	public AudioWorkerModule() {
+		ThreadFactory factory = new ThreadFactory() {
+			@Override
+			public Thread newThread(Runnable r) {
+				Thread t = new Thread(r);
+				t.setName("AudioWorkerThread:" + t.hashCode());
+				t.setDaemon(true);
+				return t;
+			}
+		};
+		exec = Executors.newCachedThreadPool(factory);
 		try {
 			handler = pipeManager.getPipeHandler("audioConvert");
 			Map<String, String> envExtra = new HashMap<String, String>();
@@ -96,7 +107,8 @@ public class AudioWorkerModule {
 		}
 		// 音声データが１つもきていない場合は、追加する無音frameが決定しないので、なにもしない
 		if(lastAudioFrame == null) {
-			return false;
+//			return false;
+			lastAudioFrame = Mp3Frame.getMutedFrame(44100, 1, 16);
 		}
 		if(frame.getPts() > passedPts + allowedDelayForVideo) {
 			// frameのptsが経過pts + 許容delayよりも大きい場合
