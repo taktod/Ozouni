@@ -11,9 +11,9 @@ import com.ttProject.ozouni.dataHandler.server.DataClient;
  * server動作経由でデータを受け取るhandler
  * @author taktod
  */
-public class ServerReceiveDataHandler implements IReceiveDataHandler {
+public class ServerReceiveDataHandler2 implements IReceiveDataHandler {
 	/** ロガー */
-	private Logger logger = Logger.getLogger(ServerReceiveDataHandler.class);
+	private Logger logger = Logger.getLogger(ServerReceiveDataHandler2.class);
 	private String server;
 	private int port;
 	private DataClient client;
@@ -24,17 +24,17 @@ public class ServerReceiveDataHandler implements IReceiveDataHandler {
 	 * @param server 接続しにいくサーバー
 	 * @param port 接続するポート
 	 */
-	public ServerReceiveDataHandler(String server, int port) {
+	public ServerReceiveDataHandler2(String server, int port) {
 		this.server = server;
 		this.port = port;
 	}
-	public ServerReceiveDataHandler(String key) {
+	public ServerReceiveDataHandler2(String key) {
 		// keyからサーバーデータを取り出す必要がある。
 	}
 	/**
 	 * コンストラクタ
 	 */
-	public ServerReceiveDataHandler() {
+	public ServerReceiveDataHandler2() {
 		// なにもないのをいれてから、keyをいれて動作開始しないとだめ。
 	}
 	public String getServer() {
@@ -77,6 +77,11 @@ public class ServerReceiveDataHandler implements IReceiveDataHandler {
 		}
 		client.connect(server, port);
 		logger.info("終わるまで待機します。");
-		client.waitForClose(); // TODO これが邪魔・・・どうするかね
+	}
+	/**
+	 * 停止する
+	 */
+	public void stop() {
+		client.close();
 	}
 }
