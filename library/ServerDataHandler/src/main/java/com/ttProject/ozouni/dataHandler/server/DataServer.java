@@ -44,6 +44,7 @@ public class DataServer {
 			@Override
 			public Thread newThread(Runnable r) {
 				Thread t = new Thread(r);
+				t.setName("DataServerThread:" + t.hashCode());
 				t.setDaemon(true);
 				return t;
 			}
