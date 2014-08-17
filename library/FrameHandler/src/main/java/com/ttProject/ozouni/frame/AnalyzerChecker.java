@@ -11,6 +11,8 @@ import com.ttProject.frame.mjpeg.MjpegFrameAnalyzer;
 import com.ttProject.frame.mp3.Mp3FrameAnalyzer;
 import com.ttProject.frame.nellymoser.NellymoserFrameAnalyzer;
 import com.ttProject.frame.opus.OpusFrameAnalyzer;
+import com.ttProject.frame.pcmalaw.PcmalawFrameAnalyzer;
+import com.ttProject.frame.pcmmulaw.PcmmulawFrameAnalyzer;
 import com.ttProject.frame.speex.SpeexFrameAnalyzer;
 import com.ttProject.frame.theora.TheoraFrameAnalyzer;
 import com.ttProject.frame.vorbis.VorbisFrameAnalyzer;
@@ -46,6 +48,10 @@ public class AnalyzerChecker {
 			return new Mp3FrameAnalyzer();
 		case NELLYMOSER:
 			return new NellymoserFrameAnalyzer();
+		case PCM_ALAW:
+			return new PcmalawFrameAnalyzer();
+		case PCM_MULAW:
+			return new PcmmulawFrameAnalyzer();
 		case OPUS:
 			return new OpusFrameAnalyzer();
 		case SPEEX:
