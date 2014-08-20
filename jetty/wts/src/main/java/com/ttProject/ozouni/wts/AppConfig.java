@@ -9,7 +9,6 @@ import com.ttProject.ozouni.base.IInputModule;
 import com.ttProject.ozouni.base.IWorkModule;
 import com.ttProject.ozouni.base.analyzer.IServerNameAnalyzer;
 import com.ttProject.ozouni.base.analyzer.IpAddressAnalyzer;
-import com.ttProject.ozouni.dataHandler.ServerReceiveDataHandler;
 import com.ttProject.ozouni.dataHandler.ServerReceiveDataHandler2;
 import com.ttProject.ozouni.input.FrameInputModule;
 import com.ttProject.ozouni.reportHandler.IReportHandler;
