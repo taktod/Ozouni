@@ -1,26 +1,21 @@
 package com.ttProject.ozouni.work.test;
 
-import org.apache.log4j.Logger;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-
-import com.ttProject.ozouni.input.FrameInputModule;
-
 /**
  * jettyの内部で利用する、小さなspringの設定動作テスト
  * signalWorkerとかが多重起動することになるので、ここではある程度調整しておきたい。
+ * 複数のspringを別々にloadして、内部のjettyFactoryとかを共有できるかテストしたかった。
  * @author taktod
  */
 public class JettyMinTest {
 	/** ロガー */
-	private Logger logger = Logger.getLogger(JettyMinTest.class);
+//	private Logger logger = Logger.getLogger(JettyMinTest.class);
 	/**
 	 * 動作テスト
 	 * @throws Exception
 	 */
 //	@Test
 	public void test() throws Exception {
-		logger.info("動作開始");
+/*		logger.info("動作開始");
 		ConfigurableApplicationContext context = null;
 //		context = new ClassPathXmlApplicationContext("ozouni.xml");
 		context = new AnnotationConfigApplicationContext(AppConfig.class);
@@ -38,6 +33,6 @@ public class JettyMinTest {
 		// オブジェクトを共有していることがわかったので、AppConfigは有効っぽいですね。
 		context2 = new AnnotationConfigApplicationContext(AppConfig.class);
 		Thread.sleep(600000);
-		logger.info("動作おわり");
+		logger.info("動作おわり");*/
 	}
 }
