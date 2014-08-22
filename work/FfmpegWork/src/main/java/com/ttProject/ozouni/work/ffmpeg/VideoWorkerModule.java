@@ -31,7 +31,7 @@ public class VideoWorkerModule {
 	private Logger logger = Logger.getLogger(VideoWorkerModule.class);
 	/** 経過Pts */
 	private long passedPts = 0;
-	/** 最後に処理したaudioFrame */
+	/** 最後に処理したvideoFrame */
 	private IVideoFrame lastVideoFrame = null;
 	private FlvTagWriter writer = null;
 	private PipeManager pipeManager = new PipeManager();
