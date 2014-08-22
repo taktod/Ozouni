@@ -225,6 +225,7 @@ public class AudioWorkerModule {
 					}
 				}
 				catch(Exception e) {
+					// ここの例外が発生することがあるっぽいです・・・
 					e.printStackTrace();
 				}
 			}
