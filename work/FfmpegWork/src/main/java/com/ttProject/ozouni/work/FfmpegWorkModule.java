@@ -13,6 +13,8 @@ import com.ttProject.ozouni.work.ffmpeg.VideoWorkerModule;
 /**
  * ffmpegを使ってframeを変換する動作
  * h264のdtsがある場合の動作に大いに問題があるはず。(いまのところそんなデータは見たことないので問題視しないけど)
+ * TODO ffmpegの変換コマンド等を外部からの設定で動作できるようにしておきたいところ・・・
+ * あと、flv特化しているので、そのあたり調整しておかないと・・・せめて名前だけでも・・・
  * @author taktod
  */
 public class FfmpegWorkModule implements IWorkModule {
