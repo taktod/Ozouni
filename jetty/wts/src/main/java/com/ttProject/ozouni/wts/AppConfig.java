@@ -31,9 +31,6 @@ public class AppConfig {
 		try {
 			Properties prop = new Properties();
 			prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("ozouni.properties"));
-			System.out.println(prop.getProperty("redis.server"));
-			System.out.println(prop.getProperty("redis.port"));
-			System.out.println(prop.getProperty("redis.db"));
 			jedisConnectionFactory = new JedisConnectionFactory();
 			jedisConnectionFactory.setHostName(prop.getProperty("redis.server"));
 			jedisConnectionFactory.setPort(Integer.parseInt(prop.getProperty("redis.port")));
