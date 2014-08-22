@@ -42,30 +42,15 @@ public class NoSoundWorkTest {
 		if(encoder.open(null, null) < 0) {
 			throw new Exception("エンコーダーが開けませんでした");
 		}
-		AacFrame frame = AacFrame.getMutedFrame(44100, 1, 16);
-		frame.setPts(0);
-		frame.setTimebase(1000);
-		processAudioDecode(frame);
-		frame = AacFrame.getMutedFrame(44100, 1, 16);
-		frame.setPts(1000);
-		frame.setTimebase(1000);
-		processAudioDecode(frame);
-		frame = AacFrame.getMutedFrame(44100, 1, 16);
-		frame.setPts(2000);
-		frame.setTimebase(1000);
-		processAudioDecode(frame);
-		frame = AacFrame.getMutedFrame(44100, 1, 16);
-		frame.setPts(3000);
-		frame.setTimebase(1000);
-		processAudioDecode(frame);
-		frame = AacFrame.getMutedFrame(44100, 1, 16);
-		frame.setPts(4000);
-		frame.setTimebase(1000);
-		processAudioDecode(frame);
-		frame = AacFrame.getMutedFrame(44100, 1, 16);
-		frame.setPts(5000);
-		frame.setTimebase(1000);
-		processAudioDecode(frame);
+		AacFrame frame = null;
+		long sampleNum = 0;
+		for(int i = 0;i < 100;i ++) {
+			frame = AacFrame.getMutedFrame(44100, 1, 16);
+			frame.setPts(sampleNum);
+			frame.setTimebase(frame.getSampleRate());
+			sampleNum += frame.getSampleNum();
+			processAudioDecode(frame);
+		}
 	}
 	/**
 	 * frameデコードを実施する
