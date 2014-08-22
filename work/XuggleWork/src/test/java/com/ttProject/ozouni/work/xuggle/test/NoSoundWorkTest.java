@@ -10,7 +10,9 @@ import com.ttProject.xuggle.frame.Packetizer;
 import com.xuggle.xuggler.IAudioSamples;
 import com.xuggle.xuggler.ICodec;
 import com.xuggle.xuggler.IPacket;
+import com.xuggle.xuggler.IRational;
 import com.xuggle.xuggler.IStreamCoder;
+import com.xuggle.xuggler.IAudioSamples.Format;
 import com.xuggle.xuggler.IStreamCoder.Direction;
 
 /**
@@ -43,12 +45,10 @@ public class NoSoundWorkTest {
 			throw new Exception("エンコーダーが開けませんでした");
 		}
 		AacFrame frame = null;
-		long sampleNum = 0;
 		for(int i = 0;i < 100;i ++) {
 			frame = AacFrame.getMutedFrame(44100, 1, 16);
-			frame.setPts(sampleNum);
-			frame.setTimebase(frame.getSampleRate());
-			sampleNum += frame.getSampleNum();
+			frame.setPts(1000 * i);
+			frame.setTimebase(1000);
 			processAudioDecode(frame);
 		}
 	}
@@ -90,7 +90,10 @@ public class NoSoundWorkTest {
 			offset += bytesDecoded;
 			if(samples.isComplete()) {
 				logger.info(samples);
-				processAudioEncode(samples);
+				IAudioSamples s = IAudioSamples.make(44100, 1, Format.FMT_S16);
+				s.setComplete(true, 44100, 44100, 1, Format.FMT_S16, samples.getPts());
+				s.setTimeBase(samples.getTimeBase());
+				processAudioEncode(s);
 			}
 		}
 	}
