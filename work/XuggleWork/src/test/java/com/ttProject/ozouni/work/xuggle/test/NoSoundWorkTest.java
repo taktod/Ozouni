@@ -10,7 +10,6 @@ import com.ttProject.xuggle.frame.Packetizer;
 import com.xuggle.xuggler.IAudioSamples;
 import com.xuggle.xuggler.ICodec;
 import com.xuggle.xuggler.IPacket;
-import com.xuggle.xuggler.IRational;
 import com.xuggle.xuggler.IStreamCoder;
 import com.xuggle.xuggler.IAudioSamples.Format;
 import com.xuggle.xuggler.IStreamCoder.Direction;
