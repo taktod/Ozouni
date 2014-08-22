@@ -8,8 +8,10 @@ import com.ttProject.frame.aac.AacFrame;
 import com.ttProject.frame.extra.AudioMultiFrame;
 import com.ttProject.xuggle.frame.Packetizer;
 import com.xuggle.xuggler.IAudioSamples;
+import com.xuggle.xuggler.ICodec;
 import com.xuggle.xuggler.IPacket;
 import com.xuggle.xuggler.IStreamCoder;
+import com.xuggle.xuggler.IStreamCoder.Direction;
 
 /**
  * 無音データでgapがある場合にどうなるか調べておきたい
@@ -24,6 +26,8 @@ public class NoSoundWorkTest {
 	private Packetizer packetizer = new Packetizer();
 	/** xuggleのpacket */
 	private IPacket packet = null;
+	/** エンコーダー */
+	private IStreamCoder encoder = null;
 	/**
 	 * テスト
 	 * @throws Exception
@@ -31,12 +35,35 @@ public class NoSoundWorkTest {
 	@Test
 	public void test() throws Exception {
 		logger.info("テスト開始");
+		encoder = IStreamCoder.make(Direction.ENCODING, ICodec.ID.CODEC_ID_MP3);
+		encoder.setChannels(1);
+		encoder.setSampleRate(44100);
+		encoder.setBitRate(96000);
+		if(encoder.open(null, null) < 0) {
+			throw new Exception("エンコーダーが開けませんでした");
+		}
 		AacFrame frame = AacFrame.getMutedFrame(44100, 1, 16);
 		frame.setPts(0);
 		frame.setTimebase(1000);
 		processAudioDecode(frame);
 		frame = AacFrame.getMutedFrame(44100, 1, 16);
 		frame.setPts(1000);
+		frame.setTimebase(1000);
+		processAudioDecode(frame);
+		frame = AacFrame.getMutedFrame(44100, 1, 16);
+		frame.setPts(2000);
+		frame.setTimebase(1000);
+		processAudioDecode(frame);
+		frame = AacFrame.getMutedFrame(44100, 1, 16);
+		frame.setPts(3000);
+		frame.setTimebase(1000);
+		processAudioDecode(frame);
+		frame = AacFrame.getMutedFrame(44100, 1, 16);
+		frame.setPts(4000);
+		frame.setTimebase(1000);
+		processAudioDecode(frame);
+		frame = AacFrame.getMutedFrame(44100, 1, 16);
+		frame.setPts(5000);
 		frame.setTimebase(1000);
 		processAudioDecode(frame);
 	}
@@ -78,6 +105,27 @@ public class NoSoundWorkTest {
 			offset += bytesDecoded;
 			if(samples.isComplete()) {
 				logger.info(samples);
+				processAudioEncode(samples);
+			}
+		}
+	}
+	/**
+	 * エンコード実施
+	 * @param samples
+	 * @throws Exception
+	 */
+	private void processAudioEncode(IAudioSamples samples) throws Exception {
+		IPacket packet = IPacket.make();
+		int sampleConsumed = 0;
+		while(sampleConsumed < samples.getNumSamples()) {
+			int retval = encoder.encodeAudio(packet, samples, sampleConsumed);
+			if(retval < 0) {
+				throw new Exception("変換失敗");
+			}
+			sampleConsumed += retval;
+			if(packet.isComplete()) {
+				logger.info("変換できた");
+				logger.info(packet);
 			}
 		}
 	}
