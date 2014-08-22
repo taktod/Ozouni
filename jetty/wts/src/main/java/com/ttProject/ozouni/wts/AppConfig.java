@@ -1,5 +1,7 @@
 package com.ttProject.ozouni.wts;
 
+import java.util.Properties;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
@@ -26,11 +28,21 @@ public class AppConfig {
 	/** serverNameを取得するためのanalyzer(こちらも共有したい) */
 	private static IServerNameAnalyzer serverNameAnalyzer = null;
 	static {
-		jedisConnectionFactory = new JedisConnectionFactory();
-		jedisConnectionFactory.setHostName("localhost"); // このあたりの設定がやばい(まぁいまはテストなのでいいけど)
-		jedisConnectionFactory.setPort(6379);
-		jedisConnectionFactory.setDatabase(2);
-		jedisConnectionFactory.afterPropertiesSet(); // propertyを設定したら、これが必要
+		try {
+			Properties prop = new Properties();
+			prop.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("ozouni.properties"));
+			System.out.println(prop.getProperty("redis.server"));
+			System.out.println(prop.getProperty("redis.port"));
+			System.out.println(prop.getProperty("redis.db"));
+			jedisConnectionFactory = new JedisConnectionFactory();
+			jedisConnectionFactory.setHostName(prop.getProperty("redis.server"));
+			jedisConnectionFactory.setPort(Integer.parseInt(prop.getProperty("redis.port")));
+			jedisConnectionFactory.setDatabase(Integer.parseInt(prop.getProperty("redis.db")));
+			jedisConnectionFactory.afterPropertiesSet(); // propertyを設定したら、これが必要
+		}
+		catch(Exception e) {
+			throw new RuntimeException("ozouni.propertiesを読み込むときに例外が発生しました。");
+		}
 		try {
 			serverNameAnalyzer = new IpAddressAnalyzer();
 		}
