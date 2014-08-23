@@ -28,7 +28,7 @@
 
   <!-- 一定時間ごとのレポート動作 -->
   <bean class="com.ttProject.ozouni.worker.SignalWorker"/>
-sa
+
   <!-- 出力モジュール -->
   <bean id="outputModule" class="com.ttProject.ozouni.output.FrameOutputModule">
     <property name="sendDataHandler">
