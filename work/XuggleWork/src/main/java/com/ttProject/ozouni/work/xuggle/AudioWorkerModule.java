@@ -6,14 +6,9 @@ import java.util.concurrent.ThreadFactory;
 
 import org.apache.log4j.Logger;
 
-import com.ttProject.frame.AudioFrame;
 import com.ttProject.frame.IAudioFrame;
 import com.ttProject.frame.IFrame;
 import com.ttProject.frame.IVideoFrame;
-import com.ttProject.frame.aac.AacFrame;
-import com.ttProject.frame.mp3.Mp3Frame;
-import com.ttProject.frame.nellymoser.NellymoserFrame;
-import com.ttProject.frame.speex.SpeexFrame;
 import com.ttProject.ozouni.base.IWorkModule;
 
 /**
@@ -68,6 +63,7 @@ public class AudioWorkerModule {
 			// こっちでは挿入する必要あり、ffmpegでは、フレームを適当に挿入してやると、変換を強制することが可能なため
 			passedPts = frame.getPts() - allowedDelayForVideo;
 			// この部分でIAudioSamplesをつかった変換を促す動作が必要になる。
+			logger.info("映像データが先攻しているので、無音データを挿入します");
 //			aFrame.setPts(passedPts);
 //			aFrame.setTimebase(1000);
 //			writeFrame(aFrame, 0x08);
@@ -101,6 +97,7 @@ public class AudioWorkerModule {
 		// あとは問題ないので、frameを追記しておく。
 		// 音声フレームだった場合
 		if(frame.getPts() < passedPts) {
+			logger.warn("過去のフレームなので、ドロップします");
 			// 過去のフレームだったら追加してもffmpegが混乱するだけなので、捨てる
 			return false;
 		}
@@ -112,6 +109,14 @@ public class AudioWorkerModule {
 			logger.info("無音frameが必要その２:" + (frame.getPts() - 30));
 		}*/
 		return true;
+	}
+	/**
+	 * 特定のptsの位置まで
+	 * @param pts
+	 * @param timebase
+	 */
+	private void insertNoSound(long pts, long timebase) {
+		
 	}
 	/**
 	 * フレームを受け入れる
@@ -128,7 +133,6 @@ public class AudioWorkerModule {
 		}
 		// 特に問題ないので、このframeを書き込む
 		passedPts = frame.getPts();
-		writeFrame(frame, id);
 		lastAudioFrame = (IAudioFrame)frame;
 	}
 }

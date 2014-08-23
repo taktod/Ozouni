@@ -68,5 +68,6 @@ public class XuggleWorkModule implements IWorkModule {
 		f.setPts(pts);
 		f.setTimebase(1000);
 		// こっちもh264のdtsについてはスルーしておく
+		logger.info(frame);
 	}
 }
