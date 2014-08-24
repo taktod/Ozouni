@@ -14,6 +14,7 @@ import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelPipelineFactory;
+import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.Channels;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
@@ -146,6 +147,13 @@ public class DataClient {
 				// 次のデータ待ち
 				size = -1;
 			}
+		}
+		@Override
+		public void channelClosed(ChannelHandlerContext ctx, ChannelStateEvent e)
+				throws Exception {
+			// このイベントはなんとかして、別のところに通知しておきたいところ・・・
+			System.out.println("切断されました。");
+			super.channelClosed(ctx, e);
 		}
 	}
 }

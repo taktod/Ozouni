@@ -19,9 +19,11 @@ import com.ttProject.ozouni.wts.AppConfig;
 /**
  * アプリケーション
  * @author taktod
+ * アプリケーションには、timer処理をいれておいて、reportHandlerでデータが取得できなくなったときに、FrameInputModuleによるデータの入手を破棄して、あたらしい接続がでてくるまで待って、でてきたら接続しなおすという動作が必要になりそうです。
  */
 public class Application implements IApplication {
 	/** 動作ロガー */
+	@SuppressWarnings("unused")
 	private static Logger logger = Logger.getLogger(Application.class);
 	private static ApplicationMonitor appMonitor = new ApplicationMonitor();
 	public static IApplication getInstance(String path) {
@@ -57,6 +59,7 @@ public class Application implements IApplication {
 			inputModule.setTargetId(paths[paths.length - 1]);
 			try {
 				inputModule.start();
+				// TODO 切断された場合の通知がほしいところ
 			}
 			catch(Exception e) {
 			}

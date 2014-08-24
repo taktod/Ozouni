@@ -88,6 +88,9 @@ public class FrameInputModule implements IInputModule {
 		// このタイミングでserverClientHandlerを起動してデータを取得するようにしないとだめ
 		ReportData reportData = reportHandler.getReportData(targetId);
 		if(reportData == null) {
+			// jettyとかでここでruntimeExceptionが飛ばされるとちとやっかいかも・・・
+			// また、ehcacheをつかっている場合、相手がみつかるまでに時間がかかるので(ehcacheのhandshakeができるまでしばらく待たされる。)
+			// その場合にどうやっても接続ができないことになりそうです。
 			throw new RuntimeException("接続先が見つかりませんでした。");
 		}
 		receiveDataHandler.registerListener(new IDataListener() {

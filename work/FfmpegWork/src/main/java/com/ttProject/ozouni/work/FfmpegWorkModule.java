@@ -5,7 +5,9 @@ import org.apache.log4j.Logger;
 import com.ttProject.frame.Frame;
 import com.ttProject.frame.IAudioFrame;
 import com.ttProject.frame.IFrame;
+import com.ttProject.frame.IVideoFrame;
 import com.ttProject.frame.extra.AudioMultiFrame;
+import com.ttProject.frame.extra.VideoMultiFrame;
 import com.ttProject.ozouni.base.IWorkModule;
 import com.ttProject.ozouni.work.ffmpeg.AudioWorkerModule;
 import com.ttProject.ozouni.work.ffmpeg.VideoWorkerModule;
@@ -13,15 +15,17 @@ import com.ttProject.ozouni.work.ffmpeg.VideoWorkerModule;
 /**
  * ffmpegを使ってframeを変換する動作
  * h264のdtsがある場合の動作に大いに問題があるはず。(いまのところそんなデータは見たことないので問題視しないけど)
+ * TODO ffmpegの変換コマンド等を外部からの設定で動作できるようにしておきたいところ・・・
+ * あと、flv特化しているので、そのあたり調整しておかないと・・・せめて名前だけでも・・・
  * @author taktod
  */
 public class FfmpegWorkModule implements IWorkModule {
 	/** ロガー */
 	private Logger logger = Logger.getLogger(FfmpegWorkModule.class);
 	/** 処理済みpts値 */
-	private long passedPts = 0; // 処理済みpts値
+	private long passedPts = 0;
 	/** 再生のやり直し等で追加される、ptsの差分値 */
-	private long ptsDiff = 0; // 再生やり直しとかでずれた場合の補完するptsの差分値
+	private long ptsDiff = 0;
 	/** リセット判定のinterval、この値以上、過去のデータがきた場合は、ストリームが再開されていると判定しておきます */
 	private long resetInterval = 1000L;
 	/** 映像の処理module */
@@ -34,7 +38,6 @@ public class FfmpegWorkModule implements IWorkModule {
 	 */
 	@Override
 	public void setWorkModule(IWorkModule workModule) {
-//		this.workModule = workModule;
 		videoWorkerModule.setWorkModule(workModule);
 		audioWorkerModule.setWorkModule(workModule);
 	}
@@ -50,19 +53,24 @@ public class FfmpegWorkModule implements IWorkModule {
 			}
 			return;
 		}
-		// フレームのデータが巻き戻った場合は、そのデータは前のデータになったと見るべき
+		if(frame instanceof VideoMultiFrame) {
+			VideoMultiFrame multiFrame = (VideoMultiFrame)frame;
+			for(IVideoFrame vFrame : multiFrame.getFrameList()) {
+				pushFrame(vFrame, id);
+			}
+			return;
+		}
 		long orgPts = (1000L * frame.getPts() / frame.getTimebase());
 		long pts = orgPts + ptsDiff;
+		// フレームのデータが巻き戻った場合は、そのデータは前のデータになったと見るべき
 		if(pts < passedPts - resetInterval) {
-			// TODO 音声frameがrtmpで抜け落ちたあとで復帰した場合には、音声frameのpts値が最終データと同じ値らへんになってしまう問題がある模様。
-			// そうするとリセットと同じ現象が走ることがありえた
-			// どうしたものかね。
 			// これだけ離れている場合は、ストリームがリセットされたと判定する。
 			logger.info("リセットされた");
 			// 今回のpts値が開始位置であると判定する。
 			ptsDiff = passedPts - 1000L * frame.getPts() / frame.getTimebase();
 			pts = passedPts;
 		}
+		// pts値が進んでいる場合は更新しておく
 		if(pts > passedPts) {
 			passedPts = pts;
 		}

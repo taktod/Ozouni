@@ -70,5 +70,10 @@
       <artifactId>FfmpegWork</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
+    <dependency>
+    	<groupId>com.ttProject.streaming</groupId>
+    	<artifactId>XuggleWork</artifactId>
+    	<version>0.0.1-SNAPSHOT</version>
+    </dependency>
   </dependencies>
 </project>

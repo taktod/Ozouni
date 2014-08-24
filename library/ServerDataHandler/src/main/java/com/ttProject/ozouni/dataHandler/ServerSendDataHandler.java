@@ -5,6 +5,7 @@ import java.lang.management.RuntimeMXBean;
 import java.nio.ByteBuffer;
 
 import org.apache.log4j.Logger;
+import org.jboss.netty.channel.ChannelException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.ttProject.ozouni.base.analyzer.IServerNameAnalyzer;
@@ -34,11 +35,14 @@ public class ServerSendDataHandler implements ISendDataHandler {
 		DataServer server = null;
 		// ポート番号候補として、pidから適当につくることにする
 		int portNumber = Integer.parseInt(pid) % 1000;
-		portNumber += 1000;
+		portNumber += 1025;
 		for(;portNumber < 65535;portNumber += 1000) {
 			try {
 				server = new DataServer(portNumber);
 				break; // break入れないとサーバーが決定しない。
+			}
+			catch(ChannelException ce) {
+				// セキュリティー的に問題があってbindができないときの例外。発生しうるので、気にする必要なし
 			}
 			catch(Exception e) {
 				e.printStackTrace();
