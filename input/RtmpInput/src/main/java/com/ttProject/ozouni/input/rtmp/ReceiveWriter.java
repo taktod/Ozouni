@@ -60,6 +60,7 @@ public class ReceiveWriter implements IReceiveWriter {
 		orderModel.reset();
 		// このタイミングでreportDataにアクセスしてframePtsをリセットしておく
 		signalWorker.getReportData().setFramePts(0);
+		pts = -1; // こっちも初期化しておく。
 	}
 	/**
 	 * {@inheritDoc}
@@ -70,6 +71,7 @@ public class ReceiveWriter implements IReceiveWriter {
 	/**
 	 * {@inheritDoc}
 	 */
+	private long pts = -1;
 	@Override
 	public void write(RtmpMessage message) {
 		try {
@@ -82,6 +84,10 @@ public class ReceiveWriter implements IReceiveWriter {
 			for(FlvTag t : orderModel.getAudioCompleteTag()) {
 				if(t instanceof AudioTag) {
 					AudioTag aTag = (AudioTag)t;
+					if(pts != -1 && pts > aTag.getPts()) {
+						logger.info("flip検出");
+					}
+					pts = aTag.getPts();
 					workModule.pushFrame(aTag.getFrame(), 0x08);
 				}
 			}
