@@ -7,9 +7,12 @@
     "http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
      http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
   <context:annotation-config />
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="location" value="classpath:/ozouni.properties" />
+  </bean>
   <!-- jedisの接続設定 -->
   <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
-    p:host-name="192.168.20.19" p:database="2"/>
+    p:host-name="${redis.server}" p:port="${redis.port}" p:database="${redis.db}"/>
   <!-- serverの名称を確定するanalyzer -->
   <bean class="com.ttProject.ozouni.base.analyzer.IpAddressAnalyzer"/>
   
