@@ -10,6 +10,12 @@ import com.ttProject.frame.IAudioFrame;
 import com.ttProject.frame.IFrame;
 import com.ttProject.frame.IVideoFrame;
 import com.ttProject.ozouni.base.IWorkModule;
+import com.ttProject.xuggle.frame.Packetizer;
+import com.xuggle.xuggler.IAudioResampler;
+import com.xuggle.xuggler.ICodec;
+import com.xuggle.xuggler.IPacket;
+import com.xuggle.xuggler.IStreamCoder;
+import com.xuggle.xuggler.IStreamCoder.Direction;
 
 /**
  * audioデータを変換するworker
@@ -21,11 +27,30 @@ public class AudioWorkerModule {
 	private Logger logger = Logger.getLogger(AudioWorkerModule.class);
 	/** 経過Pts */
 	private long passedPts = 0;
+	/** 処理済みサンプル数 */
+	private long passedSampleNum = 0;
 	/** 映像に対する許可遅延量 */
 	private final long allowedDelayForVideo = 500;
 	/** 最後に処理したaudioFrame */
 	private IAudioFrame lastAudioFrame = null;
 	private final ExecutorService exec;
+
+	/** エンコーダー */
+	private IStreamCoder encoder = null;
+	/** エンコード用処理パケット */
+	private IPacket packet = null;
+
+	/** デコーダー */
+	private IStreamCoder decoder = null;
+	/** デコード用処理パケット */
+	private IPacket decodedPacket = null;
+
+	/** frame -> packet変換 */
+	private Packetizer packetizer = null;
+	/** リサンプラー */
+	private IAudioResampler resampler = null;
+
+	/** 次に処理するモジュール */
 	private IWorkModule workModule = null;
 	/**
 	 * @param workModule
@@ -46,7 +71,16 @@ public class AudioWorkerModule {
 				return t;
 			}
 		};
-		exec = Executors.newCachedThreadPool(factory);
+		// singleThreadにすることで順番に処理できるようにしておく
+		exec = Executors.newSingleThreadExecutor(factory);
+		// 変換用のエンコーダーをつくっておく。
+		IStreamCoder coder = IStreamCoder.make(Direction.ENCODING, ICodec.ID.CODEC_ID_ADPCM_IMA_WAV);
+		coder.setSampleRate(44100);
+		coder.setChannels(1);
+		coder.setBitRate(48000); // 48kにするけど、adpcmでは意味はない
+		encoder = coder;
+		packet = IPacket.make();
+		packetizer = new Packetizer();
 	}
 	/**
 	 * 動画フレームだった場合に動作を調整する
@@ -61,12 +95,9 @@ public class AudioWorkerModule {
 		if(frame.getPts() > passedPts + allowedDelayForVideo) {
 			// frameのptsが経過pts + 許容delayよりも大きい場合
 			// こっちでは挿入する必要あり、ffmpegでは、フレームを適当に挿入してやると、変換を強制することが可能なため
-			passedPts = frame.getPts() - allowedDelayForVideo;
 			// この部分でIAudioSamplesをつかった変換を促す動作が必要になる。
 			logger.info("映像データが先攻しているので、無音データを挿入します");
-//			aFrame.setPts(passedPts);
-//			aFrame.setTimebase(1000);
-//			writeFrame(aFrame, 0x08);
+			insertNoSound(frame.getPts() - allowedDelayForVideo); // ここまでデータをうめておく
 		}
 		return false;
 	}
@@ -101,22 +132,17 @@ public class AudioWorkerModule {
 			// 過去のフレームだったら追加してもffmpegが混乱するだけなので、捨てる
 			return false;
 		}
-		// フレームの前に無音部がある場合は、IAudioSamplesで空白を埋めておく
-		// ここの30はframeデータを確認してきめる
-/*		if(frame.getPts() - 30 > passedPts) {
-			// ffmpegの動作では挿入する必要ない。
-			// xuggleでは必要あり(無音部を自動的に埋める方法がわからないため。)
-			logger.info("無音frameが必要その２:" + (frame.getPts() - 30));
-		}*/
 		return true;
 	}
 	/**
 	 * 特定のptsの位置まで
 	 * @param pts
-	 * @param timebase
 	 */
-	private void insertNoSound(long pts, long timebase) {
-		
+	private void insertNoSound(long pts) {
+		// timebaseは1000強制になっている
+		logger.info(passedPts + " -> " + pts + "までうめておく。");
+		passedPts = pts; // ここまで過ぎたことにしておく。
+		encoder.getSampleRate(); // この
 	}
 	/**
 	 * フレームを受け入れる
@@ -134,5 +160,7 @@ public class AudioWorkerModule {
 		// 特に問題ないので、このframeを書き込む
 		passedPts = frame.getPts();
 		lastAudioFrame = (IAudioFrame)frame;
+		insertNoSound(passedPts);
+//		convertSound(frame);
 	}
 }

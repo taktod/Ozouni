@@ -9,6 +9,8 @@ import com.ttProject.frame.IVideoFrame;
 import com.ttProject.frame.extra.AudioMultiFrame;
 import com.ttProject.frame.extra.VideoMultiFrame;
 import com.ttProject.ozouni.base.IWorkModule;
+import com.ttProject.ozouni.work.xuggle.AudioWorkerModule;
+import com.ttProject.ozouni.work.xuggle.VideoWorkerModule;
 
 /**
  * xuggleをつかってframeを変換する動作
@@ -23,12 +25,15 @@ public class XuggleWorkModule implements IWorkModule {
 	private long ptsDiff = 0;
 	/** リセット判定のinterval、この値以上、過去のデータがきた場合はストリームが再会されたと判定する */
 	private long resetInterval = 1000L;
+	private AudioWorkerModule audioWorkerModule = new AudioWorkerModule();
+	private VideoWorkerModule videoWorkerModule = new VideoWorkerModule();
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public void setWorkModule(IWorkModule workModule) {
-		// 子モジュールにWorkModuleを設定してやればよい
+		audioWorkerModule.setWorkModule(workModule);
+		videoWorkerModule.setWorkModule(workModule);
 	}
 	/**
 	 * {@inheritDoc}
@@ -68,6 +73,8 @@ public class XuggleWorkModule implements IWorkModule {
 		f.setPts(pts);
 		f.setTimebase(1000);
 		// こっちもh264のdtsについてはスルーしておく
-		logger.info(frame);
+//		logger.info(frame);
+		audioWorkerModule.pushFrame(frame, id);
+		videoWorkerModule.pushFrame(frame, id);
 	}
 }
