@@ -146,8 +146,6 @@ public class VideoWorkerModule {
 						if(container instanceof MkvBlockTag) {
 							MkvBlockTag blockTag = (MkvBlockTag)container;
 							IFrame frame = blockTag.getFrame();
-//							logger.info(frame + " pts:" + frame.getPts());
-//							logger.info(blockTag.getTrackId().get());
 							workModule.pushFrame(frame, 0x09);
 						}
 					}
@@ -164,7 +162,6 @@ public class VideoWorkerModule {
 		writer.addContainer(headerTag);
 	}
 	private void writeFrame(IFrame frame, int id) throws Exception {
-//		logger.info(frame + " pts:" + frame.getPts());
 		writer.addFrame(id, frame);
 	}
 }

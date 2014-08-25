@@ -107,14 +107,12 @@ public class AudioWorkerModule {
 		}
 		// 音声データが１つもきていない場合は、追加する無音frameが決定しないので、なにもしない
 		if(lastAudioFrame == null) {
-//			return false;
 			lastAudioFrame = Mp3Frame.getMutedFrame(44100, 1, 16);
 		}
 		if(frame.getPts() > passedPts + allowedDelayForVideo) {
 			// frameのptsが経過pts + 許容delayよりも大きい場合
 			// こっちでは挿入する必要あり、ffmpegでは、フレームを適当に挿入してやると、変換を強制することが可能なため
 			passedPts = frame.getPts() - allowedDelayForVideo;
-//			logger.info("無音frameが必要:" + passedPts);
 			AudioFrame aFrame = null;
 			switch(lastAudioFrame.getCodecType()) {
 			case AAC:
@@ -133,6 +131,10 @@ public class AudioWorkerModule {
 			case SPEEX:
 				aFrame = SpeexFrame.getMutedFrame(lastAudioFrame.getSampleRate(), lastAudioFrame.getChannel(), lastAudioFrame.getBit());
 				break;
+			case PCM_ALAW:
+				throw new Exception("pcm_alawの無音frameは未確認です。");
+			case PCM_MULAW:
+				throw new Exception("pcm_mulawの無音frameは未確認です。");
 			case ADPCM_IMA_WAV:
 			case OPUS:
 			case VORBIS:
@@ -174,12 +176,6 @@ public class AudioWorkerModule {
 			// 過去のフレームだったら追加してもffmpegが混乱するだけなので、捨てる
 			return false;
 		}
-		// ここの30はframeデータを確認してきめる
-/*		if(frame.getPts() - 30 > passedPts) {
-			// ffmpegの動作では挿入する必要ない。
-			// xuggleでは必要あり(無音部を自動的に埋める方法がわからないため。)
-			logger.info("無音frameが必要その２:" + (frame.getPts() - 30));
-		}*/
 		return true;
 	}
 	/**
@@ -218,8 +214,6 @@ public class AudioWorkerModule {
 						if(container instanceof MkvBlockTag) {
 							MkvBlockTag blockTag = (MkvBlockTag)container;
 							IFrame frame = blockTag.getFrame();
-//							logger.info(frame + " pts:" + frame.getPts());
-//							logger.info(blockTag.getTrackId().get());
 							workModule.pushFrame(frame, 0x08);
 						}
 					}
@@ -237,7 +231,6 @@ public class AudioWorkerModule {
 		writer.addContainer(headerTag);
 	}
 	private void writeFrame(IFrame frame, int id) throws Exception {
-//		logger.info(frame + " pts:" + frame.getPts());
 		writer.addFrame(id, frame);
 	}
 }
