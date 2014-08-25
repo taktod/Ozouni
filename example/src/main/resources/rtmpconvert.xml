@@ -37,7 +37,9 @@
   </bean>
 
   <!-- 作業モジュール -->
-  <bean id="workModule" class="com.ttProject.ozouni.work.XuggleWorkModule"/>
+  <bean id="workModule" class="com.ttProject.ozouni.work.XuggleWorkModule">
+    <property name="WorkModule" ref="outputModule"/>
+  </bean>
 
   <!-- 入力モジュール -->
   <bean class="com.ttProject.ozouni.input.RtmpInputModule">

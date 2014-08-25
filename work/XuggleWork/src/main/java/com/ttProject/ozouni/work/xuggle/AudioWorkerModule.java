@@ -245,7 +245,7 @@ public class AudioWorkerModule {
 			sampleConsumed += retval;
 			if(packet.isComplete()) {
 				IFrame frame = depacketizer.getFrame(encoder, packet);
-				logger.info(frame.getCodecType() + " " + frame.getPts() + " / " + frame.getTimebase());
+//				logger.info(frame.getCodecType() + " " + frame.getPts() + " / " + frame.getTimebase());
 				if(workModule != null) {
 					if(frame instanceof AudioMultiFrame) {
 						AudioMultiFrame multiFrame = (AudioMultiFrame)frame;
