@@ -26,7 +26,7 @@ public class XuggleWorkModule implements IWorkModule {
 	/** リセット判定のinterval、この値以上、過去のデータがきた場合はストリームが再会されたと判定する */
 	private long resetInterval = 1000L;
 	private AudioWorkerModule audioWorkerModule = new AudioWorkerModule(8);
-	private VideoWorkerModule videoWorkerModule = new VideoWorkerModule();
+	private VideoWorkerModule videoWorkerModule = new VideoWorkerModule(9);
 	/**
 	 * {@inheritDoc}
 	 */

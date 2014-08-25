@@ -36,7 +36,9 @@ public class AudioWorkerModule {
 	private long passedSampleNum = 0;
 	/** 映像に対する許可遅延量 */
 	private final long allowedDelayForVideo = 500;
-	private int id; // 処理するID
+	/** 処理するID */
+	private final int id;
+	/** Threadのexecutor */
 	private final ExecutorService exec;
 
 	/** エンコーダー */
@@ -221,6 +223,8 @@ public class AudioWorkerModule {
 			if(retval <= 0) {
 				throw new Exception("音声のリサンプルに失敗しました。");
 			}
+			spl.setPts(samples.getPts());
+			spl.setTimeBase(samples.getTimeBase());
 			return spl;
 		}
 		else {
@@ -242,16 +246,14 @@ public class AudioWorkerModule {
 			if(packet.isComplete()) {
 				IFrame frame = depacketizer.getFrame(encoder, packet);
 				logger.info(frame.getCodecType() + " " + frame.getPts() + " / " + frame.getTimebase());
-				if(frame instanceof AudioMultiFrame) {
-					AudioMultiFrame multiFrame = (AudioMultiFrame)frame;
-					if(workModule != null) {
+				if(workModule != null) {
+					if(frame instanceof AudioMultiFrame) {
+						AudioMultiFrame multiFrame = (AudioMultiFrame)frame;
 						for(IAudioFrame aFrame : multiFrame.getFrameList()) {
 							workModule.pushFrame(aFrame, id);
 						}
 					}
-				}
-				else {
-					if(workModule != null) {
+					else {
 						workModule.pushFrame(frame, id);
 					}
 				}
@@ -270,7 +272,8 @@ public class AudioWorkerModule {
 				if(findFormat == null) {
 					findFormat = format;
 				}
-				if(findFormat == IAudioSamples.Format.FMT_S16) {
+				if(format == IAudioSamples.Format.FMT_S16) {
+					findFormat = format;
 					break;
 				}
 			}
