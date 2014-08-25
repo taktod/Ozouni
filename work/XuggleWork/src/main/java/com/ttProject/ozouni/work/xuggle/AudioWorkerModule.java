@@ -10,6 +10,7 @@ import com.ttProject.frame.IAudioFrame;
 import com.ttProject.frame.IFrame;
 import com.ttProject.frame.IVideoFrame;
 import com.ttProject.ozouni.base.IWorkModule;
+import com.ttProject.util.HexUtil;
 import com.ttProject.xuggle.frame.Packetizer;
 import com.xuggle.xuggler.IAudioResampler;
 import com.xuggle.xuggler.IAudioSamples;
@@ -73,7 +74,7 @@ public class AudioWorkerModule {
 		// singleThreadにすることで順番に処理できるようにしておく
 		exec = Executors.newSingleThreadExecutor(factory);
 		// 変換用のエンコーダーをつくっておく。
-		IStreamCoder coder = IStreamCoder.make(Direction.ENCODING, ICodec.ID.CODEC_ID_ADPCM_IMA_WAV);
+		IStreamCoder coder = IStreamCoder.make(Direction.ENCODING, ICodec.ID.CODEC_ID_AAC);
 		coder.setSampleRate(44100);
 		coder.setChannels(1);
 		coder.setBitRate(48000); // 48kにするけど、adpcmでは意味はない
@@ -111,7 +112,7 @@ public class AudioWorkerModule {
 		if(!(frame instanceof IAudioFrame)) {
 			return false;
 		}
-		IAudioFrame aFrame = (IAudioFrame)frame;
+//		IAudioFrame aFrame = (IAudioFrame)frame;
 		// あとは問題ないので、frameを追記しておく。
 		// 音声フレームだった場合
 		if(frame.getPts() < passedPts) {
@@ -228,6 +229,7 @@ public class AudioWorkerModule {
 			if(packet.isComplete()) {
 				logger.info("変換できた");
 				logger.info(packet);
+				logger.info(HexUtil.toHex(packet.getData().getByteArray(0, packet.getSize())));
 			}
 		}
 	}

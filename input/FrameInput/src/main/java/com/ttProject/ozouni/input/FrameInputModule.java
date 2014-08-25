@@ -13,6 +13,7 @@ import com.ttProject.frame.IAnalyzer;
 import com.ttProject.frame.IFrame;
 import com.ttProject.frame.NullFrame;
 import com.ttProject.frame.VideoAnalyzer;
+import com.ttProject.frameutil.AnalyzerChecker;
 import com.ttProject.nio.channels.ByteReadChannel;
 import com.ttProject.nio.channels.IReadChannel;
 import com.ttProject.ozouni.base.IInputModule;
@@ -20,7 +21,6 @@ import com.ttProject.ozouni.base.IWorkModule;
 import com.ttProject.ozouni.base.ReportData;
 import com.ttProject.ozouni.dataHandler.IDataListener;
 import com.ttProject.ozouni.dataHandler.IReceiveDataHandler;
-import com.ttProject.ozouni.frame.AnalyzerChecker;
 import com.ttProject.ozouni.frame.ShareFrameData;
 import com.ttProject.ozouni.reportHandler.IReportHandler;
 
