@@ -12,6 +12,7 @@ import com.ttProject.frame.IVideoFrame;
 import com.ttProject.ozouni.base.IWorkModule;
 import com.ttProject.xuggle.frame.Packetizer;
 import com.xuggle.xuggler.IAudioResampler;
+import com.xuggle.xuggler.IAudioSamples;
 import com.xuggle.xuggler.ICodec;
 import com.xuggle.xuggler.IPacket;
 import com.xuggle.xuggler.IStreamCoder;
@@ -31,8 +32,6 @@ public class AudioWorkerModule {
 	private long passedSampleNum = 0;
 	/** 映像に対する許可遅延量 */
 	private final long allowedDelayForVideo = 500;
-	/** 最後に処理したaudioFrame */
-	private IAudioFrame lastAudioFrame = null;
 	private final ExecutorService exec;
 
 	/** エンコーダー */
@@ -113,18 +112,6 @@ public class AudioWorkerModule {
 			return false;
 		}
 		IAudioFrame aFrame = (IAudioFrame)frame;
-		// データがかわったことについては、IStreamCoder側で調整できるので問題なし
-/*		if(lastAudioFrame != null) {
-			// フレームデータが入れ替わっていないか確認する必要あり
-			if(lastAudioFrame.getCodecType() != aFrame.getCodecType()
-			|| lastAudioFrame.getChannel() != aFrame.getChannel()
-			|| lastAudioFrame.getSampleRate() != aFrame.getSampleRate()
-			|| lastAudioFrame.getBit() != aFrame.getBit()) {
-				logger.info("データが変更になっているので、なんとかしておかないとだめ。");
-				// 今までの接続があったら切っておく
-//				openFlvTagWriter();
-			}
-		}*/
 		// あとは問題ないので、frameを追記しておく。
 		// 音声フレームだった場合
 		if(frame.getPts() < passedPts) {
@@ -138,11 +125,136 @@ public class AudioWorkerModule {
 	 * 特定のptsの位置まで
 	 * @param pts
 	 */
-	private void insertNoSound(long pts) {
+	private void insertNoSound(long pts) throws Exception {
 		// timebaseは1000強制になっている
 		logger.info(passedPts + " -> " + pts + "までうめておく。");
+		logger.info("targetSampleNum:" + (pts * encoder.getSampleRate() / 1000));
+		long filledSampleNum = (pts * encoder.getSampleRate() / 1000 - passedSampleNum);
+		if(filledSampleNum == 0) {
+			// 特に埋める必要がないなら、処理しない
+			return;
+		}
+		logger.info("埋めるsample数:" + filledSampleNum);
+		passedSampleNum += filledSampleNum;
+		IAudioSamples samples = IAudioSamples.make(encoder.getSampleRate(), encoder.getChannels(), encoder.getSampleFormat());
+		samples.setComplete(true, filledSampleNum, encoder.getSampleRate(), encoder.getChannels(), encoder.getSampleFormat(), passedPts);
+		encodeSound(samples);
 		passedPts = pts; // ここまで過ぎたことにしておく。
-		encoder.getSampleRate(); // この
+	}
+	/**
+	 * 音声データをデコードします。
+	 * @param audioFrame
+	 */
+	private void decodeSound(IAudioFrame aFrame) throws Exception {
+		// このフレームをデコードして、何サンプル取得できたか確認しておきたいところ。
+		decoder = packetizer.getDecoder(aFrame, decoder);
+		if(decoder == null) {
+			logger.warn("フレームのデコーダーが決定できませんでした。");
+			return;
+		}
+		if(!decoder.isOpen()) {
+			logger.info("デコーダーを開きます。");
+			if(decoder.open(null, null) < 0) {
+				throw new Exception("デコーダーが開けませんでした");
+			}
+		}
+		IPacket pkt = packetizer.getPacket(aFrame, decodedPacket);
+		if(pkt == null) {
+			return;
+		}
+		decodedPacket = pkt;
+		logger.info(decodedPacket);
+		IAudioSamples samples = IAudioSamples.make(aFrame.getSampleNum(), decoder.getChannels());
+		int offset = 0;
+		while(offset < decodedPacket.getSize()) {
+			int bytesDecoded = decoder.decodeAudio(samples, decodedPacket, offset);
+			if(bytesDecoded < 0) {
+				throw new Exception("データのデコードに失敗しました。");
+			}
+			offset += bytesDecoded;
+			if(samples.isComplete()) {
+				logger.info(samples);
+				// ここで必要だったらリサンプル処理が必要
+				samples = getResampled(samples);
+				// このサンプルデータを処理にまわしておけばよさげ。
+				passedSampleNum += samples.getNumSamples();
+				encodeSound(samples);
+			}
+		}
+	}
+	/**
+	 * リサンプルをかけて、周波数を変換しておきます。
+	 * @param samples
+	 * @return
+	 */
+	private IAudioSamples getResampled(IAudioSamples samples) throws Exception {
+		if(samples.getSampleRate() != encoder.getSampleRate()
+		|| samples.getFormat()     != encoder.getSampleFormat()
+		|| samples.getChannels()   != encoder.getChannels()) {
+			if(resampler == null
+			||    (samples.getSampleRate() != resampler.getInputRate()
+				|| samples.getFormat()     != resampler.getInputFormat()
+				|| samples.getChannels()   != resampler.getInputChannels())) {
+				// リサンプラーがない、もしくは、リサンプラーの入力フォーマットと、現状の入力フォーマットが違う場合
+				// リサンプラーを作り直す
+				resampler = IAudioResampler.make(
+						encoder.getChannels(), samples.getChannels(),
+						encoder.getSampleRate(), samples.getSampleRate(),
+						encoder.getSampleFormat(), samples.getFormat());
+			}
+			IAudioSamples spl = IAudioSamples.make(1024, encoder.getChannels());
+			int retval = resampler.resample(spl, samples, samples.getNumSamples());
+			if(retval <= 0) {
+				throw new Exception("音声のリサンプルに失敗しました。");
+			}
+			return spl;
+		}
+		else {
+			return samples;
+		}
+	}
+	/**
+	 * エンコード処理を実施します。
+	 */
+	private void encodeSound(IAudioSamples samples) throws Exception {
+		// ここで必要だったらencoderを開く必要あり
+		int sampleConsumed = 0;
+		while(sampleConsumed < samples.getNumSamples()) {
+			int retval = encoder.encodeAudio(packet, samples, sampleConsumed);
+			if(retval < 0) {
+				throw new Exception("変換失敗");
+			}
+			sampleConsumed += retval;
+			if(packet.isComplete()) {
+				logger.info("変換できた");
+				logger.info(packet);
+			}
+		}
+	}
+	/**
+	 * エンコーダーを開きます。
+	 * @throws Exception
+	 */
+	private void openEncoder() throws Exception {
+		if(!encoder.isOpen()) {
+			ICodec codec = encoder.getCodec();
+			IAudioSamples.Format findFormat = null;
+			for(IAudioSamples.Format format : codec.getSupportedAudioSampleFormats()) {
+				if(findFormat == null) {
+					findFormat = format;
+				}
+				if(findFormat == IAudioSamples.Format.FMT_S16) {
+					break;
+				}
+			}
+			if(findFormat == null) {
+				throw new Exception("対応しているAudioFormatが不明です。");
+			}
+			encoder.setSampleFormat(findFormat);
+			if(encoder.open(null, null) < 0) {
+				throw new Exception("音声エンコーダーが開けませんでした");
+			}
+		}
 	}
 	/**
 	 * フレームを受け入れる
@@ -151,6 +263,7 @@ public class AudioWorkerModule {
 	 * @throws Exception
 	 */
 	public void pushFrame(IFrame frame, int id) throws Exception {
+		openEncoder();
 		if(!checkVideoFrame(frame)) {
 			return;
 		}
@@ -158,9 +271,9 @@ public class AudioWorkerModule {
 			return;
 		}
 		// 特に問題ないので、このframeを書き込む
-		passedPts = frame.getPts();
-		lastAudioFrame = (IAudioFrame)frame;
-		insertNoSound(passedPts);
-//		convertSound(frame);
+		IAudioFrame aFrame = (IAudioFrame) frame;
+		insertNoSound(aFrame.getPts());
+		decodeSound(aFrame);
+		passedPts = aFrame.getPts() + 1000 * aFrame.getSampleNum() / aFrame.getSampleRate();
 	}
 }
