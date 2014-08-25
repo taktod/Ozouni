@@ -30,7 +30,7 @@ flvで扱うことができるデータ特化した、ffmpegで変換を実施�
     </dependency>
     <dependency>
       <groupId>com.ttProject</groupId>
-      <artifactId>myLib.xuggle.frame</artifactId>
+      <artifactId>myLib.xuggle.frameutil</artifactId>
       <version>0.0.2-SNAPSHOT</version>
     </dependency>
   </dependencies>

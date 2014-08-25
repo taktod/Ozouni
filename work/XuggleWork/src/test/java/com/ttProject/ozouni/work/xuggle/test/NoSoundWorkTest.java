@@ -6,7 +6,7 @@ import org.junit.Test;
 import com.ttProject.frame.IAudioFrame;
 import com.ttProject.frame.aac.AacFrame;
 import com.ttProject.frame.extra.AudioMultiFrame;
-import com.ttProject.xuggle.frame.Packetizer;
+import com.ttProject.xuggle.frameutil.Packetizer;
 import com.xuggle.xuggler.IAudioSamples;
 import com.xuggle.xuggler.ICodec;
 import com.xuggle.xuggler.IPacket;

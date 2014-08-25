@@ -9,9 +9,10 @@ import org.apache.log4j.Logger;
 import com.ttProject.frame.IAudioFrame;
 import com.ttProject.frame.IFrame;
 import com.ttProject.frame.IVideoFrame;
+import com.ttProject.frame.extra.AudioMultiFrame;
 import com.ttProject.ozouni.base.IWorkModule;
-import com.ttProject.util.HexUtil;
-import com.ttProject.xuggle.frame.Packetizer;
+import com.ttProject.xuggle.frameutil.Depacketizer;
+import com.ttProject.xuggle.frameutil.Packetizer;
 import com.xuggle.xuggler.IAudioResampler;
 import com.xuggle.xuggler.IAudioSamples;
 import com.xuggle.xuggler.ICodec;
@@ -22,6 +23,8 @@ import com.xuggle.xuggler.IStreamCoder.Direction;
 /**
  * audioデータを変換するworker
  * もともとつくっていたiOSLiveTurboのデモ動作では、frameを取得したところから別threadで実行していたので、それを踏襲する形にしておきたいと思う。
+ * 
+ * あとは、executorをつかって、処理をする形にすれば、処理の高速化が図れる
  * @author taktod
  */
 public class AudioWorkerModule {
@@ -33,6 +36,7 @@ public class AudioWorkerModule {
 	private long passedSampleNum = 0;
 	/** 映像に対する許可遅延量 */
 	private final long allowedDelayForVideo = 500;
+	private int id; // 処理するID
 	private final ExecutorService exec;
 
 	/** エンコーダー */
@@ -47,6 +51,8 @@ public class AudioWorkerModule {
 
 	/** frame -> packet変換 */
 	private Packetizer packetizer = null;
+	/** packet -> frame変換 */
+	private Depacketizer depacketizer = null;
 	/** リサンプラー */
 	private IAudioResampler resampler = null;
 
@@ -61,7 +67,8 @@ public class AudioWorkerModule {
 	/**
 	 * コンストラクタ
 	 */
-	public AudioWorkerModule() {
+	public AudioWorkerModule(int id) {
+		this.id = id;
 		ThreadFactory factory = new ThreadFactory() {
 			@Override
 			public Thread newThread(Runnable r) {
@@ -74,13 +81,14 @@ public class AudioWorkerModule {
 		// singleThreadにすることで順番に処理できるようにしておく
 		exec = Executors.newSingleThreadExecutor(factory);
 		// 変換用のエンコーダーをつくっておく。
-		IStreamCoder coder = IStreamCoder.make(Direction.ENCODING, ICodec.ID.CODEC_ID_AAC);
+		IStreamCoder coder = IStreamCoder.make(Direction.ENCODING, ICodec.ID.CODEC_ID_ADPCM_IMA_WAV);
 		coder.setSampleRate(44100);
 		coder.setChannels(1);
 		coder.setBitRate(48000); // 48kにするけど、adpcmでは意味はない
 		encoder = coder;
 		packet = IPacket.make();
 		packetizer = new Packetizer();
+		depacketizer = new Depacketizer();
 	}
 	/**
 	 * 動画フレームだった場合に動作を調整する
@@ -96,7 +104,6 @@ public class AudioWorkerModule {
 			// frameのptsが経過pts + 許容delayよりも大きい場合
 			// こっちでは挿入する必要あり、ffmpegでは、フレームを適当に挿入してやると、変換を強制することが可能なため
 			// この部分でIAudioSamplesをつかった変換を促す動作が必要になる。
-			logger.info("映像データが先攻しているので、無音データを挿入します");
 			insertNoSound(frame.getPts() - allowedDelayForVideo); // ここまでデータをうめておく
 		}
 		return false;
@@ -127,19 +134,27 @@ public class AudioWorkerModule {
 	 * @param pts
 	 */
 	private void insertNoSound(long pts) throws Exception {
+		// ここから先を別threadにやらせておけばいいと思う
 		// timebaseは1000強制になっている
-		logger.info(passedPts + " -> " + pts + "までうめておく。");
-		logger.info("targetSampleNum:" + (pts * encoder.getSampleRate() / 1000));
 		long filledSampleNum = (pts * encoder.getSampleRate() / 1000 - passedSampleNum);
 		if(filledSampleNum == 0) {
 			// 特に埋める必要がないなら、処理しない
 			return;
 		}
-		logger.info("埋めるsample数:" + filledSampleNum);
 		passedSampleNum += filledSampleNum;
-		IAudioSamples samples = IAudioSamples.make(encoder.getSampleRate(), encoder.getChannels(), encoder.getSampleFormat());
+		final IAudioSamples samples = IAudioSamples.make(encoder.getSampleRate(), encoder.getChannels(), encoder.getSampleFormat());
 		samples.setComplete(true, filledSampleNum, encoder.getSampleRate(), encoder.getChannels(), encoder.getSampleFormat(), passedPts);
-		encodeSound(samples);
+		exec.execute(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					encodeSound(samples);
+				}
+				catch(Exception e) {
+					logger.error("無音音声の追記処理で例外が発生しました", e);
+				}
+			}
+		});
 		passedPts = pts; // ここまで過ぎたことにしておく。
 	}
 	/**
@@ -164,7 +179,6 @@ public class AudioWorkerModule {
 			return;
 		}
 		decodedPacket = pkt;
-		logger.info(decodedPacket);
 		IAudioSamples samples = IAudioSamples.make(aFrame.getSampleNum(), decoder.getChannels());
 		int offset = 0;
 		while(offset < decodedPacket.getSize()) {
@@ -174,7 +188,6 @@ public class AudioWorkerModule {
 			}
 			offset += bytesDecoded;
 			if(samples.isComplete()) {
-				logger.info(samples);
 				// ここで必要だったらリサンプル処理が必要
 				samples = getResampled(samples);
 				// このサンプルデータを処理にまわしておけばよさげ。
@@ -227,9 +240,21 @@ public class AudioWorkerModule {
 			}
 			sampleConsumed += retval;
 			if(packet.isComplete()) {
-				logger.info("変換できた");
-				logger.info(packet);
-				logger.info(HexUtil.toHex(packet.getData().getByteArray(0, packet.getSize())));
+				IFrame frame = depacketizer.getFrame(encoder, packet);
+				logger.info(frame.getCodecType() + " " + frame.getPts() + " / " + frame.getTimebase());
+				if(frame instanceof AudioMultiFrame) {
+					AudioMultiFrame multiFrame = (AudioMultiFrame)frame;
+					if(workModule != null) {
+						for(IAudioFrame aFrame : multiFrame.getFrameList()) {
+							workModule.pushFrame(aFrame, id);
+						}
+					}
+				}
+				else {
+					if(workModule != null) {
+						workModule.pushFrame(frame, id);
+					}
+				}
 			}
 		}
 	}
@@ -272,10 +297,24 @@ public class AudioWorkerModule {
 		if(!checkAudioFrame(frame)) {
 			return;
 		}
+		if(this.id != id) {
+			// idが一致しないストリームについては、処理しません
+			return;
+		}
 		// 特に問題ないので、このframeを書き込む
-		IAudioFrame aFrame = (IAudioFrame) frame;
+		final IAudioFrame aFrame = (IAudioFrame) frame;
 		insertNoSound(aFrame.getPts());
-		decodeSound(aFrame);
+		exec.execute(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					decodeSound(aFrame);
+				}
+				catch(Exception e) {
+					logger.error("デコード処理で例外が発生しました。", e);
+				}
+			}
+		});
 		passedPts = aFrame.getPts() + 1000 * aFrame.getSampleNum() / aFrame.getSampleRate();
 	}
 }
