@@ -71,7 +71,7 @@ public class XuggleWorkModule implements IWorkModule {
 		// flvしか扱わないつもりなので、このタイミングでptsを強制的に直してしまう。
 		Frame f = (Frame)frame;
 		f.setPts(pts);
-		f.setTimebase(1000);
+		f.setTimebase(1000); // こっちもtimebaseでミリ秒を強制しているのが、ちょっと微妙かも・・・
 		// こっちもh264のdtsについてはスルーしておく
 //		logger.info(frame);
 		audioWorkerModule.pushFrame(frame, id);

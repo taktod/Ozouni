@@ -77,7 +77,7 @@ public class FfmpegWorkModule implements IWorkModule {
 		// flvしか扱わないつもりなので、このタイミングでptsを強制的に直してしまう。
 		Frame f = (Frame)frame;
 		f.setPts(pts);
-		f.setTimebase(1000);
+		f.setTimebase(1000); // timebaseミリ秒を強制していますが、flv以外を扱うなら微妙かも・・・
 		// h264のdtsについては、あとで考えることにしよう。
 		videoWorkerModule.pushFrame(frame, id);
 		audioWorkerModule.pushFrame(frame, id);
