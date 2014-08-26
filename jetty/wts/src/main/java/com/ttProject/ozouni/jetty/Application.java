@@ -23,7 +23,6 @@ import com.ttProject.ozouni.wts.AppConfig;
  */
 public class Application implements IApplication {
 	/** 動作ロガー */
-	@SuppressWarnings("unused")
 	private static Logger logger = Logger.getLogger(Application.class);
 	private static ApplicationMonitor appMonitor = new ApplicationMonitor();
 	public static IApplication getInstance(String path) {
