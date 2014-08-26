@@ -14,6 +14,7 @@ import com.ttProject.ozouni.work.xuggle.VideoWorkerModule;
 
 /**
  * xuggleをつかってframeを変換する動作
+ * ミリ秒単位で24日分いけるっぽいから、よっぽどひどいのでない限りいけそうですね。(overflow問題)
  * @author taktod
  */
 public class XuggleWorkModule implements IWorkModule {
