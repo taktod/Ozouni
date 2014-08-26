@@ -27,7 +27,7 @@ import com.xuggle.xuggler.IStreamCoder.Direction;
  * あとは、executorをつかって、処理をする形にすれば、処理の高速化が図れる
  * @author taktod
  */
-public class AudioWorkerModule {
+public class AudioWorkerModule implements IWorkModule {
 	/** ロガー */
 	private Logger logger = Logger.getLogger(AudioWorkerModule.class);
 	/** 経過Pts */
@@ -63,6 +63,7 @@ public class AudioWorkerModule {
 	/**
 	 * @param workModule
 	 */
+	@Override
 	public void setWorkModule(IWorkModule workModule) {
 		this.workModule = workModule;
 	}
@@ -292,6 +293,7 @@ public class AudioWorkerModule {
 	 * @param id
 	 * @throws Exception
 	 */
+	@Override
 	public void pushFrame(IFrame frame, int id) throws Exception {
 		openEncoder();
 		if(!checkVideoFrame(frame)) {

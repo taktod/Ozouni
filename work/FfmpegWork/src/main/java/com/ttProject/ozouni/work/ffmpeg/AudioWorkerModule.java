@@ -49,7 +49,7 @@ import com.ttProject.pipe.PipeManager;
  * (iOSLiveTurboの動作では、音声データの連続が動作の起点になるため、ぬけている部分があると困る。)
  * @author taktod
  */
-public class AudioWorkerModule {
+public class AudioWorkerModule implements IWorkModule {
 	/** ロガー */
 	private Logger logger = Logger.getLogger(AudioWorkerModule.class);
 	/** 経過Pts */
@@ -67,6 +67,7 @@ public class AudioWorkerModule {
 	/**
 	 * @param workModule
 	 */
+	@Override
 	public void setWorkModule(IWorkModule workModule) {
 		this.workModule = workModule;
 	}
@@ -184,6 +185,7 @@ public class AudioWorkerModule {
 	 * @param id
 	 * @throws Exception
 	 */
+	@Override
 	public void pushFrame(IFrame frame, int id) throws Exception {
 		if(!checkVideoFrame(frame)) {
 			return;

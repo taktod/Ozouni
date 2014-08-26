@@ -1,5 +1,8 @@
 package com.ttProject.ozouni.work;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 
 import com.ttProject.frame.Frame;
@@ -9,43 +12,43 @@ import com.ttProject.frame.IVideoFrame;
 import com.ttProject.frame.extra.AudioMultiFrame;
 import com.ttProject.frame.extra.VideoMultiFrame;
 import com.ttProject.ozouni.base.IWorkModule;
-import com.ttProject.ozouni.work.ffmpeg.AudioWorkerModule;
-import com.ttProject.ozouni.work.ffmpeg.VideoWorkerModule;
 
 /**
- * ffmpegを使ってframeを変換する動作
- * h264のdtsがある場合の動作に大いに問題があるはず。(いまのところそんなデータは見たことないので問題視しないけど)
- * TODO ffmpegの変換コマンド等を外部からの設定で動作できるようにしておきたいところ・・・
- * あと、flv特化しているので、そのあたり調整しておかないと・・・せめて名前だけでも・・・
+ * ffmpegやxuggleに変換を促すために、入力frameをミリ秒による単純増加データにソートします。
  * @author taktod
  */
-public class FfmpegWorkModule implements IWorkModule {
+public class OneLineWorkModule implements IWorkModule {
 	/** ロガー */
-	private Logger logger = Logger.getLogger(FfmpegWorkModule.class);
+	private Logger logger = Logger.getLogger(OneLineWorkModule.class);
 	/** 処理済みpts値 */
 	private long passedPts = 0;
 	/** 再生のやり直し等で追加される、ptsの差分値 */
 	private long ptsDiff = 0;
 	/** リセット判定のinterval、この値以上、過去のデータがきた場合は、ストリームが再開されていると判定しておきます */
 	private long resetInterval = 1000L;
-	/** 映像の処理module */
-	private VideoWorkerModule videoWorkerModule = new VideoWorkerModule();
-	/** 音声の処理module */
-	private AudioWorkerModule audioWorkerModule = new AudioWorkerModule();
+	/** 次の処理に回すリスト */
+	private List<IWorkModule> workModules = new ArrayList<IWorkModule>();
 	/**
-	 * 出力モジュールを設定
-	 * @param outputModule
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void setWorkModule(IWorkModule workModule) {
-		videoWorkerModule.setWorkModule(workModule);
-		audioWorkerModule.setWorkModule(workModule);
+		// こっちは単体のworkModule用の動作
+		workModules.add(workModule);
+	}
+	/**
+	 * 複数のworkModuleを一括して付加するためのプロパティ
+	 * @param workModules Listの形で追加してほしい
+	 */
+	public void setWorkList(List<IWorkModule> workModules) {
+		this.workModules.addAll(workModules);
 	}
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public void pushFrame(IFrame frame, int id) throws Exception {
+		// マルチフレームは分解しておきます。
 		if(frame instanceof AudioMultiFrame) {
 			AudioMultiFrame multiFrame = (AudioMultiFrame)frame;
 			for(IAudioFrame aFrame : multiFrame.getFrameList()) {
@@ -74,12 +77,11 @@ public class FfmpegWorkModule implements IWorkModule {
 		if(pts > passedPts) {
 			passedPts = pts;
 		}
-		// flvしか扱わないつもりなので、このタイミングでptsを強制的に直してしまう。
 		Frame f = (Frame)frame;
 		f.setPts(pts);
 		f.setTimebase(1000); // timebaseミリ秒を強制していますが、flv以外を扱うなら微妙かも・・・
-		// h264のdtsについては、あとで考えることにしよう。
-		videoWorkerModule.pushFrame(frame, id);
-		audioWorkerModule.pushFrame(frame, id);
+		for(IWorkModule workModule : workModules) {
+			workModule.pushFrame(frame, id);
+		}
 	}
 }
