@@ -26,7 +26,7 @@ import com.ttProject.pipe.PipeManager;
  * 映像の動作について、実行しておく
  * @author taktod
  */
-public class VideoWorkerModule {
+public class VideoWorkerModule implements IWorkModule {
 	/** ロガー */
 	private Logger logger = Logger.getLogger(VideoWorkerModule.class);
 	/** 経過Pts */
@@ -42,6 +42,7 @@ public class VideoWorkerModule {
 	/**
 	 * @param workModule
 	 */
+	@Override
 	public void setWorkModule(IWorkModule workModule) {
 		this.workModule = workModule;
 	}
@@ -114,6 +115,7 @@ public class VideoWorkerModule {
 	 * @param id
 	 * @throws Exception
 	 */
+	@Override
 	public void pushFrame(IFrame frame, int id) throws Exception {
 		// 音声フレームとの兼ね合いを調べる
 		if(!checkAudioFrame(frame)) {
