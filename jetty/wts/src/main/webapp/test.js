@@ -110,8 +110,8 @@ var ats = 0;
 var canvas = document.getElementById("target");
 var ctx = canvas.getContext("2d");
 // websocket経由で対象サーバーに接続する。
-//var ws = new WebSocket("ws://192.168.11.2:8080/");
-var ws = new WebSocket("ws://192.168.20.155:8080/wts/123");
+var ws = new WebSocket("ws://localhost:8080/123");
+//var ws = new WebSocket("ws://192.168.20.155:8080/wts/123");
 ws.onopen = function() {
 	// 接続したとき(まぁどうでもいい)
 	console.log("opened");

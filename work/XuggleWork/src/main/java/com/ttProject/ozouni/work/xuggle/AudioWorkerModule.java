@@ -22,9 +22,6 @@ import com.xuggle.xuggler.IStreamCoder.Direction;
 
 /**
  * audioデータを変換するworker
- * もともとつくっていたiOSLiveTurboのデモ動作では、frameを取得したところから別threadで実行していたので、それを踏襲する形にしておきたいと思う。
- * 
- * あとは、executorをつかって、処理をする形にすれば、処理の高速化が図れる
  * @author taktod
  */
 public class AudioWorkerModule implements IWorkModule {
