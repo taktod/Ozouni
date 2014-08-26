@@ -18,6 +18,7 @@ import com.xuggle.xuggler.IAudioSamples;
 import com.xuggle.xuggler.ICodec;
 import com.xuggle.xuggler.IPacket;
 import com.xuggle.xuggler.IStreamCoder;
+import com.xuggle.xuggler.IStreamCoder.Direction;
 
 /**
  * xuggleをつかった音声の変換モジュール
@@ -32,11 +33,17 @@ public class XuggleAudioWorkModule implements IWorkModule {
 	/** 処理済みサンプル数 */
 	private long passedSampleNum = 0;
 	/** 映像に対する許可遅延量 */
-	private long allowedDelayForVideo = 500;
+	private long allowedDelay = 500;
 	/** 処理するID */
 	private int id;
 	/** Threadのexecutor */
 	private final ExecutorService exec;
+
+	/** エンコード情報 */
+	private int channels;
+	private int bitRate;
+	private int sampleRate;
+	private ICodec.ID codecId;
 
 	/** エンコーダー */
 	private IStreamCoder encoder = null;
@@ -63,6 +70,24 @@ public class XuggleAudioWorkModule implements IWorkModule {
 	@Override
 	public void setWorkModule(IWorkModule workModule) {
 		this.workModule = workModule;
+	}
+	public void setChannels(int channels) {
+		this.channels = channels;
+	}
+	public void setBitRate(int bitRate) {
+		this.bitRate = bitRate;
+	}
+	public void setSampleRate(int sampleRate) {
+		this.sampleRate = sampleRate;
+	}
+	public void setCodec(String codecName) {
+		this.codecId = ICodec.ID.valueOf(codecName);
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public void setAllowedDelay(long delay) {
+		this.allowedDelay = delay;
 	}
 	/**
 	 * コンストラクタ
@@ -95,11 +120,11 @@ public class XuggleAudioWorkModule implements IWorkModule {
 		if(!(frame instanceof IVideoFrame)) {
 			return true;
 		}
-		if(frame.getPts() > passedPts + allowedDelayForVideo) {
+		if(frame.getPts() > passedPts + allowedDelay) {
 			// frameのptsが経過pts + 許容delayよりも大きい場合
 			// こっちでは挿入する必要あり、ffmpegでは、フレームを適当に挿入してやると、変換を強制することが可能なため
 			// この部分でIAudioSamplesをつかった変換を促す動作が必要になる。
-			insertNoSound(frame.getPts() - allowedDelayForVideo); // ここまでデータをうめておく
+			insertNoSound(frame.getPts() - allowedDelay); // ここまでデータをうめておく
 		}
 		return false;
 	}
@@ -114,8 +139,6 @@ public class XuggleAudioWorkModule implements IWorkModule {
 		if(!(frame instanceof IAudioFrame)) {
 			return false;
 		}
-//		IAudioFrame aFrame = (IAudioFrame)frame;
-		// あとは問題ないので、frameを追記しておく。
 		// 音声フレームだった場合
 		if(frame.getPts() < passedPts) {
 			logger.warn("過去のフレームなので、ドロップします");
@@ -259,6 +282,11 @@ public class XuggleAudioWorkModule implements IWorkModule {
 	 */
 	private void openEncoder() throws Exception {
 		if(encoder == null) {
+			IStreamCoder coder = IStreamCoder.make(Direction.ENCODING, codecId);
+			coder.setChannels(channels);
+			coder.setSampleRate(sampleRate);
+			coder.setBitRate(bitRate);
+			encoder = coder;
 			// ここでencoderの作成から実施する必要あり
 			ICodec codec = encoder.getCodec();
 			IAudioSamples.Format findFormat = null;
