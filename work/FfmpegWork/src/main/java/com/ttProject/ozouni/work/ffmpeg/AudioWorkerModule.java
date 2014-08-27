@@ -9,9 +9,6 @@ import java.util.concurrent.ThreadFactory;
 
 import org.apache.log4j.Logger;
 
-import com.ttProject.container.IContainer;
-import com.ttProject.container.mkv.MkvBlockTag;
-import com.ttProject.container.mkv.MkvTagReader;
 import com.ttProject.frame.AudioFrame;
 import com.ttProject.frame.IAudioFrame;
 import com.ttProject.frame.IFrame;
@@ -20,10 +17,11 @@ import com.ttProject.frame.aac.AacFrame;
 import com.ttProject.frame.mp3.Mp3Frame;
 import com.ttProject.frame.nellymoser.NellymoserFrame;
 import com.ttProject.frame.speex.SpeexFrame;
-import com.ttProject.nio.channels.IReadChannel;
 import com.ttProject.ozouni.base.IWorkModule;
 import com.ttProject.ozouni.frame.FlvAudioWriter;
 import com.ttProject.ozouni.frame.IFrameWriter;
+import com.ttProject.ozouni.frame.MkvReader;
+import com.ttProject.ozouni.frame.worker.IFrameListener;
 import com.ttProject.pipe.PipeHandler;
 import com.ttProject.pipe.PipeManager;
 
@@ -212,7 +210,21 @@ public class AudioWorkerModule implements IWorkModule {
 			@Override
 			public void run() {
 				try {
-					IReadChannel channel = handler.getReadChannel();
+					MkvReader reader = new MkvReader();
+					reader.setFrameListener(new IFrameListener() {
+						@Override
+						public void receiveFrame(IFrame frame) {
+							try {
+								workModule.pushFrame(frame, 0x08);
+							}
+							catch(Exception e) {
+								logger.error("フレームの取得動作で例外が発生しました。", e);
+								throw new RuntimeException(e.getMessage());
+							}
+						}
+					});
+					reader.start(handler.getReadChannel());
+/*					IReadChannel channel = handler.getReadChannel();
 					MkvTagReader reader = new MkvTagReader();
 					IContainer container = null;
 					while((container = reader.read(channel)) != null) {
@@ -221,7 +233,7 @@ public class AudioWorkerModule implements IWorkModule {
 							IFrame frame = blockTag.getFrame();
 							workModule.pushFrame(frame, 0x08);
 						}
-					}
+					}*/
 				}
 				catch(Exception e) {
 					// ここの例外が発生することがあるっぽいです・・・

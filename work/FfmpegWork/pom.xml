@@ -48,5 +48,10 @@ flvで扱うことができるデータ特化した、ffmpegで変換を実施�
     	<artifactId>FlvFrameHandler</artifactId>
     	<version>0.0.1-SNAPSHOT</version>
     </dependency>
+    <dependency>
+    	<groupId>com.ttProject.streaming</groupId>
+    	<artifactId>MkvFrameHandler</artifactId>
+    	<version>0.0.1-SNAPSHOT</version>
+    </dependency>
   </dependencies>
 </project>
