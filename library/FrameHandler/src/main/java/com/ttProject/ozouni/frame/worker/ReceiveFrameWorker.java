@@ -4,6 +4,8 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import com.ttProject.frame.IAnalyzer;
 import com.ttProject.frame.IFrame;
 import com.ttProject.frameutil.AnalyzerChecker;
@@ -19,6 +21,8 @@ import com.ttProject.ozouni.frame.ShareFrameData;
  * @author taktod
  */
 public class ReceiveFrameWorker {
+	/** ロガー */
+	private Logger logger = Logger.getLogger(ReceiveFrameWorker.class);
 	private IReceiveDataHandler receiveDataHandler = null;
 	private IDataListener listener = new DataListener();
 	private IFrameListener frameListener = null;
@@ -57,7 +61,7 @@ public class ReceiveFrameWorker {
 				frameListener.receiveFrame(frame);
 			}
 			catch(Exception e) {
-				
+				logger.error("データ取得時に例外が発生しました。", e);
 			}
 		}
 	}
