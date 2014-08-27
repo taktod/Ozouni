@@ -95,6 +95,7 @@ public class AudioWorkerModule implements IWorkModule {
 			openFlvTagWriter();
 		}
 		catch(Exception e) {
+			logger.error("初期化で例外が発生しました。", e);
 		}
 	}
 	/**
@@ -200,11 +201,12 @@ public class AudioWorkerModule implements IWorkModule {
 		lastAudioFrame = (IAudioFrame)frame;
 	}
 	private void openFlvTagWriter() throws Exception {
-		if(writer != null) {
-			writer.prepareTailer();
+		System.out.println("openFlvTagWirterを実施");
+		writer.prepareTailer();
+		if(future != null) {
 			future.cancel(true);
-			handler.close();
 		}
+		handler.close();
 		handler.executeProcess();
 		future = exec.submit(new Runnable() {
 			@Override

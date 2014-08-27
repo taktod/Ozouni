@@ -42,30 +42,38 @@ public class FlvAudioWriter implements IFrameWriter {
 	@Override
 	@Deprecated
 	public void addContainer(IContainer container) throws Exception {
-		writer.addContainer(container);
+		if(writer != null) {
+			writer.addContainer(container);
+		}
 	}
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public void addFrame(int trackId, IFrame frame) throws Exception {
-		writer.addFrame(trackId, frame);
+		if(writer != null) {
+			writer.addFrame(trackId, frame);
+		}
 	}
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public void prepareHeader() throws Exception {
-		FlvHeaderTag headerTag = new FlvHeaderTag();
-		headerTag.setAudioFlag(true);
-		headerTag.setVideoFlag(false);
-		writer.addContainer(headerTag);
+		if(writer != null) {
+			FlvHeaderTag headerTag = new FlvHeaderTag();
+			headerTag.setAudioFlag(true);
+			headerTag.setVideoFlag(false);
+			writer.addContainer(headerTag);
+		}
 	}
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public void prepareTailer() throws Exception {
-		writer.prepareTailer();
+		if(writer != null) {
+			writer.prepareTailer();
+		}
 	}
 }
