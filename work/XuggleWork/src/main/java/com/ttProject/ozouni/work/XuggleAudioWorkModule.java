@@ -35,14 +35,14 @@ public class XuggleAudioWorkModule implements IWorkModule {
 	/** 映像に対する許可遅延量 */
 	private long allowedDelay = 500;
 	/** 処理するID */
-	private int id;
+	private int id = -1;
 	/** Threadのexecutor */
 	private final ExecutorService exec;
 
 	/** エンコード情報 */
-	private int channels;
-	private int bitRate;
-	private int sampleRate;
+	private int channels = 2;
+	private int bitRate = 96000;
+	private int sampleRate = 44100;
 	private ICodec.ID codecId;
 
 	/** エンコーダー */
@@ -71,27 +71,50 @@ public class XuggleAudioWorkModule implements IWorkModule {
 	public void setWorkModule(IWorkModule workModule) {
 		this.workModule = workModule;
 	}
+	/**
+	 * チャンネルを設定
+	 * @param channels
+	 */
 	public void setChannels(int channels) {
 		this.channels = channels;
 	}
+	/**
+	 * ビットレートを設定
+	 * @param bitRate
+	 */
 	public void setBitRate(int bitRate) {
 		this.bitRate = bitRate;
 	}
+	/**
+	 * サンプルレートを設定
+	 * @param sampleRate
+	 */
 	public void setSampleRate(int sampleRate) {
 		this.sampleRate = sampleRate;
 	}
+	/**
+	 * コーデックを設定
+	 * @param codecName
+	 */
 	public void setCodec(String codecName) {
 		this.codecId = ICodec.ID.valueOf(codecName);
 	}
+	/**
+	 * 処理IDを設定
+	 * @param id
+	 */
 	public void setId(int id) {
 		this.id = id;
 	}
+	/**
+	 * 許容delay用を設定
+	 * @param delay ミリ秒
+	 */
 	public void setAllowedDelay(long delay) {
 		this.allowedDelay = delay;
 	}
 	/**
 	 * コンストラクタ
-	 * @param id
 	 */
 	public XuggleAudioWorkModule() {
 		ThreadFactory factory = new ThreadFactory() {
@@ -280,7 +303,7 @@ public class XuggleAudioWorkModule implements IWorkModule {
 	 * エンコーダーを開きます。
 	 * @throws Exception
 	 */
-	private void openEncoder() throws Exception {
+	private synchronized void openEncoder() throws Exception {
 		if(encoder == null) {
 			IStreamCoder coder = IStreamCoder.make(Direction.ENCODING, codecId);
 			coder.setChannels(channels);
