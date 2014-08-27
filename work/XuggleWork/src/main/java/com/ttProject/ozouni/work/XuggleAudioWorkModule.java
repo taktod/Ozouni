@@ -121,7 +121,7 @@ public class XuggleAudioWorkModule implements IWorkModule {
 			@Override
 			public Thread newThread(Runnable r) {
 				Thread t = new Thread(r);
-				t.setName("XuggleAudioWorkerThread:" + t.hashCode());
+				t.setName("XuggleAudioWorkThread:" + t.hashCode());
 				t.setDaemon(true);
 				return t;
 			}

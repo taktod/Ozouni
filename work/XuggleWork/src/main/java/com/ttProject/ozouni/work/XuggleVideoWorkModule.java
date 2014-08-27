@@ -172,7 +172,7 @@ public class XuggleVideoWorkModule implements IWorkModule {
 			@Override
 			public Thread newThread(Runnable r) {
 				Thread t = new Thread(r);
-				t.setName("XuggleVideoWorkerThread:" + t.hashCode());
+				t.setName("XuggleVideoWorkThread:" + t.hashCode());
 				t.setDaemon(true);
 				return t;
 			}
