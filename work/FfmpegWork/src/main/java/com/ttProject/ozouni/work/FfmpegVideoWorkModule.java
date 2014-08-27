@@ -30,20 +30,38 @@ public class FfmpegVideoWorkModule implements IWorkModule {
 	private long passedPts = 0;
 	/** 最後に処理したvideoFrame */
 	private IVideoFrame lastVideoFrame = null;
+	/** pipeline動作のマネージャー */
 	private PipeManager pipeManager = new PipeManager();
+	/** pipeline動作のhandler */
 	private PipeHandler handler = null;
+	/** マルチスレッド動作 */
 	private final ExecutorService exec;
+	/** マルチスレッドの制御用future */
 	private Future<?> future = null;
+	/** 処理ID */
 	private int id = -1;
 	/** 外部から設定するデータ */
+	/** 動作コマンド */
 	private String command;
+	/** 追加環境変数 */
 	private Map<String, String> envExtra = new HashMap<String, String>();
+	/** pipeへの書き込み処理 */
 	private IFrameWriter writer = null;
+	/** pipeプロセスの標準出力読み込み処理 */
 	private IFrameReader reader = null;
+	/** 次のworkModule */
 	private IWorkModule workModule = null;
+	/**
+	 * コマンドの設定
+	 * @param command
+	 */
 	public void setCommand(String command) {
 		this.command = command;
 	}
+	/**
+	 * 環境変数設定
+	 * @param env
+	 */
 	public void setEnvExtra(Map<String, String> env) {
 		this.envExtra.putAll(env);
 	}
@@ -167,16 +185,6 @@ public class FfmpegVideoWorkModule implements IWorkModule {
 						}
 					});
 					reader.start(handler.getReadChannel());
-/*					IReadChannel channel = handler.getReadChannel();
-					MkvTagReader reader = new MkvTagReader();
-					IContainer container = null;
-					while((container = reader.read(channel)) != null) {
-						if(container instanceof MkvBlockTag) {
-							MkvBlockTag blockTag = (MkvBlockTag)container;
-							IFrame frame = blockTag.getFrame();
-							workModule.pushFrame(frame, id);
-						}
-					}*/
 				}
 				catch(Exception e) {
 					e.printStackTrace();
