@@ -34,7 +34,7 @@ public class FfmpegAudioWorkModule implements IWorkModule {
 	/** 経過Pts */
 	private long passedPts = 0;
 	/** 映像に対する許可遅延量 */
-	private final long allowedDelayForVideo = 500;
+	private long allowedDelay = 500;
 	/** 最後に処理したaudioFrame */
 	private IAudioFrame lastAudioFrame = null;
 	private PipeManager pipeManager = new PipeManager();
@@ -48,6 +48,26 @@ public class FfmpegAudioWorkModule implements IWorkModule {
 	private IFrameWriter writer = null;
 	private IFrameReader reader = null;
 	private IWorkModule workModule = null;
+	public void setCommand(String command) {
+		this.command = command;
+	}
+	public void setEnvExtra(Map<String, String> env) {
+		this.envExtra.putAll(env);
+	}
+	/**
+	 * 処理IDを設定
+	 * @param id
+	 */
+	public void setId(int id) {
+		this.id = id;
+	}
+	/**
+	 * 許容delay用を設定
+	 * @param delay ミリ秒
+	 */
+	public void setAllowedDelay(long delay) {
+		this.allowedDelay = delay;
+	}
 	/**
 	 * {@inheritDoc}
 	 * @param workModule
@@ -86,10 +106,10 @@ public class FfmpegAudioWorkModule implements IWorkModule {
 		if(lastAudioFrame == null) {
 			lastAudioFrame = Mp3Frame.getMutedFrame(44100, 1, 16);
 		}
-		if(frame.getPts() > passedPts + allowedDelayForVideo) {
+		if(frame.getPts() > passedPts + allowedDelay) {
 			// frameのptsが経過pts + 許容delayよりも大きい場合
 			// こっちでは挿入する必要あり、ffmpegでは、フレームを適当に挿入してやると、変換を強制することが可能なため
-			passedPts = frame.getPts() - allowedDelayForVideo;
+			passedPts = frame.getPts() - allowedDelay;
 			AudioFrame aFrame = null;
 			// ここではすべてのcodecに対する無音frameを追加する感じにしておく。
 			switch(lastAudioFrame.getCodecType()) {
