@@ -157,13 +157,15 @@ public class FfmpegAudioWorkModule implements IWorkModule {
 		return true;
 	}
 	private synchronized void initializePipe() {
-		try {
-			handler.setCommand(command);
-			handler.setEnvExtra(envExtra);
-			openFlvTagWriter();
+		if(future == null) {
+			try {
+				handler.setCommand(command);
+				handler.setEnvExtra(envExtra);
+				openFlvTagWriter();
+			}
+			catch(Exception e) {
+			}
 		}
-		catch(Exception e) {
-		}		
 	}
 	/**
 	 * {@inheritDoc}
