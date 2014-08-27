@@ -24,6 +24,7 @@ import com.ttProject.frame.nellymoser.NellymoserFrame;
 import com.ttProject.frame.speex.SpeexFrame;
 import com.ttProject.nio.channels.IReadChannel;
 import com.ttProject.ozouni.base.IWorkModule;
+import com.ttProject.ozouni.frame.IFrameWriter;
 import com.ttProject.pipe.PipeHandler;
 import com.ttProject.pipe.PipeManager;
 
@@ -40,7 +41,6 @@ public class FfmpegAudioWorkModule implements IWorkModule {
 	private final long allowedDelayForVideo = 500;
 	/** 最後に処理したaudioFrame */
 	private IAudioFrame lastAudioFrame = null;
-	private FlvTagWriter writer = null;
 	private PipeManager pipeManager = new PipeManager();
 	private PipeHandler handler = null;
 	private final ExecutorService exec;
@@ -48,7 +48,7 @@ public class FfmpegAudioWorkModule implements IWorkModule {
 	/** 外部から設定するデータ */
 	private String command;
 	private Map<String, String> envExtra = new HashMap<String, String>();
-	private Object flvHandler; // flvの書き込みを実施する動作(pipeにデータを渡す)
+	private IFrameWriter writer = null;
 	private Object mkvHandler; // mkvの読み込みを実施する動作(標準入力をうけとる)
 	private IWorkModule workModule = null;
 	/**
@@ -188,11 +188,11 @@ public class FfmpegAudioWorkModule implements IWorkModule {
 		lastAudioFrame = (IAudioFrame)frame;
 	}
 	private void openFlvTagWriter() throws Exception {
-		if(writer != null) {
-			writer.prepareTailer();
+		writer.prepareTailer();
+		if(future != null) {
 			future.cancel(true);
-			handler.close();
 		}
+		handler.close();
 		handler.executeProcess();
 		future = exec.submit(new Runnable() {
 			@Override
@@ -215,11 +215,8 @@ public class FfmpegAudioWorkModule implements IWorkModule {
 				}
 			}
 		});
-		writer = new FlvTagWriter(handler.getPipeTarget().getAbsolutePath());
-		FlvHeaderTag headerTag = new FlvHeaderTag();
-		headerTag.setAudioFlag(true);
-		headerTag.setVideoFlag(false);
-		writer.addContainer(headerTag);
+		writer.setFileName(handler.getPipeTarget().getAbsolutePath());
+		writer.prepareHeader();
 	}
 	private void writeFrame(IFrame frame, int id) throws Exception {
 		writer.addFrame(id, frame);

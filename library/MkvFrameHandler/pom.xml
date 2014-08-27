@@ -23,9 +23,9 @@
       <version>0.0.2-SNAPSHOT</version>
     </dependency>
     <dependency>
-    	<groupId>com.ttProject.streaming</groupId>
-    	<artifactId>FrameHandler</artifactId>
-    	<version>0.0.1-SNAPSHOT</version>
+      <groupId>com.ttProject.streaming</groupId>
+      <artifactId>FrameHandler</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
     </dependency>
   </dependencies>
 </project>
