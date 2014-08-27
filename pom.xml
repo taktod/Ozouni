@@ -43,9 +43,8 @@ library: システムとやりとりするライブラリ
     <module>library/EhcacheReportHandler</module>
     <module>library/ServerDataHandler</module>
     <module>library/FrameHandler</module>
-    <module>library/MediaHandler</module>
-    <module>library/FlvMediaHandler</module>
-    <module>library/MkvMediaHandler</module>
+    <module>library/FlvFrameHandler</module>
+    <module>library/MkvFrameHandler</module>
     <module>entry/Entry</module>
     <module>entry/RtmpEntry</module>
     <module>worker/SignalWorker</module>

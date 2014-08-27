@@ -6,8 +6,8 @@
     <version>0.0.1-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
-  <artifactId>FlvMediaHandler</artifactId>
-  <name>FlvMediaHandler</name>
+  <artifactId>FlvFrameHandler</artifactId>
+  <name>FlvFrameHandler</name>
   <description>flvとして、入出力を実施する動作</description>
   <licenses>
     <license>
@@ -21,6 +21,11 @@
       <groupId>com.ttProject</groupId>
       <artifactId>myLib.container.flv</artifactId>
       <version>0.0.2-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.ttProject.streaming</groupId>
+      <artifactId>FrameHandler</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
     </dependency>
   </dependencies>
 </project>

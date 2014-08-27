@@ -6,8 +6,8 @@
     <version>0.0.1-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
-  <artifactId>MkvMediaHandler</artifactId>
-  <name>MkvMediaHandler</name>
+  <artifactId>MkvFrameHandler</artifactId>
+  <name>MkvFrameHandler</name>
   <licenses>
     <license>
       <name>The MIT License</name>
@@ -21,6 +21,11 @@
       <groupId>com.ttProject</groupId>
       <artifactId>myLib.container.mkv</artifactId>
       <version>0.0.2-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+    	<groupId>com.ttProject.streaming</groupId>
+    	<artifactId>FrameHandler</artifactId>
+    	<version>0.0.1-SNAPSHOT</version>
     </dependency>
   </dependencies>
 </project>

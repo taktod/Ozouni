@@ -10,8 +10,6 @@ import java.util.concurrent.ThreadFactory;
 import org.apache.log4j.Logger;
 
 import com.ttProject.container.IContainer;
-import com.ttProject.container.flv.FlvHeaderTag;
-import com.ttProject.container.flv.FlvTagWriter;
 import com.ttProject.container.mkv.MkvBlockTag;
 import com.ttProject.container.mkv.MkvTagReader;
 import com.ttProject.frame.AudioFrame;
@@ -24,6 +22,8 @@ import com.ttProject.frame.nellymoser.NellymoserFrame;
 import com.ttProject.frame.speex.SpeexFrame;
 import com.ttProject.nio.channels.IReadChannel;
 import com.ttProject.ozouni.base.IWorkModule;
+import com.ttProject.ozouni.frame.FlvAudioWriter;
+import com.ttProject.ozouni.frame.IFrameWriter;
 import com.ttProject.pipe.PipeHandler;
 import com.ttProject.pipe.PipeManager;
 
@@ -58,7 +58,8 @@ public class AudioWorkerModule implements IWorkModule {
 	private final long allowedDelayForVideo = 500;
 	/** 最後に処理したaudioFrame */
 	private IAudioFrame lastAudioFrame = null;
-	private FlvTagWriter writer = null;
+	private IFrameWriter writer = new FlvAudioWriter();
+//	private FlvTagWriter writer = null;
 	private PipeManager pipeManager = new PipeManager();
 	private PipeHandler handler = null;
 	private final ExecutorService exec;
@@ -226,11 +227,9 @@ public class AudioWorkerModule implements IWorkModule {
 				}
 			}
 		});
-		writer = new FlvTagWriter(handler.getPipeTarget().getAbsolutePath());
-		FlvHeaderTag headerTag = new FlvHeaderTag();
-		headerTag.setAudioFlag(true);
-		headerTag.setVideoFlag(false);
-		writer.addContainer(headerTag);
+//		writer = new FlvTagWriter(handler.getPipeTarget().getAbsolutePath());
+		writer.setFileName(handler.getPipeTarget().getAbsolutePath());
+		writer.prepareHeader();
 	}
 	private void writeFrame(IFrame frame, int id) throws Exception {
 		writer.addFrame(id, frame);
