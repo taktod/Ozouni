@@ -6,7 +6,8 @@
     <version>0.0.1-SNAPSHOT</version>
     <relativePath>../..</relativePath>
   </parent>
-  <artifactId>FlvOutput</artifactId>
+  <artifactId>MkvMediaHandler</artifactId>
+  <name>MkvMediaHandler</name>
   <licenses>
     <license>
       <name>The MIT License</name>
@@ -14,18 +15,12 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
+  <description>matroskaとして、入出力を実施する動作</description>
   <dependencies>
     <dependency>
-      <groupId>com.ttProject.streaming</groupId>
-      <artifactId>OzouniBase</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
       <groupId>com.ttProject</groupId>
-      <artifactId>myLib.container.flv</artifactId>
+      <artifactId>myLib.container.mkv</artifactId>
       <version>0.0.2-SNAPSHOT</version>
     </dependency>
   </dependencies>
-  <name>FlvOutput</name>
-  <description>Flvとしてデータを出力するモジュール</description>
 </project>

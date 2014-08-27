@@ -43,13 +43,14 @@ library: システムとやりとりするライブラリ
     <module>library/EhcacheReportHandler</module>
     <module>library/ServerDataHandler</module>
     <module>library/FrameHandler</module>
+    <module>library/MediaHandler</module>
+    <module>library/FlvMediaHandler</module>
+    <module>library/MkvMediaHandler</module>
     <module>entry/Entry</module>
     <module>entry/RtmpEntry</module>
     <module>worker/SignalWorker</module>
     <module>input/RtmpInput</module>
     <module>input/FrameInput</module>
-    <module>input/MkvInput</module>
-    <module>output/FlvOutput</module>
     <module>output/FrameOutput</module>
     <module>work/OneLineWork</module>
     <module>work/FfmpegWork</module>
