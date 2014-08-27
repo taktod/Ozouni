@@ -9,16 +9,13 @@ import java.util.concurrent.ThreadFactory;
 
 import org.apache.log4j.Logger;
 
-import com.ttProject.container.IContainer;
-import com.ttProject.container.flv.FlvHeaderTag;
-import com.ttProject.container.flv.FlvTagWriter;
-import com.ttProject.container.mkv.MkvBlockTag;
-import com.ttProject.container.mkv.MkvTagReader;
 import com.ttProject.frame.IAudioFrame;
 import com.ttProject.frame.IFrame;
 import com.ttProject.frame.IVideoFrame;
-import com.ttProject.nio.channels.IReadChannel;
 import com.ttProject.ozouni.base.IWorkModule;
+import com.ttProject.ozouni.frame.IFrameReader;
+import com.ttProject.ozouni.frame.IFrameWriter;
+import com.ttProject.ozouni.frame.worker.IFrameListener;
 import com.ttProject.pipe.PipeHandler;
 import com.ttProject.pipe.PipeManager;
 
@@ -33,13 +30,30 @@ public class FfmpegVideoWorkModule implements IWorkModule {
 	private long passedPts = 0;
 	/** 最後に処理したvideoFrame */
 	private IVideoFrame lastVideoFrame = null;
-	private FlvTagWriter writer = null;
 	private PipeManager pipeManager = new PipeManager();
 	private PipeHandler handler = null;
 	private final ExecutorService exec;
 	private Future<?> future = null;
 	private int id = -1;
+	/** 外部から設定するデータ */
+	private String command;
+	private Map<String, String> envExtra = new HashMap<String, String>();
+	private IFrameWriter writer = null;
+	private IFrameReader reader = null;
 	private IWorkModule workModule = null;
+	public void setCommand(String command) {
+		this.command = command;
+	}
+	public void setEnvExtra(Map<String, String> env) {
+		this.envExtra.putAll(env);
+	}
+	/**
+	 * 処理IDを設定
+	 * @param id
+	 */
+	public void setId(int id) {
+		this.id = id;
+	}
 	/**
 	 * @param workModule
 	 */
@@ -104,10 +118,7 @@ public class FfmpegVideoWorkModule implements IWorkModule {
 	private synchronized void initializePipe() {
 		if(future == null) {
 			try {
-				handler = pipeManager.getPipeHandler("videoConvert");
-				Map<String, String> envExtra = new HashMap<String, String>();
-				envExtra.put("LD_LIBRARY_PATH", "/usr/local/lib");
-				handler.setCommand("avconv -copyts -i ${pipe} -vcodec mjpeg -s 320x240 -q 10 -r 10 -f matroska - 2>avconv.video.log");
+				handler.setCommand(command);
 				handler.setEnvExtra(envExtra);
 				openFlvTagWriter();
 			}
@@ -135,37 +146,45 @@ public class FfmpegVideoWorkModule implements IWorkModule {
 		lastVideoFrame = (IVideoFrame)frame;
 	}
 	private void openFlvTagWriter() throws Exception {
-		if(writer != null) {
-			writer.prepareTailer();
+		writer.prepareTailer();
+		if(future != null) {
 			future.cancel(true);
-			handler.close();
 		}
+		handler.close();
 		handler.executeProcess();
 		future = exec.submit(new Runnable() {
 			@Override
 			public void run() {
 				try {
-					IReadChannel channel = handler.getReadChannel();
+					reader.setFrameListener(new IFrameListener() {
+						@Override
+						public void receiveFrame(IFrame frame) {
+							try {
+								workModule.pushFrame(frame, id);
+							}
+							catch(Exception e) {
+							}
+						}
+					});
+					reader.start(handler.getReadChannel());
+/*					IReadChannel channel = handler.getReadChannel();
 					MkvTagReader reader = new MkvTagReader();
 					IContainer container = null;
 					while((container = reader.read(channel)) != null) {
 						if(container instanceof MkvBlockTag) {
 							MkvBlockTag blockTag = (MkvBlockTag)container;
 							IFrame frame = blockTag.getFrame();
-							workModule.pushFrame(frame, 0x09);
+							workModule.pushFrame(frame, id);
 						}
-					}
+					}*/
 				}
 				catch(Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});
-		writer = new FlvTagWriter(handler.getPipeTarget().getAbsolutePath());
-		FlvHeaderTag headerTag = new FlvHeaderTag();
-		headerTag.setAudioFlag(false);
-		headerTag.setVideoFlag(true);
-		writer.addContainer(headerTag);
+		writer.setFileName(handler.getPipeTarget().getAbsolutePath());
+		writer.prepareHeader();
 	}
 	private void writeFrame(IFrame frame, int id) throws Exception {
 		writer.addFrame(id, frame);
