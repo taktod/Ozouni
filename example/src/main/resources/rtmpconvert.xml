@@ -37,8 +37,21 @@
   </bean>
 
   <!-- 作業モジュール -->
-  <bean id="workModule" class="com.ttProject.ozouni.work.XuggleWorkModule">
-    <property name="WorkModule" ref="outputModule"/>
+  <bean id="workModule" class="com.ttProject.ozouni.work.OneLineWorkModule">
+    <property name="WorkList">
+      <list>
+        <bean class="com.ttProject.ozouni.work.XuggleAudioWorkModule">
+          <property name="Id" value="8"/>
+          <property name="WorkModule" ref="outputModule"/>
+          <property name="Codec" value="CODEC_ID_ADPCM_IMA_WAV"/>
+        </bean>
+        <bean class="com.ttProject.ozouni.work.XuggleVideoWorkModule">
+          <property name="Id" value="9"/>
+          <property name="WorkModule" ref="outputModule"/>
+          <property name="Codec" value="CODEC_ID_MJPEG"/>
+        </bean>
+      </list>
+    </property>
   </bean>
 
   <!-- 入力モジュール -->
