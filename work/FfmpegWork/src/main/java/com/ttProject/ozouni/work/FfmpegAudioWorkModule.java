@@ -9,11 +9,6 @@ import java.util.concurrent.ThreadFactory;
 
 import org.apache.log4j.Logger;
 
-import com.ttProject.container.IContainer;
-import com.ttProject.container.flv.FlvHeaderTag;
-import com.ttProject.container.flv.FlvTagWriter;
-import com.ttProject.container.mkv.MkvBlockTag;
-import com.ttProject.container.mkv.MkvTagReader;
 import com.ttProject.frame.AudioFrame;
 import com.ttProject.frame.IAudioFrame;
 import com.ttProject.frame.IFrame;
@@ -22,9 +17,10 @@ import com.ttProject.frame.aac.AacFrame;
 import com.ttProject.frame.mp3.Mp3Frame;
 import com.ttProject.frame.nellymoser.NellymoserFrame;
 import com.ttProject.frame.speex.SpeexFrame;
-import com.ttProject.nio.channels.IReadChannel;
 import com.ttProject.ozouni.base.IWorkModule;
+import com.ttProject.ozouni.frame.IFrameReader;
 import com.ttProject.ozouni.frame.IFrameWriter;
+import com.ttProject.ozouni.frame.worker.IFrameListener;
 import com.ttProject.pipe.PipeHandler;
 import com.ttProject.pipe.PipeManager;
 
@@ -45,11 +41,12 @@ public class FfmpegAudioWorkModule implements IWorkModule {
 	private PipeHandler handler = null;
 	private final ExecutorService exec;
 	private Future<?> future = null;
+	private int id = -1;
 	/** 外部から設定するデータ */
 	private String command;
 	private Map<String, String> envExtra = new HashMap<String, String>();
 	private IFrameWriter writer = null;
-	private Object mkvHandler; // mkvの読み込みを実施する動作(標準入力をうけとる)
+	private IFrameReader reader = null;
 	private IWorkModule workModule = null;
 	/**
 	 * {@inheritDoc}
@@ -161,9 +158,7 @@ public class FfmpegAudioWorkModule implements IWorkModule {
 	}
 	private synchronized void initializePipe() {
 		try {
-			Map<String, String> envExtra = new HashMap<String, String>();
-			envExtra.put("LD_LIBRARY_PATH", "/usr/local/lib");
-			handler.setCommand("avconv -copyts -i ${pipe} -acodec adpcm_ima_wav -ar 44100 -ac 1 -async 2 -f matroska - 2>avconv.audio.log");
+			handler.setCommand(command);
 			handler.setEnvExtra(envExtra);
 			openFlvTagWriter();
 		}
@@ -198,16 +193,18 @@ public class FfmpegAudioWorkModule implements IWorkModule {
 			@Override
 			public void run() {
 				try {
-					IReadChannel channel = handler.getReadChannel();
-					MkvTagReader reader = new MkvTagReader();
-					IContainer container = null;
-					while((container = reader.read(channel)) != null) {
-						if(container instanceof MkvBlockTag) {
-							MkvBlockTag blockTag = (MkvBlockTag)container;
-							IFrame frame = blockTag.getFrame();
-							workModule.pushFrame(frame, 0x08);
+					reader.setFrameListener(new IFrameListener() {
+						@Override
+						public void receiveFrame(IFrame frame) {
+							try {
+								workModule.pushFrame(frame, id);
+							}
+							catch(Exception e) {
+								logger.error("フレームの取得動作で例外が発生しました", e);
+							}
 						}
-					}
+					});
+					reader.start(handler.getReadChannel());
 				}
 				catch(Exception e) {
 					// ここの例外が発生することがあるっぽいです・・・
