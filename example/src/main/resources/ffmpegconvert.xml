@@ -37,8 +37,43 @@
   </bean>
 
   <!-- 作業モジュール -->
-  <bean id="workModule" class="com.ttProject.ozouni.work.FfmpegWorkModule">
-    <property name="WorkModule" ref="outputModule"/>
+  <bean id="workModule" class="com.ttProject.ozouni.work.OneLineWorkModule">
+    <property name="WorkList">
+      <list>
+        <bean class="com.ttProject.ozouni.work.FfmpegAudioWorkModule">
+          <property name="Id" value="8"/>
+          <property name="WorkModule" ref="outputModule"/>
+          <property name="Command" value="avconv -copyts -i $\{pipe} -acodec adpcm_ima_wav -ar 44100 -ac 1 -async 2 -f matroska -"/>
+          <property name="EnvExtra">
+            <props>
+              <prop key="LD_LIBRARY_PATH">/usr/local/lib</prop>
+            </props>
+          </property>
+          <property name="Writer">
+            <bean class="com.ttProject.ozouni.frame.FlvAudioWriter"/>
+          </property>
+          <property name="Reader">
+            <bean class="com.ttProject.ozouni.frame.MkvReader"/>
+          </property>
+        </bean>
+        <bean class="com.ttProject.ozouni.work.FfmpegVideoWorkModule">
+          <property name="Id" value="9"/>
+          <property name="WorkModule" ref="outputModule"/>
+          <property name="Command" value="avconv -copyts -i $\{pipe} -vcodec mjpeg -s 320x240 -q 10 -r 10 -f matroska -"/>
+          <property name="EnvExtra">
+            <props>
+              <prop key="LD_LIBRARY_PATH">/usr/local/lib</prop>
+            </props>
+          </property>
+          <property name="Writer">
+            <bean class="com.ttProject.ozouni.frame.FlvVideoWriter"/>
+          </property>
+          <property name="Reader">
+            <bean class="com.ttProject.ozouni.frame.MkvReader"/>
+          </property>
+        </bean>
+      </list>
+    </property>
   </bean>
 
   <!-- 入力モジュール -->

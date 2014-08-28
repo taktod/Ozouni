@@ -2,6 +2,7 @@ package com.ttProject.ozouni.work;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -56,14 +57,17 @@ public class FfmpegVideoWorkModule implements IWorkModule {
 	 * @param command
 	 */
 	public void setCommand(String command) {
-		this.command = command;
+		this.command = command.replaceAll("\\$\\\\", "\\$");
 	}
 	/**
 	 * 環境変数設定
 	 * @param env
 	 */
-	public void setEnvExtra(Map<String, String> env) {
-		this.envExtra.putAll(env);
+	public void setEnvExtra(Properties env) {
+		for(Object key : env.keySet()) {
+			String sKey = (String)key;
+			this.envExtra.put(sKey, env.getProperty(sKey));
+		}
 	}
 	/**
 	 * 処理IDを設定
@@ -71,6 +75,12 @@ public class FfmpegVideoWorkModule implements IWorkModule {
 	 */
 	public void setId(int id) {
 		this.id = id;
+	}
+	public void setWriter(IFrameWriter writer) {
+		this.writer = writer;
+	}
+	public void setReader(IFrameReader reader) {
+		this.reader = reader;
 	}
 	/**
 	 * @param workModule
@@ -136,11 +146,13 @@ public class FfmpegVideoWorkModule implements IWorkModule {
 	private synchronized void initializePipe() {
 		if(future == null) {
 			try {
+				logger.info(command);
 				handler.setCommand(command);
 				handler.setEnvExtra(envExtra);
 				openFlvTagWriter();
 			}
 			catch(Exception e) {
+				logger.error("プロセス起動でエラーが発生しました。", e);
 			}
 		}
 	}
