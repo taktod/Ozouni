@@ -6,6 +6,7 @@ import java.nio.channels.WritableByteChannel;
 import com.ttProject.container.IContainer;
 import com.ttProject.container.flv.FlvHeaderTag;
 import com.ttProject.container.flv.FlvTagWriter;
+import com.ttProject.frame.CodecType;
 import com.ttProject.frame.IFrame;
 
 /**
@@ -59,7 +60,7 @@ public class FlvVideoWriter implements IFrameWriter {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void prepareHeader() throws Exception {
+	public void prepareHeader(CodecType ...codecs) throws Exception {
 		if(writer != null) {
 			FlvHeaderTag headerTag = new FlvHeaderTag();
 			headerTag.setAudioFlag(false);
