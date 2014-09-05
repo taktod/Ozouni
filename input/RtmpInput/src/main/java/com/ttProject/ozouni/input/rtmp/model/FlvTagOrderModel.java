@@ -2,7 +2,6 @@ package com.ttProject.ozouni.input.rtmp.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -11,6 +10,7 @@ import com.ttProject.container.flv.AggregateTag;
 import com.ttProject.container.flv.FlvTag;
 import com.ttProject.container.flv.type.AudioTag;
 import com.ttProject.container.flv.type.VideoTag;
+import com.ttProject.unit.UnitComparator;
 
 /**
  * flvのtagの整列を実施するモデル
@@ -24,7 +24,7 @@ public class FlvTagOrderModel implements IFlvTagOrderModel {
 	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(FlvTagOrderModel.class);
 	/** ソート用比較オブジェクト */
-	private static final FlvTagComparator comparator = new FlvTagComparator();
+	private static final UnitComparator comparator = new UnitComparator();
 	private List<FlvTag> videoTags = new ArrayList<FlvTag>();
 	private List<FlvTag> audioTags = new ArrayList<FlvTag>();
 	/** 処理済みvideoTagのpts値 */
@@ -108,15 +108,5 @@ public class FlvTagOrderModel implements IFlvTagOrderModel {
 			result.add(tag);
 		}
 		return result;
-	}
-	/**
-	 * tagの比較クラス
-	 * @author taktod
-	 */
-	public static class FlvTagComparator implements Comparator<FlvTag> {
-		@Override
-		public int compare(FlvTag tag1, FlvTag tag2) {
-			return (int)(tag1.getPts() - tag2.getPts());
-		}
 	}
 }
