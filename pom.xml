@@ -55,6 +55,7 @@ library: システムとやりとりするライブラリ
     <module>work/FfmpegWork</module>
     <module>work/XuggleWork</module>
     <module>jetty/wts</module>
+    <module>jetty/webm</module>
     <module>EasyRestServer</module>
   </modules>
   <dependencies>
