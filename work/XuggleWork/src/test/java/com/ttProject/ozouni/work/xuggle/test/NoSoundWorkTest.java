@@ -4,8 +4,8 @@ import org.apache.log4j.Logger;
 import org.junit.Test;
 
 import com.ttProject.frame.IAudioFrame;
-import com.ttProject.frame.adpcmswf.AdpcmswfFrame;
 import com.ttProject.frame.extra.AudioMultiFrame;
+import com.ttProject.frame.pcmalaw.PcmalawFrame;
 import com.ttProject.xuggle.frameutil.Packetizer;
 import com.xuggle.xuggler.IAudioSamples;
 import com.xuggle.xuggler.ICodec;
@@ -43,9 +43,9 @@ public class NoSoundWorkTest {
 		if(encoder.open(null, null) < 0) {
 			throw new Exception("エンコーダーが開けませんでした");
 		}
-		AdpcmswfFrame frame = null;
+		PcmalawFrame frame = null;
 		for(int i = 0;i < 100;i ++) {
-			frame = AdpcmswfFrame.getMutedFrame(44100, 1, 16);
+			frame = PcmalawFrame.getMutedFrame(8000, 1, 16);
 			frame.setPts(1000 * i);
 			frame.setTimebase(1000);
 			processAudioDecode(frame);
