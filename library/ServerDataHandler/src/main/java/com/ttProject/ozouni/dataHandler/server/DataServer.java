@@ -3,7 +3,9 @@ package com.ttProject.ozouni.dataHandler.server;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
@@ -35,6 +37,8 @@ public class DataServer {
 	private final Set<Channel> channels = new HashSet<Channel>();
 	private final Channel serverChannel;
 	private final ServerBootstrap bootstrap;
+	/** 接続時に共有する初期バッファ値 */
+	private Map<Integer, ByteBuffer> initBufferMap = new ConcurrentHashMap<Integer, ByteBuffer>();
 	/**
 	 * コンストラクタ
 	 * @param port
@@ -78,6 +82,14 @@ public class DataServer {
 		}
 	}
 	/**
+	 * 初期データ保持
+	 * @param id
+	 * @param buffer
+	 */
+	public void setInitialData(int id, ByteBuffer buffer) {
+		initBufferMap.put(id, buffer);
+	}
+	/**
 	 * サーバーを閉じます
 	 */
 	public void close() {
@@ -90,6 +102,18 @@ public class DataServer {
 		ChannelFuture future = serverChannel.close();
 		future.awaitUninterruptibly(); // timeoutいれておいた方がいいかも
 		bootstrap.releaseExternalResources();
+	}
+	/**
+	 * 単一チャンネルにデータをおくる
+	 * @param buffer
+	 * @param channel
+	 */
+	private void sendData(ByteBuffer buffer, Channel channel) {
+		ByteBuffer size = ByteBuffer.allocate(4);
+		size.putInt(buffer.remaining());
+		size.flip();
+		ChannelBuffer channelBuffer = ChannelBuffers.copiedBuffer(BufferUtil.connect(size, buffer));
+		channel.write(channelBuffer);
 	}
 	/**
 	 * アクセスをコントロールするhandler
@@ -110,7 +134,14 @@ public class DataServer {
 		public void channelConnected(ChannelHandlerContext ctx,
 				ChannelStateEvent e) throws Exception {
 			logger.info("コネクト");
-			channels.add(e.getChannel());
+			Channel channel = e.getChannel();
+			// 初期情報をおくっておく。
+			for(ByteBuffer buffer : initBufferMap.values()) {
+				sendData(buffer.duplicate(), channel);
+			}
+			// 初期データを送る
+			channels.add(channel);
+			// ここで初期データを送ってやる必要あり。
 		}
 		@Override
 		public void channelClosed(ChannelHandlerContext ctx, ChannelStateEvent e)
