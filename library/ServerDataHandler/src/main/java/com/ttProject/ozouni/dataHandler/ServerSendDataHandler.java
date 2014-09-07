@@ -93,6 +93,7 @@ public class ServerSendDataHandler implements ISendDataHandler {
 	public void setInitialData(int id, ByteBuffer initialData) {
 		// ここで登録されたデータを接続開始時に送信するようにしておく。
 		// よく考えたら１つのコーデックによって１つの接続とは決まらないので複数のデータを送る必要がでることがあるみたいですな。
+		server.setInitialData(id, initialData); // 初期接続データを登録しておく。(ある意味更新？)
 	}
 	/**
 	 * {@inheritDoc}
