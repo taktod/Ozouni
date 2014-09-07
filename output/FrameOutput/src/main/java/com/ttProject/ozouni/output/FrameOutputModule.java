@@ -17,6 +17,7 @@ import com.ttProject.ozouni.base.IWorkModule;
 import com.ttProject.ozouni.base.ReportData;
 import com.ttProject.ozouni.dataHandler.ISendDataHandler;
 import com.ttProject.ozouni.frame.ShareFrameData;
+import com.ttProject.unit.extra.bit.Bit8;
 
 /**
  * frameServerとして、ozouniシステム間でデータを共有するモジュール
@@ -88,7 +89,7 @@ public class FrameOutputModule implements IOutputModule {
 		// h264のframeの場合はちょっと特殊なことをやる必要がある。
 		CodecType codecType = frame.getCodecType();
 		// trackIdを作成する必要がある。
-		ShareFrameData shareFrameData = new ShareFrameData(codecType, frame, id);
+		ShareFrameData shareFrameData = new ShareFrameData(codecType, new Bit8(), frame, id);
 		ByteBuffer buffer = null;
 		if(codecType == CodecType.H264) { // h265でも同じようなことしないとだめかもしれない。
 			buffer = frame.getPackBuffer();

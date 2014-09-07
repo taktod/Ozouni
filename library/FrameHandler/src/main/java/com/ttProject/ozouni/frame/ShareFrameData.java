@@ -27,6 +27,7 @@ import com.ttProject.util.BufferUtil;
  * プロセス間でframeを共有する場合の定義データ
  * データは次の形で保持します。
  * Bit8:codecType
+ * Bit8:flg // ここにフラグを追加
  * Bit64:pts
  * Bit64:dts
  * Bit32:timebase
@@ -48,6 +49,7 @@ public class ShareFrameData {
 	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(ShareFrameData.class);
 	private Bit8  codecType      = new Bit8();
+	private Bit8  flag           = new Bit8();
 	private Bit64 pts            = new Bit64();
 	private Bit64 dts            = new Bit64();
 	private Bit32 timebase       = new Bit32();
@@ -67,6 +69,7 @@ public class ShareFrameData {
 	 */
 	public ShareFrameData(ByteBuffer data) throws Exception {
 		codecType.set(data.get());
+		flag.set(data.get());
 		type = CodecType.getCodecType(codecType.get());
 		pts.setLong(data.getLong());
 		dts.setLong(data.getLong());
@@ -85,9 +88,10 @@ public class ShareFrameData {
 		frameData.put(data);
 		frameData.flip();
 	}
-	public ShareFrameData(CodecType type, IFrame frame, int trackId) throws Exception {
+	public ShareFrameData(CodecType type, Bit8 flag, IFrame frame, int trackId) throws Exception {
 		codecType.set(type.getId());
 		this.type = type;
+		this.flag.set(flag.get());
 		pts.setLong(frame.getPts());
 		if(frame instanceof IVideoFrame) {
 			dts.setLong(((IVideoFrame) frame).getDts());
