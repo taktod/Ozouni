@@ -37,11 +37,11 @@ public class FrameOutputModule implements IOutputModule {
 	/** データ送信用のDataHandler設定 */
 	private ISendDataHandler sendDataHandler = null;
 	/**
-	 * これ、ここにあるの・・・おかしいなぁ・・・まぁ、いいけど
+	 * {@inheritDoc}
 	 */
+	@Deprecated
 	@Override
 	public void setWorkModule(IWorkModule workModule) {
-		
 	}
 	/**
 	 * データ送信handlerを設定する
@@ -80,6 +80,7 @@ public class FrameOutputModule implements IOutputModule {
 		}
 		// TODO 該当トラックの該当フレームが初めて来たかの判定がほしい。
 		// そうすればそのCodecPrivateデータを共有するか決めることができるかね。
+		// 前回のデータと違うか確認して、ちがったらデータを送らないとだめっぽい。
 		// この部分でframeがmultiFrameだったら分解しておく必要がある。
 		// 処理フレームの値を記録する動作が必要
 		ReportData reportData = signalWorker.getReportData();
