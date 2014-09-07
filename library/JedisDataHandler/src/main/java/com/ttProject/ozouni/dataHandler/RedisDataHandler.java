@@ -117,6 +117,7 @@ public class RedisDataHandler implements ISendDataHandler {
 	 * rpushで登録していく
 	 * @param frame
 	 */
+	@Override
 	public void pushData(ByteBuffer buffer) {
 		// 登録すべきデータをつくる。
 		int position = buffer.position();
@@ -153,6 +154,13 @@ public class RedisDataHandler implements ISendDataHandler {
 		}
 		ByteBuffer buffer = ByteBuffer.wrap(Base64.decodeBase64(data.get(1)));
 		return buffer;
+	}
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setInitialData(int id, ByteBuffer initialData) {
+		
 	}
 	/**
 	 * jedisを閉じる

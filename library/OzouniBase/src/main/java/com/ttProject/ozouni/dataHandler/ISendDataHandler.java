@@ -22,4 +22,8 @@ public interface ISendDataHandler {
 	 * @return
 	 */
 	public String getKey();
+	/**
+	 * 各データの初期値を設定する
+	 */
+	public void setInitialData(int id, ByteBuffer initialData);
 }

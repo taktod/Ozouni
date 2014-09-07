@@ -90,6 +90,14 @@ public class ServerSendDataHandler implements ISendDataHandler {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void setInitialData(int id, ByteBuffer initialData) {
+		// ここで登録されたデータを接続開始時に送信するようにしておく。
+		// よく考えたら１つのコーデックによって１つの接続とは決まらないので複数のデータを送る必要がでることがあるみたいですな。
+	}
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public String getKey() {
 		// ここでは、一意に判定するための文字列を応答します。
 		// とりあえずserver:[server]:[port]とでもしておこうか
