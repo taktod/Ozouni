@@ -24,6 +24,8 @@ import com.ttProject.unit.extra.bit.Bit8;
  * @author taktod
  * // クライアントソフトウェアがアクセスした場合には、はじめに、frameデータを送ってやった方がいいかも・・・
  * できたらkeyFrameデータでないと初回起動がエラーになることがままありそう。
+ * そのフレームがはじめてきたかという情報がほしいかもしれない・・・
+ * codecPrivateがかわっているか判定すればいいか？
  */
 public class FrameOutputModule implements IOutputModule {
 	/** ロガー */
@@ -76,6 +78,8 @@ public class FrameOutputModule implements IOutputModule {
 			// frameがnullの場合はほっとく。
 			return;
 		}
+		// TODO 該当トラックの該当フレームが初めて来たかの判定がほしい。
+		// そうすればそのCodecPrivateデータを共有するか決めることができるかね。
 		// この部分でframeがmultiFrameだったら分解しておく必要がある。
 		// 処理フレームの値を記録する動作が必要
 		ReportData reportData = signalWorker.getReportData();
