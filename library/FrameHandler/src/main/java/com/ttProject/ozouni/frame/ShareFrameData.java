@@ -183,7 +183,7 @@ public class ShareFrameData {
 	public ByteBuffer getShareData() {
 		BitConnector connector = new BitConnector();
 		return BufferUtil.connect(
-				connector.connect(codecType, pts, dts, timebase, trackId, sampleRate, channels, bitNum, width, height),
+				connector.connect(codecType, flag, pts, dts, timebase, trackId, sampleRate, channels, bitNum, width, height),
 				frameData.duplicate());
 	}
 }
