@@ -47,5 +47,6 @@ public class WebMServlet extends HttpServlet {
 		catch(Exception e) {
 			;
 		}
+		context.close();
 	}
 }
