@@ -63,6 +63,9 @@ public class OneLineWorkModule implements IWorkModule {
 			}
 			return;
 		}
+		if(frame == null) {
+			return; // frameがnullだったら処理できない。
+		}
 		long orgPts = (1000L * frame.getPts() / frame.getTimebase());
 		long pts = orgPts + ptsDiff;
 		// フレームのデータが巻き戻った場合は、そのデータは前のデータになったと見るべき
