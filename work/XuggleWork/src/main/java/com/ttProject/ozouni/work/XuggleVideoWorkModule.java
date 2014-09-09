@@ -244,6 +244,8 @@ public class XuggleVideoWorkModule implements IWorkModule {
 			}
 			offset += bytesDecoded;
 			if(picture.isComplete()) {
+				// ここでいったんptsを修正しておこうか？
+				picture.setPts((long)(vFrame.getPts() / picture.getTimeBase().getDouble() / vFrame.getTimebase()));
 				// リサンプルにかけてみる
 				picture = getResampled(picture);
 				encodeVideo(picture);
