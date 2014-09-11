@@ -177,6 +177,13 @@ public class ShareFrameData {
 		frameData = buffer;
 	}
 	/**
+	 * flagデータを参照する
+	 * @return
+	 */
+	public int getFlag() {
+		return this.flag.get();
+	}
+	/**
 	 * 共有するのに利用するデータを応答する。
 	 * @return
 	 */
