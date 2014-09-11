@@ -264,6 +264,7 @@ public class FfmpegAudioWorkModule implements IWorkModule {
 			}
 		});
 		writer.setFileName(handler.getPipeTarget().getAbsolutePath());
+		// ここでは設定する必要なし。(このwriterでは、prepareHeaderでの設定が強制されている。)
 		writer.prepareHeader();
 	}
 	private void writeFrame(IFrame frame, int id) throws Exception {
