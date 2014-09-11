@@ -131,14 +131,22 @@ public class FrameInputModule implements IInputModule {
 			shareFrameData.setupFrameSelector(((AudioAnalyzer)analyzer).getSelector());
 			analyzerMap.put(shareFrameData.getTrackId(), analyzer);
 		}
-		IFrame frame = null;
 		IReadChannel channel = new ByteReadChannel(shareFrameData.getFrameData());
-		while((frame = analyzer.analyze(channel)) != null) {
-			pushData(frame, shareFrameData);
+		if((shareFrameData.getFlag() & 0x80) != 0x00) {
+			logger.info("privateData用のshareFrameDataを受け取りました。:とりあえずvorbisの初期化時に呼ばれる予定");
+			// privateData用のshareFrameDataの場合
+			analyzer.setPrivateData(channel);
+			shareFrameData.setupFrameSelector(((AudioAnalyzer)analyzer).getSelector());
 		}
-		frame = analyzer.getRemainFrame();
-		if(frame != null) {
-			pushData(frame, shareFrameData);
+		else {
+			IFrame frame = null;
+			while((frame = analyzer.analyze(channel)) != null) {
+				pushData(frame, shareFrameData);
+			}
+			frame = analyzer.getRemainFrame();
+			if(frame != null) {
+				pushData(frame, shareFrameData);
+			}
 		}
 	}
 	/**

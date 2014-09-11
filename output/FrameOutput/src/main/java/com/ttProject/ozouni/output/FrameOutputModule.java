@@ -1,6 +1,8 @@
 package com.ttProject.ozouni.output;
 
 import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +31,15 @@ import com.ttProject.unit.extra.bit.Bit8;
  */
 public class FrameOutputModule implements IOutputModule {
 	/** ロガー */
-	@SuppressWarnings("unused")
+//	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(FrameOutputModule.class);
 	/** reportDataを引き出すために、signalWorkerを参照します。*/
 	@Autowired
 	private ISignalModule signalWorker;
 	/** データ送信用のDataHandler設定 */
 	private ISendDataHandler sendDataHandler = null;
+	/** privateDataのhashCodeを保持しておいて、変更があるかわかるようになっている */
+	private Map<Integer, Integer> privateDataCodeList = new HashMap<Integer, Integer>();
 	/**
 	 * {@inheritDoc}
 	 */
@@ -79,6 +83,25 @@ public class FrameOutputModule implements IOutputModule {
 			return;
 		}
 		// TODO 該当トラックの該当フレームが初めて来たかの判定がほしい。
+		switch(frame.getCodecType()) {
+		case VORBIS: // vorbisの場合はprivateデータがあります。
+			Integer hashCode = privateDataCodeList.get(id);
+			if(hashCode == null || hashCode.intValue() != frame.getPrivateData().hashCode()) {
+				// hashCodeを確認して違う場合は初データであると判断できます。
+				ByteBuffer privateData = frame.getPrivateData();
+				privateDataCodeList.put(id, privateData.hashCode());
+				// privateDataをつくって、hashCode
+				logger.info("privateDataをつくって共有する必要があります。");
+				// 現状接続しているクライアントがいる場合はデータを送る必要があるので、送信しておく
+				ShareFrameData initFrameData = new ShareFrameData(frame.getCodecType(), new Bit8(0x80), frame, id);
+				initFrameData.setFrameData(privateData);
+				sendDataHandler.setInitialData(id, initFrameData.getShareData()); // 一番はじめに接続したときに、送信しておくデータを登録しておく。
+			}
+			break;
+		case THEORA: // theoraにもprivateデータがあります。
+		default:
+			break;
+		}
 		// そうすればそのCodecPrivateデータを共有するか決めることができるかね。
 		// 前回のデータと違うか確認して、ちがったらデータを送らないとだめっぽい。
 		// この部分でframeがmultiFrameだったら分解しておく必要がある。
