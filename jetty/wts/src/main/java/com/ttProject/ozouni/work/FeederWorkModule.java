@@ -46,7 +46,7 @@ public class FeederWorkModule implements IWorkModule {
 		// フレームをうけいれた場合の動作
 		// timestampをミリ秒単位にして、
 		// Bit32 timestamp
-		// Bit8 type (1:音声 4:映像)
+		// Bit8 type (0:44100Hz音声 1:22050Hz音声 2:11025Hz音声 3:5512Hz音声 4:映像)
 		// 残りはframeデータ
 		// という形でBinaryの形式として、データをおくる必要あり。
 		Bit32 timestamp = new Bit32();
@@ -55,7 +55,23 @@ public class FeederWorkModule implements IWorkModule {
 		timestamp.setLong(pts); // 端数部分は抜け落ちるけど、とりあえず仕方ない
 		if(frame instanceof AdpcmImaWavFrame) {
 			// 音声
-			type.set(1);
+			AdpcmImaWavFrame audioFrame = (AdpcmImaWavFrame)frame;
+			switch(audioFrame.getSampleRate()) {
+			case 44100:
+				type.set(0);
+				break;
+			case 22050:
+				type.set(1);
+				break;
+			case 11025:
+				type.set(2);
+				break;
+			case 5512:
+				type.set(3);
+				break;
+			default:
+				return;
+			}
 		}
 		else if(frame instanceof MjpegFrame) {
 			// 映像

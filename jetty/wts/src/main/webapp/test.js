@@ -151,23 +151,19 @@ var onMessage = function(evt) {
 		var timestamp = dataView.getUint32(0);
 		var type = dataView.getUint8(4);
 		switch(type) {
-		case 1: // 44100Hz
-//			if(play == 0) {
-//				return;
-//			}
+		case 0: // 44100Hz
 			var currentAdpcm = uint8ArrayView.subarray(5);
 			// ここでadpcmをpcmに変換してfloatのArrayにしておきたいと思います。
 			audioBuffers.push({ts:timestamp, buf:getFloat32PcmArray(currentAdpcm)});
 			// 取得した瞬間に、Buffersのデータに変換してやる必要あり。
 			break;
-		case 2: // 22050Hz
+		case 1: // 22050Hz
 			break;
-		case 3: // 11025Hz
+		case 2: // 11025Hz
+			break;
+		case 3: // 5512Hz
 			break;
 		case 4: // 映像データ(適当に再生時に表示しないとだめ)
-//			if(play == 0) {
-//				return;
-//			}
 			// とりあえず画像にして、そのまま表示しておく。
 			var imageArray = uint8ArrayView.subarray(5);
 			var blob = new Blob([imageArray], {type:"image/jpeg"});
