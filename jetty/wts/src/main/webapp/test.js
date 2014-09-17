@@ -77,15 +77,15 @@ var nextPredictor = function(index, nibble, predictor, step) {
 		predictor += diff;
 	}
 	// predictorがoverflowする場合は、音声が割れたりする模様
-	if(predictor > 32767) {
-		return 32767;
-	}
-	else if(predictor < -32768) {
-		return -32768;
-	}
-	else {
+//	if(predictor > 32767) {
+//		return 32767;
+//	}
+//	else if(predictor < -32768) {
+//		return -32768;
+//	}
+//	else {
 		return predictor;
-	}
+//	}
 };
 
 /** 音声バッファ */
@@ -112,7 +112,7 @@ function getFloat32PcmArray(audioBuffer) {
 	if(predictor > 32767) {
 		predictor = predictor - 0x010000;
 	}
-	result[pos] = predictor / 65536;
+	result[pos] = predictor / 100000;
 	pos ++;
 	var index = audioBuffer[2];
 	var step = imaStepTable[index];
@@ -123,14 +123,14 @@ function getFloat32PcmArray(audioBuffer) {
 		index = nextIndex(index, nibble);
 		predictor = nextPredictor(index, nibble, predictor, step);
 		step = imaStepTable[index];
-		result[pos] = predictor / 65536;
+		result[pos] = predictor / 100000;
 		pos ++;
 		// low 4bitやっておく
 		nibble = (audioBuffer[bPos]) & 0x0F;
 		index = nextIndex(index, nibble);
 		predictor = nextPredictor(index, nibble, predictor, step);
 		step = imaStepTable[index];
-		result[pos] = predictor / 65536;
+		result[pos] = predictor / 100000;
 		pos ++;
 	}
 	return result;
@@ -186,6 +186,8 @@ var aPos = 0;
 function Process(ev) {
 	var buf0 = ev.outputBuffer.getChannelData(0);
 	var buf1 = ev.outputBuffer.getChannelData(1);
+	// 映像のlengthが3を越えている場合はある程度データを除去したいところ。
+	// 映像がないデータの場合は音声のたまり具合でなんとかしないとだめだが・・・
 	// buf0とbuf1にデータを設定すれば、それが再生される
 	for(var i = 0;i < bufsize;i ++) {
 		if(currentBuffer == null) {
@@ -208,7 +210,10 @@ function Process(ev) {
 		else {
 			buf0[i] = buf1[i] = currentBuffer[aPos];
 			aPos ++; // 位置を１つずらしておく
-			if(currentBuffer.length == aPos) {
+			if(imageBuffers.length > 10 && aPos % 100 == 0) {
+				aPos ++;
+			}
+			if(currentBuffer.length <= aPos) {
 				currentBuffer = null; // いままでのバッファがなくなったので、破棄しておく。
 			}
 		}
@@ -230,8 +235,8 @@ var imageUpdate = function() {
 	}
 	if(img != null) {
 		ctx.drawImage(img, 0, 0);
+		document.querySelector("div").innerHTML = "audio:" + audioBuffers.length + " / video:" + imageBuffers.length + " ats:" + ats + " / vts:" + ts;
 	}
-	document.querySelector("div").innerHTML = "audio:" + audioBuffers.length + " / video:" + imageBuffers.length + " ats:" + ats + " / vts:" + ts;
 	// 次のフレーム時にも処理しておきたい。
 	requestAnimationFrame(imageUpdate);
 };
