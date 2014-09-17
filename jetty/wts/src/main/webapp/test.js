@@ -220,8 +220,10 @@ function Process(ev) {
  */
 var imageUpdate = function() {
 	var img = null;
+	var ts = -1;
 	while(imageBuffers.length > 0) {
 		if(imageBuffers[0].ts > ats) {
+			ts = imageBuffers[0].ts;
 			break;
 		}
 		img = imageBuffers.shift().img;
@@ -229,7 +231,7 @@ var imageUpdate = function() {
 	if(img != null) {
 		ctx.drawImage(img, 0, 0);
 	}
-	document.querySelector("div").innerHTML = "audio:" + audioBuffers.length + " / video:" + imageBuffers.length;
+	document.querySelector("div").innerHTML = "audio:" + audioBuffers.length + " / video:" + imageBuffers.length + " ats:" + ats + " / vts:" + ts;
 	// 次のフレーム時にも処理しておきたい。
 	requestAnimationFrame(imageUpdate);
 };
@@ -239,6 +241,11 @@ imageUpdate();
  * 再生開始処理
  */
 function Play() {
+	if(ws != null) {
+		ws.close(); // 前の接続は殺しておく。
+	}
+	audioBuffers = [];
+	imageBuffers = [];
 	if(typeof(audioctx.createOscillator) !== "undefined") {
 		osc = audioctx.createOscillator();
 		osc.connect(scrproc);
