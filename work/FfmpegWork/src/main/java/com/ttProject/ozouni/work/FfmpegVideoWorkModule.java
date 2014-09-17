@@ -205,6 +205,8 @@ public class FfmpegVideoWorkModule implements IWorkModule {
 						@Override
 						public void receiveFrame(IFrame frame) {
 							try {
+								// ここでframeデータが転送されてこなかったら、リセットを書け直すというのがある必要があると思う。
+								// これについては、映像or音声があれば、okみたいな感じにしたいところだが・・・
 								converted = true;
 								workModule.pushFrame(frame, id);
 							}

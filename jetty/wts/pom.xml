@@ -17,7 +17,8 @@
   <name>wts</name>
   <description>websocketをつかって、mjpeg + adpcmデータを送信し、クライアント側でライブ視聴するためのサーバー側動作
 
-とりあえず、動作したけど、xuggleでは、順番に送信されていたものの、ffmpegでは、chunkの形で一期にながれてくるので(mkvの性か？)動作が微妙になっているみたいだ。</description>
+動作の問題は大体OK
+細かい実装がまだあるけど・・・どうするかね？</description>
   <dependencies>
     <dependency>
       <groupId>com.ttProject.streaming</groupId>
