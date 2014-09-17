@@ -18,7 +18,6 @@ import com.ttProject.frame.IAudioFrame;
 import com.ttProject.frame.IFrame;
 import com.ttProject.frame.IVideoFrame;
 import com.ttProject.frame.h264.SliceFrame;
-import com.ttProject.frame.h264.type.SupplementalEnhancementInformation;
 import com.ttProject.ozouni.base.IWorkModule;
 import com.ttProject.ozouni.frame.IFrameReader;
 import com.ttProject.ozouni.frame.IFrameWriter;
