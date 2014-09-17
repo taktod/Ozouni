@@ -10,9 +10,15 @@ import java.util.concurrent.ThreadFactory;
 
 import org.apache.log4j.Logger;
 
+import com.ttProject.container.IWriter;
+import com.ttProject.container.flv.FlvTagWriter;
+import com.ttProject.frame.CodecType;
+import com.ttProject.frame.Frame;
 import com.ttProject.frame.IAudioFrame;
 import com.ttProject.frame.IFrame;
 import com.ttProject.frame.IVideoFrame;
+import com.ttProject.frame.h264.SliceFrame;
+import com.ttProject.frame.h264.type.SupplementalEnhancementInformation;
 import com.ttProject.ozouni.base.IWorkModule;
 import com.ttProject.ozouni.frame.IFrameReader;
 import com.ttProject.ozouni.frame.IFrameWriter;
@@ -48,10 +54,13 @@ public class FfmpegVideoWorkModule implements IWorkModule {
 	private Map<String, String> envExtra = new HashMap<String, String>();
 	/** pipeへの書き込み処理 */
 	private IFrameWriter writer = null;
+	private IWriter writer2 = null;
 	/** pipeプロセスの標準出力読み込み処理 */
 	private IFrameReader reader = null;
 	/** 次のworkModule */
 	private IWorkModule workModule = null;
+	/** すでに変換が開始しているか確認するフラグ */
+	private boolean converted = false;
 	/**
 	 * コマンドの設定
 	 * @param command
@@ -128,6 +137,11 @@ public class FfmpegVideoWorkModule implements IWorkModule {
 		if(!(frame instanceof IVideoFrame)) {
 			return false;
 		}
+		if(frame.getCodecType() == CodecType.H264) {
+			if(!(frame instanceof SliceFrame)) {
+				return false;
+			}
+		}
 		IVideoFrame vFrame = (IVideoFrame)frame;
 		if(lastVideoFrame != null) {
 			if(lastVideoFrame.getCodecType() != vFrame.getCodecType()
@@ -171,15 +185,24 @@ public class FfmpegVideoWorkModule implements IWorkModule {
 			return;
 		}
 		// 問題なければ書き込む
+		if(passedPts == frame.getPts() && !converted) {
+			Frame f = (Frame)frame;
+			f.setPts(passedPts + 1);
+		}
 		passedPts = frame.getPts();
 		writeFrame(frame, id);
 		lastVideoFrame = (IVideoFrame)frame;
 	}
+	private int counter = 0;
 	private void openFlvTagWriter() throws Exception {
 		writer.prepareTailer();
+		if(writer2 != null) {
+			writer2.prepareTailer();
+		}
 		if(future != null) {
 			future.cancel(true);
 		}
+		converted = false;
 		handler.close();
 		handler.executeProcess();
 		future = exec.submit(new Runnable() {
@@ -190,6 +213,7 @@ public class FfmpegVideoWorkModule implements IWorkModule {
 						@Override
 						public void receiveFrame(IFrame frame) {
 							try {
+								converted = true;
 								workModule.pushFrame(frame, id);
 							}
 							catch(Exception e) {
@@ -204,9 +228,12 @@ public class FfmpegVideoWorkModule implements IWorkModule {
 			}
 		});
 		writer.setFileName(handler.getPipeTarget().getAbsolutePath());
+		writer2 = new FlvTagWriter("/home/taktod/task/movieError/video" + (counter ++) + ".flv");
+		writer2.prepareHeader(CodecType.FLV1);
 		writer.prepareHeader();
 	}
 	private void writeFrame(IFrame frame, int id) throws Exception {
 		writer.addFrame(id, frame);
+		writer2.addFrame(id, frame);
 	}
 }
