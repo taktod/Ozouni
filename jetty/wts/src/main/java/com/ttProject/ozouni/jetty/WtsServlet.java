@@ -17,6 +17,7 @@ public class WtsServlet extends WebSocketServlet {
 	 */
 	@Override
 	public WebSocket doWebSocketConnect(HttpServletRequest request, String protocol) {
+		System.out.println(request.getQueryString()); // この部分でrtmpアドレスがとれるっぽいですね。
 		IApplication app = Application.getInstance(request.getRequestURI());
 		IClient client = new Client(app);
 		// 接続してもいいか確認
