@@ -210,7 +210,7 @@ function Process(ev) {
 		else {
 			buf0[i] = buf1[i] = currentBuffer[aPos];
 			aPos ++; // 位置を１つずらしておく
-			if(imageBuffers.length > 10 && aPos % 100 == 0) {
+			if(imageBuffers.length > 5 && aPos % 100 == 0) {
 				aPos ++;
 			}
 			if(currentBuffer.length <= aPos) {
