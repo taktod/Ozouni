@@ -15,11 +15,31 @@
   <bean class="com.ttProject.ozouni.reportHandler.NullReportHandler"/>
   <!-- 一定時間ごとのレポート動作 -->
   <bean class="com.ttProject.ozouni.worker.SignalWorker"/>
+  <!-- 変換モジュール -->
+  <bean id="audioConvert" class="com.ttProject.ozouni.work.XuggleAudioWorkModule">
+    <property name="Id" value="8"/>
+    <property name="Codec" value="CODEC_ID_ADPCM_IMA_WAV"/>
+    <property name="Channels" value="1"/>
+  </bean>
+  <bean id="videoConvert" class="com.ttProject.ozouni.work.XuggleVideoWorkModule">
+    <property name="Id" value="9"/>
+    <property name="Codec" value="CODEC_ID_MJPEG"/>
+  </bean>
+  <!-- 作業モジュール -->
+  <bean id="workModule" class="com.ttProject.ozouni.work.OneLineWorkModule">
+    <property name="WorkList">
+      <list>
+        <ref bean="audioConvert"/>
+        <ref bean="videoConvert"/>
+      </list>
+    </property>
+  </bean>
   <!-- 入力モジュール -->
   <bean class="com.ttProject.ozouni.input.RtmpInputModule">
     <property name="objectEncoding" value="3"/>
     <property name="WriterToSave">
       <bean class="com.ttProject.ozouni.input.rtmp.ReceiveWriter"/>
     </property>
+    <property name="WorkModule" ref="workModule"/>
   </bean>
 </beans>
