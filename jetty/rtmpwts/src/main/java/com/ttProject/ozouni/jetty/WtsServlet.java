@@ -21,12 +21,28 @@ public class WtsServlet extends WebSocketServlet {
 	@Override
 	public WebSocket doWebSocketConnect(HttpServletRequest request, String protocol) {
 		// とりあえず、queryを分解して必要なデータを取り出したいですね。
-		logger.info(request.getParameter("host"));
-		logger.info(request.getParameter("port"));
-		logger.info(request.getParameter("app"));
-		logger.info(request.getParameter("stream"));
+		String host, port, app, stream;
+		host = request.getParameter("host");
+		port = request.getParameter("port");
+		app  = request.getParameter("app");
+		stream = request.getParameter("stream");
+		if(port == null || port.equals("")) {
+			port = "1935";
+		}
+		if(host == null || host.equals("")) {
+			return null;
+		}
+		if(app == null || app.equals("")) {
+			return null;
+		}
+		if(stream == null || stream.equals("")) {
+			return null;
+		}
+		IApplication appInst = Application.getInstance(host, port, app, stream);
+		// 取得できたappInstance
+		logger.info(appInst);
+		IClient client = new Client(appInst);
 		// この段階でport番号がなかったら1935にしておく。
-		
-		return null;
+		return client;
 	}
 }

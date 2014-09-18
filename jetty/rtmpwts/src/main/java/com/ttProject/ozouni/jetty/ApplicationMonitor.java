@@ -65,7 +65,8 @@ public class ApplicationMonitor {
 	public IApplication getApplication(String host, String port, String app, String stream) {
 		String path = makePath(host, port, app, stream);
 		IApplication inst = applications.get(path);
-		if(app == null) {
+		if(inst == null) {
+			// アプリケーションつくります。
 			inst = new Application(host, port, app, stream);
 			applications.put(path, inst);
 			// アプリケーション作成時イベント

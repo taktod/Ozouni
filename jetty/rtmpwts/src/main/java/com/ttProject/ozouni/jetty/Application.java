@@ -11,6 +11,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import org.apache.log4j.Logger;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * アプリケーション
@@ -28,8 +29,8 @@ public class Application implements IApplication {
 	 */
 	public static IApplication getInstance(String host, String port, String app, String stream) {
 		// 今回この部分はpathでわけてありましたが、rtmpのurlで分けた方がよさそうですね。
-//		return appMonitor.getApplication(path);
-		return null;
+		return appMonitor.getApplication(host, port, app, stream);
+//		return null;
 	}
 	/**
 	 * アプリケーションリスト参照動作
@@ -59,7 +60,9 @@ public class Application implements IApplication {
 		this.app = app;
 		this.stream = stream;
 		// このタイミングでspringのcontextを読み込んでおきたい。
-			// このタイミングでxmlのデータをロードして、動作しなければいけない感じか？
+		context = new ClassPathXmlApplicationContext();
+		logger.info("ここまできたので、rtmpのダウンロード処理を開始したりします。");
+		// このタイミングでxmlのデータをロードして、動作しなければいけない感じか？
 			// uniqueIdは、決定できません。
 /*			logger.info("ターゲットpath:" + paths[paths.length - 1]);
 			context = new AnnotationConfigApplicationContext(AppConfig.class);
