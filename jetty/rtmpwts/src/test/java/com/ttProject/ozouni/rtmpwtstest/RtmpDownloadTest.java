@@ -1,9 +1,7 @@
 package com.ttProject.ozouni.rtmpwtstest;
 
 import org.apache.log4j.Logger;
-import org.junit.Test;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.flazr.rtmp.client.ClientOptions;
@@ -24,7 +22,7 @@ public class RtmpDownloadTest {
 	 * 動作開始
 	 * @throws Excetion
 	 */
-	@Test
+//	@Test
 	public void test() {
 		try {
 			logger.info("動作テスト開始");
