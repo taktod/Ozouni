@@ -9,9 +9,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.apache.log4j.Logger;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * アプリケーション
@@ -49,7 +46,7 @@ public class Application implements IApplication {
 	private long expire = 10000L; // 10秒たったらexpireになったものとして扱う(最終ユーザーがアクセスしてから)
 	private long lastClientRemoveTime = -1; // クライアントが最後にアクセスしていた時刻保持
 	private boolean closed = false;
-	private ConfigurableApplicationContext context = null;
+//	private ConfigurableApplicationContext context = null;
 	/**
 	 * コンストラクタ
 	 * @param path
@@ -60,7 +57,7 @@ public class Application implements IApplication {
 		this.app = app;
 		this.stream = stream;
 		// このタイミングでspringのcontextを読み込んでおきたい。
-		context = new ClassPathXmlApplicationContext();
+//		context = new ClassPathXmlApplicationContext();
 		logger.info("ここまできたので、rtmpのダウンロード処理を開始したりします。");
 		// このタイミングでxmlのデータをロードして、動作しなければいけない感じか？
 			// uniqueIdは、決定できません。
