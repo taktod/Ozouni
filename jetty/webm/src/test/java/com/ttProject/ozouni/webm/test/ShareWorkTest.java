@@ -1,7 +1,6 @@
 package com.ttProject.ozouni.webm.test;
 
 import org.apache.log4j.Logger;
-import org.junit.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -17,7 +16,7 @@ public class ShareWorkTest {
 	/**
 	 * 動作テスト
 	 */
-	@Test
+//	@Test
 	public void shareTest() {
 		logger.info("共有開始");
 		ConfigurableApplicationContext context = null;
