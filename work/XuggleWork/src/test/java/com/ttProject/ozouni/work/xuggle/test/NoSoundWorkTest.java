@@ -78,7 +78,7 @@ public class NoSoundWorkTest {
 			return;
 		}
 		packet = pkt;
-		logger.info(packet);
+//		logger.info(packet);
 		IAudioSamples samples = IAudioSamples.make(1024, decoder.getChannels());
 		int offset = 0;
 		while(offset < packet.getSize()) {
@@ -88,7 +88,7 @@ public class NoSoundWorkTest {
 			}
 			offset += bytesDecoded;
 			if(samples.isComplete()) {
-				logger.info(samples);
+//				logger.info(samples);
 				IAudioSamples s = IAudioSamples.make(44100, 1, Format.FMT_S16);
 				s.setComplete(true, 44100, 44100, 1, Format.FMT_S16, samples.getPts());
 				s.setTimeBase(samples.getTimeBase());

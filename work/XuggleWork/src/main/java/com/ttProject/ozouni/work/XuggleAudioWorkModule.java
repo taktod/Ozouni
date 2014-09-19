@@ -306,7 +306,9 @@ public class XuggleAudioWorkModule implements IWorkModule {
 			sampleConsumed += retval;
 			if(packet.isComplete()) {
 				IFrame frame = depacketizer.getFrame(encoder, packet);
-				signalWorker.getReportData().reportWorkStatus(moduleId);
+				if(signalWorker != null) {
+					signalWorker.getReportData().reportWorkStatus(moduleId);
+				}
 				if(workModule != null) {
 					if(frame instanceof AudioMultiFrame) {
 						AudioMultiFrame multiFrame = (AudioMultiFrame)frame;

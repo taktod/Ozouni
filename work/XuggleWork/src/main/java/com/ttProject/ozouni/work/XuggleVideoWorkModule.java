@@ -316,7 +316,9 @@ public class XuggleVideoWorkModule implements IWorkModule {
 		if(packet.isComplete()) {
 			IFrame frame = depacketizer.getFrame(encoder, packet);
 //			logger.info(frame.getCodecType() + " " + frame.getPts() + " / " + frame.getTimebase());
-			signalWorker.getReportData().reportWorkStatus(moduleId);
+			if(signalWorker != null) {
+				signalWorker.getReportData().reportWorkStatus(moduleId);
+			}
 			if(workModule != null) {
 				if(frame instanceof VideoMultiFrame) {
 					VideoMultiFrame multiFrame = (VideoMultiFrame)frame;
