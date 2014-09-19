@@ -35,7 +35,7 @@ public class NoSoundAudioWorkerTest {
 			public void setWorkModule(IWorkModule workModule) {
 			}
 			@Override
-			public void start(int num) throws Exception {
+			public void start() throws Exception {
 			}
 			@Override
 			public synchronized void pushFrame(IFrame frame, int id) throws Exception {
