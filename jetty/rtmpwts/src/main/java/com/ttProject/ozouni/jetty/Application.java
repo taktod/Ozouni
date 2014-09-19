@@ -84,13 +84,15 @@ public class Application implements IApplication {
 		if(!clientOptions.parseCli(options)) {
 			throw new Exception("アクセスアドレスデータをパースすることができませんでした。");
 		}
-		IWorkModule feederWorkModule = new FeederWorkModule();
+		IWorkModule feederWorkModule = new FeederWorkModule(this);
 		XuggleAudioWorkModule audioModule = context.getBean(XuggleAudioWorkModule.class);
 		audioModule.setWorkModule(feederWorkModule);
 		XuggleVideoWorkModule videoModule = context.getBean(XuggleVideoWorkModule.class);
 		videoModule.setWorkModule(feederWorkModule);
+		rtmpInputModule.setAsyncMode(true);
 		rtmpInputModule.start(); // 開始するけど、このままだと、rtmpの転送がおわるまでずっとうごきっぱになってるはず。
-		context.close();
+		// コンテキストはおわったときにcloseする
+//		context.close();
 			// uniqueIdは、決定できません。
 /*			logger.info("ターゲットpath:" + paths[paths.length - 1]);
 			context = new AnnotationConfigApplicationContext(AppConfig.class);
@@ -117,6 +119,11 @@ public class Application implements IApplication {
 		}
 		clients.clear();
 		properties.clear();
+		// rtmpInputModuleを停止する。
+		RtmpInputModule rtmpInputModule = context.getBean(RtmpInputModule.class);
+		rtmpInputModule.stop();
+		// contextもcloseしておく。
+		context.close();
 	}
 	/**
 	 * {@inheritDoc}
@@ -153,6 +160,7 @@ public class Application implements IApplication {
 	public void sendMessage(ByteBuffer buffer) throws Exception {
 		// 接続しているclientすべてにメッセージ
 		for(IClient client : clients) {
+			logger.info(client + ":にデータおくるぜ");
 			client.sendMessage(buffer);
 		}
 	}

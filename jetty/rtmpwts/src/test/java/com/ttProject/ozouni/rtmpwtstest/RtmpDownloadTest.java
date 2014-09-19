@@ -5,9 +5,9 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.flazr.rtmp.client.ClientOptions;
+import com.ttProject.frame.IFrame;
 import com.ttProject.ozouni.base.IWorkModule;
 import com.ttProject.ozouni.input.RtmpInputModule;
-import com.ttProject.ozouni.work.FeederWorkModule;
 import com.ttProject.ozouni.work.XuggleAudioWorkModule;
 import com.ttProject.ozouni.work.XuggleVideoWorkModule;
 
@@ -46,7 +46,20 @@ public class RtmpDownloadTest {
 			if(!clientOptions.parseCli(options)) {
 				throw new Exception("アクセスアドレスデータをパースすることができませんでした。");
 			}
-			IWorkModule feederWorkModule = new FeederWorkModule();
+			IWorkModule feederWorkModule = new IWorkModule() {
+				@Override
+				public void start() throws Exception {
+				}
+				
+				@Override
+				public void setWorkModule(IWorkModule workModule) {
+				}
+				@Override
+				public void pushFrame(IFrame frame, int id) throws Exception {
+					// frameデータを受け取ります。
+					logger.info(frame);
+				}
+			};
 			XuggleAudioWorkModule audioModule = context.getBean(XuggleAudioWorkModule.class);
 			audioModule.setWorkModule(feederWorkModule);
 			XuggleVideoWorkModule videoModule = context.getBean(XuggleVideoWorkModule.class);

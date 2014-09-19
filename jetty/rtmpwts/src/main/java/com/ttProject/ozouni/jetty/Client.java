@@ -25,6 +25,7 @@ public class Client implements IClient {
 	 * @param app
 	 */
 	public Client(IApplication app) {
+		logger.info("クライアントつくりました。:" + app);
 		this.app = app;
 	}
 	/**
@@ -41,10 +42,13 @@ public class Client implements IClient {
 	 */
 	@Override
 	public void onOpen(Connection connection) {
+		logger.info("接続してるよん");
 		if(((Application)app).isClosed()) { // なんらかの原因でapplicationがすでに終了済みだったら
+			logger.info("アプリケーションがとじてました。なんで？");
 			connection.close(); // 強制切断しておわらせる
 			return;
 		}
+		logger.info("ここまでこれました。");
 		this.connection = new WeakReference<Connection>(connection);
 		((Application)app).addClient(this);
 		// 接続時イベント発行
