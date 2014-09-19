@@ -17,6 +17,7 @@ import com.ttProject.frameutil.AnalyzerChecker;
 import com.ttProject.nio.channels.ByteReadChannel;
 import com.ttProject.nio.channels.IReadChannel;
 import com.ttProject.ozouni.base.IInputModule;
+import com.ttProject.ozouni.base.ISignalModule;
 import com.ttProject.ozouni.base.IWorkModule;
 import com.ttProject.ozouni.base.ReportData;
 import com.ttProject.ozouni.dataHandler.IDataListener;
@@ -44,6 +45,11 @@ public class FrameInputModule implements IInputModule {
 	private AnalyzerChecker analyzerChecker = new AnalyzerChecker();
 	/** 接続先targetId */
 	private String targetId = null;
+	/** モジュールのID番号 */
+	private int moduleId = 0;
+	/** アクセスシグナルモジュール */
+	@Autowired
+	private ISignalModule signalWorker;
 	/**
 	 * コンストラクタ
 	 */
@@ -85,6 +91,11 @@ public class FrameInputModule implements IInputModule {
 	@Override
 	public void start() throws Exception {
 		logger.info("開始します。");
+		ReportData myReportData = signalWorker.getReportData();
+		moduleId = myReportData.getNextModuleId();
+		String moduleData = moduleId + ":" + getClass().getSimpleName();
+		myReportData.addModule(moduleData);
+		workModule.start();
 		// このタイミングでserverClientHandlerを起動してデータを取得するようにしないとだめ
 		ReportData reportData = reportHandler.getReportData(targetId);
 		if(reportData == null) {
@@ -186,6 +197,7 @@ public class FrameInputModule implements IInputModule {
 		f.setTimebase(shareFrameData.getTimebase());
 		f.setPts(shareFrameData.getPts());
 		// 出力モジュールにデータを明け渡します。
+		signalWorker.getReportData().reportWorkStatus(moduleId);
 		workModule.pushFrame(frame, shareFrameData.getTrackId());
 	}
 }

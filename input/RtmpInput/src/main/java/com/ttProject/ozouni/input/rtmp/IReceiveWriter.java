@@ -14,4 +14,9 @@ public interface IReceiveWriter extends RtmpWriter {
 	 * @param outputModule
 	 */
 	public void setWorkModule(IWorkModule workModule);
+	/**
+	 * 動作モジュールIDを設定しておくようにしておく
+	 * @param moduleId
+	 */
+	public void setModuleId(int moduleId);
 }

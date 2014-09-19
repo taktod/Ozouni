@@ -40,10 +40,20 @@ public class ReceiveWriter implements IReceiveWriter {
 	/** アクセスシグナルモジュール */
 	@Autowired
 	private ISignalModule signalWorker;
+	/** 動作モジュールID */
+	private int moduleId = 0;
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setModuleId(int moduleId) {
+		this.moduleId = moduleId;
+	}
 	/**
 	 * 出力モジュール設定
 	 * @param workModule
 	 */
+	@Override
 	public void setWorkModule(IWorkModule workModule) {
 		this.workModule = workModule;
 	}
@@ -60,7 +70,7 @@ public class ReceiveWriter implements IReceiveWriter {
 		orderModel.reset();
 		// このタイミングでreportDataにアクセスしてframePtsをリセットしておく
 		signalWorker.getReportData().setFramePts(0);
-		pts = -1; // こっちも初期化しておく。
+//		pts = -1; // こっちも初期化しておく。
 	}
 	/**
 	 * {@inheritDoc}
@@ -71,7 +81,7 @@ public class ReceiveWriter implements IReceiveWriter {
 	/**
 	 * {@inheritDoc}
 	 */
-	private long pts = -1;
+//	private long pts = -1;
 	@Override
 	public void write(RtmpMessage message) {
 		try {
@@ -81,13 +91,14 @@ public class ReceiveWriter implements IReceiveWriter {
 			// 変更があったとわかったときに、トリガーとして、誰かに処理開始させるものが必要になりそうです。
 			// どうやるかね？(redisのpubsubか？それとも直接phpたたくか？)
 			// とりあえず、直接phpをたたくのがちょうどよさそうだが・・・
+			signalWorker.getReportData().reportWorkStatus(moduleId);
 			for(FlvTag t : orderModel.getAudioCompleteTag()) {
 				if(t instanceof AudioTag) {
 					AudioTag aTag = (AudioTag)t;
-					if(pts != -1 && pts > aTag.getPts()) {
+/*					if(pts != -1 && pts > aTag.getPts()) {
 						logger.info("flip検出");
 					}
-					pts = aTag.getPts();
+					pts = aTag.getPts();*/
 					workModule.pushFrame(aTag.getFrame(), 0x08);
 				}
 			}

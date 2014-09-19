@@ -1,10 +1,13 @@
 package com.ttProject.ozouni.input;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.flazr.rtmp.client.ClientOptions;
 import com.ttProject.ozouni.base.IInputModule;
+import com.ttProject.ozouni.base.ISignalModule;
 import com.ttProject.ozouni.base.IWorkModule;
+import com.ttProject.ozouni.base.ReportData;
 import com.ttProject.ozouni.input.rtmp.IReceiveWriter;
 import com.ttProject.ozouni.input.rtmp.RtmpClient;
 
@@ -24,6 +27,11 @@ public class RtmpInputModule implements IInputModule {
 	private IWorkModule workModule = null;
 	/** objectEncodingの値 */
 	private int objectEncoding = -1;
+	/** モジュールのID番号 */
+	private int moduleId = 0;
+	/** アクセスシグナルモジュール */
+	@Autowired
+	private ISignalModule signalWorker;
 	/**
 	 * 出力モジュールを設定する。(bean用)
 	 */
@@ -57,8 +65,15 @@ public class RtmpInputModule implements IInputModule {
 	 */
 	@Override
 	public void start() throws Exception {
+		ReportData reportData = signalWorker.getReportData();
+		moduleId = reportData.getNextModuleId();
+		String moduleData = moduleId + ":" + getClass().getSimpleName();
+		reportData.addModule(moduleData);
+		workModule.start();
+
 		// writerと出力モジュールを紐づけておく
 		writer.setWorkModule(workModule);
+		writer.setModuleId(moduleId);
 		// optionsの調整
 		ClientOptions options = getClientOptions();
 		if(options.getLoad() != 1 || options.getClientOptionsList() != null) {
