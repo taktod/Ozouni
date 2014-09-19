@@ -255,8 +255,12 @@ function Play() {
 		osc = audioctx.createOscillator();
 		osc.connect(scrproc);
 		osc.start(0);
-		// 開始するときに、websocketと接続する形にしておけばいいかな
-		ws = new WebSocket("ws://" + location.host + "/wts/?host=49.212.39.17&port=1935&app=live&stream=test");
+		// 開始するときにrtmpサーバーの接続先を指定して動作させておく。
+		var server = document.getElementById("server").value;
+		var port   = document.getElementById("port").value;
+		var app    = document.getElementById("app").value;
+		var stream = document.getElementById("stream").value;
+		ws = new WebSocket("ws://" + location.host + "/wts/?host=" + server + "&port=" + port + "&app=" + app + "&stream=" + stream);
 		ws.onmessage = onMessage;
 	}
 }
