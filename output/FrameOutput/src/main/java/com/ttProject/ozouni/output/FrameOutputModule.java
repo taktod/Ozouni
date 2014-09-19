@@ -40,6 +40,8 @@ public class FrameOutputModule implements IOutputModule {
 	private ISendDataHandler sendDataHandler = null;
 	/** privateDataのhashCodeを保持しておいて、変更があるかわかるようになっている */
 	private Map<Integer, Integer> privateDataCodeList = new HashMap<Integer, Integer>();
+	/** モジュールのID番号 */
+	private int moduleId = 0;
 	/**
 	 * {@inheritDoc}
 	 */
@@ -51,7 +53,14 @@ public class FrameOutputModule implements IOutputModule {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void start(int num) throws Exception {
+	public void start() throws Exception {
+		if(moduleId != 0) {
+			return;
+		}
+		ReportData reportData = signalWorker.getReportData();
+		moduleId = reportData.getNextModuleId();
+		String moduleData = moduleId + ":" + getClass().getSimpleName();
+		reportData.addModule(moduleData);
 	}
 	/**
 	 * データ送信handlerを設定する
@@ -120,6 +129,7 @@ public class FrameOutputModule implements IOutputModule {
 		}
 		// 現在時刻を登録しておく
 		reportData.setLastUpdateTime(System.currentTimeMillis());
+		reportData.reportWorkStatus(moduleId);
 		// h264のframeの場合はちょっと特殊なことをやる必要がある。
 		CodecType codecType = frame.getCodecType();
 		// trackIdを作成する必要がある。
