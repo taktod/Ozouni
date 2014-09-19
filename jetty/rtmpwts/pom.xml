@@ -16,10 +16,10 @@
   </licenses>
   <name>rtmpwts</name>
   <description>websocketをつかって、mjpeg + adpcmデータを送信し、クライアント側でライブ視聴するためのサーバー側動作
- 
-ws://ターゲットipアドレス:8080/?rtmp://sample.com/live/test
+
+ws://locahost:8080/?host=localhost&amp;port=1935&amp;app=live&amp;stream=test
 みたいな感じでアクセスすると、該当rtmpアドレスのストリームデータを取得して動作。
-みたいな感じでつくっておきたい。</description>
+みたいな感じでつくってみた。</description>
   <dependencies>
     <dependency>
       <groupId>com.ttProject.streaming</groupId>
