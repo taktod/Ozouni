@@ -41,4 +41,11 @@ public class FeederWorkModule implements IWorkModule {
 	public void setWorkModule(IWorkModule workModule) {
 		
 	}
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void start(int num) throws Exception {
+		
+	}
 }

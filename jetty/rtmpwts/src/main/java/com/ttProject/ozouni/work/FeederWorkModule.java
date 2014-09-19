@@ -24,6 +24,13 @@ public class FeederWorkModule implements IWorkModule {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void start(int num) throws Exception {
+		
+	}
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void pushFrame(IFrame frame, int id) throws Exception {
 		// frameデータを受け取ります。
 		logger.info(frame);

@@ -81,6 +81,13 @@ public class XuggleVideoWorkModule implements IWorkModule {
 		this.workModule = workModule;
 	}
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void start(int num) throws Exception {
+		
+	}
+	/**
 	 * groupOfPicture(keyFrame間隔)を設定
 	 * @param groupOfPictures
 	 */

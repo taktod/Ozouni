@@ -35,6 +35,9 @@ public class NoSoundAudioWorkerTest {
 			public void setWorkModule(IWorkModule workModule) {
 			}
 			@Override
+			public void start(int num) throws Exception {
+			}
+			@Override
 			public synchronized void pushFrame(IFrame frame, int id) throws Exception {
 				logger.info("ここから");
 				logger.info(frame.getCodecType() + " " + frame.getPts() + " / " + frame.getTimebase());

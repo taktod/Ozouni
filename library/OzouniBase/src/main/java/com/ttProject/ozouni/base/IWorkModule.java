@@ -13,6 +13,12 @@ public interface IWorkModule {
 	 */
 	public void setWorkModule(IWorkModule workModule);
 	/**
+	 * 開始通知
+	 * @param num イベント番号
+	 * @throws Exception
+	 */
+	public void start(int num) throws Exception;
+	/**
 	 * inputModuleからworkModuleにframeを送る
 	 * @param frame
 	 * @param id

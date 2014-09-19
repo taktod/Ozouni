@@ -72,6 +72,13 @@ public class XuggleAudioWorkModule implements IWorkModule {
 		this.workModule = workModule;
 	}
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void start(int num) throws Exception {
+		
+	}
+	/**
 	 * チャンネルを設定
 	 * @param channels
 	 */
@@ -284,7 +291,6 @@ public class XuggleAudioWorkModule implements IWorkModule {
 			sampleConsumed += retval;
 			if(packet.isComplete()) {
 				IFrame frame = depacketizer.getFrame(encoder, packet);
-//				logger.info(frame.getCodecType() + " " + frame.getPts() + " / " + frame.getTimebase());
 				if(workModule != null) {
 					if(frame instanceof AudioMultiFrame) {
 						AudioMultiFrame multiFrame = (AudioMultiFrame)frame;

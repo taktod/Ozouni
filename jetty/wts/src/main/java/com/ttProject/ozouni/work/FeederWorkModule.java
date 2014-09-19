@@ -42,6 +42,13 @@ public class FeederWorkModule implements IWorkModule {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void start(int num) throws Exception {
+		
+	}
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void pushFrame(IFrame frame, int id) throws Exception {
 		// フレームをうけいれた場合の動作
 		// timestampをミリ秒単位にして、

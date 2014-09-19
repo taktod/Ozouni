@@ -37,6 +37,13 @@ public class OneLineWorkModule implements IWorkModule {
 		workModules.add(workModule);
 	}
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void start(int num) throws Exception {
+		
+	}
+	/**
 	 * 複数のworkModuleを一括して付加するためのプロパティ
 	 * @param workModules Listの形で追加してほしい
 	 */

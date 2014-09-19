@@ -95,6 +95,12 @@ public class FfmpegVideoWorkModule implements IWorkModule {
 		this.workModule = workModule;
 	}
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void start(int num) throws Exception {
+	}
+	/**
 	 * コンストラクタ
 	 */
 	public FfmpegVideoWorkModule() {
