@@ -31,6 +31,10 @@ import com.ttProject.flazr.rtmp.RtmpEncoderEx;
 public class RtmpClient {
 	/** 動作clientOptions */
 	private ClientOptions options = new ClientOptionsEx();
+	/** 接続bootstrap */
+	private ClientBootstrap bootstrap;
+	/** 接続状況用future */
+	private ChannelFuture future = null;
 	/**
 	 * 設定clientOptionsを応答します。
 	 * @return
@@ -39,24 +43,35 @@ public class RtmpClient {
 		return options;
 	}
 	/**
-	 * 接続clientOptionsを設定(上書きします)
+	 * clientOptionsを設定します(上書き)
 	 * @param options
 	 */
 	public void setClientOptions(ClientOptions options) {
 		this.options = options;
 	}
 	/**
-	 * 接続動作(処理がおわるまで応答は帰ってきません)
+	 * 接続を開始します
+	 * @param asyncFlg true:応答がすぐにかえってきて、あとで切断処理をしないとだめです。 false:rtmpの処理がおわるまで応答を返しません
 	 */
-	public void connect() {
-		final ClientBootstrap bootstrap = getBootstrap(Executors.newCachedThreadPool());
-		final ChannelFuture future = bootstrap.connect(new InetSocketAddress(options.getHost(), options.getPort()));
+	public boolean connect() {
+		bootstrap = getBootstrap(Executors.newCachedThreadPool());
+		future = bootstrap.connect(new InetSocketAddress(options.getHost(), options.getPort()));
 		future.awaitUninterruptibly();
-		if(!future.isSuccess()) {
-			
-		}
+		return future.isSuccess();
+	}
+	/**
+	 * 終了まで待機します。
+	 */
+	public void waitForClose() {
 		future.getChannel().getCloseFuture().awaitUninterruptibly();
 		bootstrap.getFactory().releaseExternalResources();
+	}
+	/**
+	 * 処理を終わらせます。
+	 */
+	public void close() {
+		future.getChannel().close();
+		bootstrap.releaseExternalResources();
 	}
 	/**
 	 * bootstrap初期化

@@ -32,6 +32,8 @@ public class RtmpInputModule implements IInputModule {
 	/** アクセスシグナルモジュール */
 	@Autowired
 	private ISignalModule signalWorker;
+	/** 非同期処理フラグ */
+	private boolean asyncFlag = false;
 	/**
 	 * 出力モジュールを設定する。(bean用)
 	 */
@@ -52,6 +54,13 @@ public class RtmpInputModule implements IInputModule {
 	 */
 	public void setWriterToSave(IReceiveWriter writer) {
 		this.writer = writer;
+	}
+	/**
+	 * 非同期処理をするか設定
+	 * @param flag
+	 */
+	public void setAsyncMode(boolean flag) {
+		asyncFlag = flag;
 	}
 	/**
 	 * クライアントoptionを参照する
@@ -93,6 +102,13 @@ public class RtmpInputModule implements IInputModule {
 		}
 		options.setWriterToSave(writer);
 		// 動作開始
-		client.connect();
+		if(!client.connect()) {
+			// 接続がうまくいかない場合は、そのまま殺す
+			client.close();
+		}
+		if(!asyncFlag) {
+			// 非同期処理の場合は、停止するまで待っておく
+			client.waitForClose();
+		}
 	}
 }
