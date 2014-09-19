@@ -10,9 +10,9 @@ import org.eclipse.jetty.websocket.WebSocketServlet;
  * websocketのアクセスエントリー
  * @author taktod
  */
-public class WtsServlet extends WebSocketServlet {
+public class RtmpWtsServlet extends WebSocketServlet {
 	/** 動作ロガー */
-	private Logger logger = Logger.getLogger(WtsServlet.class);
+	private Logger logger = Logger.getLogger(RtmpWtsServlet.class);
 	/** servletのシリアル番号 */
 	private static final long serialVersionUID = 2982098341377632654L;
 	/**

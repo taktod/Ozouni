@@ -6,7 +6,7 @@
   <display-name>Archetype Created Web Application</display-name>
   <servlet>
     <servlet-name>wtsCore</servlet-name>
-    <servlet-class>com.ttProject.ozouni.jetty.WtsServlet</servlet-class>
+    <servlet-class>com.ttProject.ozouni.jetty.RtmpWtsServlet</servlet-class>
 <!--    <init-param>
       <param-name>minVersion</param-name>
       <param-value>-1</param-value>
