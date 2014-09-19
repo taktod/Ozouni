@@ -21,7 +21,6 @@ public class FeederWorkModule implements IWorkModule {
 			writer.prepareHeader(CodecType.VP8, CodecType.VORBIS);
 		}
 		catch(Exception e) {
-			
 		}
 	}
 	/**
@@ -29,7 +28,6 @@ public class FeederWorkModule implements IWorkModule {
 	 */
 	@Override
 	public void pushFrame(IFrame frame, int id) throws Exception {
-//		logger.info(frame);
 		logger.info(frame + " / " + (frame.getPts() * 1000L / frame.getTimebase()));
 		writer.addFrame(id, frame);
 	}
@@ -45,7 +43,7 @@ public class FeederWorkModule implements IWorkModule {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void start(int num) throws Exception {
+	public void start() throws Exception {
 		
 	}
 }

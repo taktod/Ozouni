@@ -42,7 +42,7 @@ public class FeederWorkModule implements IWorkModule {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void start(int num) throws Exception {
+	public void start() throws Exception {
 		
 	}
 	/**
