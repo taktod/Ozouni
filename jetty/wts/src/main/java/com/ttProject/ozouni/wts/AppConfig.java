@@ -8,6 +8,7 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import com.ttProject.ozouni.base.IInputModule;
+import com.ttProject.ozouni.base.ISignalModule;
 import com.ttProject.ozouni.base.IWorkModule;
 import com.ttProject.ozouni.base.analyzer.IServerNameAnalyzer;
 import com.ttProject.ozouni.base.analyzer.IpAddressAnalyzer;
@@ -16,6 +17,7 @@ import com.ttProject.ozouni.input.FrameInputModule;
 import com.ttProject.ozouni.reportHandler.IReportHandler;
 import com.ttProject.ozouni.reportHandler.RedisReportHandler;
 import com.ttProject.ozouni.work.FeederWorkModule;
+import com.ttProject.ozouni.worker.SignalWorker;
 
 /**
  * アプリケーションの動作
@@ -54,6 +56,10 @@ public class AppConfig {
 	@Bean
 	public IServerNameAnalyzer serverNameAnalyzer() {
 		return serverNameAnalyzer;
+	}
+	@Bean
+	public ISignalModule signalWorker() throws Exception {
+		return new SignalWorker();
 	}
 	/**
 	 * 動作レポートの定義
