@@ -111,4 +111,19 @@ public class RtmpInputModule implements IInputModule {
 			client.waitForClose();
 		}
 	}
+	/**
+	 * 動作を停止させます。
+	 */
+	public void stop() {
+		client.close();
+	}
+	/**
+	 * 必要ないと思うけど、念のため
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void finalize() throws Throwable {
+		client.close();
+		super.finalize();
+	}
 }

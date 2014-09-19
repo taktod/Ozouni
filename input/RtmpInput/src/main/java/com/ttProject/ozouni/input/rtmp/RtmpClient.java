@@ -63,15 +63,27 @@ public class RtmpClient {
 	 * 終了まで待機します。
 	 */
 	public void waitForClose() {
-		future.getChannel().getCloseFuture().awaitUninterruptibly();
-		bootstrap.getFactory().releaseExternalResources();
+		if(future != null) {
+			future.getChannel().getCloseFuture().awaitUninterruptibly();
+		}
+		if(bootstrap != null) {
+			bootstrap.getFactory().releaseExternalResources();
+		}
+		future = null;
+		bootstrap = null;
 	}
 	/**
 	 * 処理を終わらせます。
 	 */
 	public void close() {
-		future.getChannel().close();
-		bootstrap.releaseExternalResources();
+		if(future != null) {
+			future.getChannel().close();
+		}
+		if(bootstrap != null) {
+			bootstrap.releaseExternalResources();
+		}
+		future = null;
+		bootstrap = null;
 	}
 	/**
 	 * bootstrap初期化
