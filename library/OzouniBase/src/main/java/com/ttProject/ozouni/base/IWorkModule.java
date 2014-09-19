@@ -17,9 +17,9 @@ public interface IWorkModule {
 	 * @param num イベント番号
 	 * @throws Exception
 	 */
-	public void start(int num) throws Exception;
+	public void start() throws Exception;
 	/**
-	 * inputModuleからworkModuleにframeを送る
+	 * workModuleにframeを送る
 	 * @param frame
 	 * @param id
 	 * @throws Exception

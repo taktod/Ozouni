@@ -74,6 +74,7 @@ public class SignalWorker implements ISignalModule, Runnable {
 				return;
 			}
 			reportHandler.reportData(uid, reportData);
+			reportData.resetWorkStatus();
 		}
 	}
 	/**

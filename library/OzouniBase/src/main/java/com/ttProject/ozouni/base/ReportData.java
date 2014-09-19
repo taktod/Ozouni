@@ -9,25 +9,50 @@ import java.lang.management.RuntimeMXBean;
  * @author taktod
  */
 public class ReportData implements Serializable {
+	/** ID */
 	private static final long serialVersionUID = 812521654687321056L;
-	private long framePts = -1;
-	private String hostName = null;
-	private static int thisProcessId = -1; // プロセス番号は自動的に拾えるはず
+	/** 動作プロセスID */
+	private static int thisProcessId = -1; // プロセスIDのひな形
+	/**
+	 * 静的初期化
+	 */
 	static {
 		RuntimeMXBean bean = ManagementFactory.getRuntimeMXBean();
 		thisProcessId = Integer.parseInt(bean.getName().split("@")[0]);
 	}
+	/** モジュールID用の割り当てよう変数 */
+	private int moduleId = 1;
+	/**
+	 * 新たに開始したmoduleにidを割り当てる
+	 * @return
+	 */
+	public synchronized int getNextModuleId() {
+		int id = moduleId;
+		moduleId <<= 1;
+		return id;
+	}
+	/** 処理途中のpts値(基本的に最終データ出力のモジュールがレポートします) */
+	private long framePts = -1;
+	/** 動作ホスト名(IServerNameAnalyzerで決定させます。) */
+	private String hostName = null;
+	/** プロセスID */
+	private int processId;
+	/** フレーム共有メソッド名 */
+	private String method = null;
+	/** フレーム共有キー */
+	private String key = null;
+	/** 最終更新時刻 */
+	private long lastUpdateTime = -1;
+	/** モジュールのリスト */
+	private String moduleList = null;
+	/** 各モジュールの動作ステータス情報 */
+	private int moduleStatus = 0;
 	/**
 	 * コンストラクタ
 	 */
 	public ReportData() {
 		processId = thisProcessId;
 	}
-	private int processId;
-	private String method = null;
-	private long lastUpdateTime = -1;
-	// TODO 共有方法を知るすべをいれておく必要がある。jedisならキーとか
-	private String key = null; // データにアクセスするのに必要となるキー
 	public long getFramePts() {
 		return framePts;
 	}
@@ -67,6 +92,26 @@ public class ReportData implements Serializable {
 	}
 	public void setKey(String key) {
 		this.key = key;
+	}
+	public String getModuleList() {
+		return moduleList;
+	}
+	public void addModule(String moduleData) {
+		if(moduleList == null) {
+			moduleList = moduleData;
+		}
+		else {
+			moduleList += "\n" + moduleData;
+		}
+	}
+	public void resetWorkStatus() {
+		moduleStatus = 0;
+	}
+	public void reportWorkStatus(int moduleId) {
+		moduleStatus |= moduleId;
+	}
+	public int getModuleStatus() {
+		return moduleStatus;
 	}
 	@Override
 	public String toString() {
