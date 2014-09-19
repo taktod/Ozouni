@@ -31,6 +31,8 @@ public class RedisReportHandler implements IReportHandler {
 		map.put("method", data.getMethod() != null ? data.getMethod().toString() : "null");
 		map.put("lastUpdateTime", Long.toString(data.getLastUpdateTime()));
 		map.put("key", data.getKey() != null ? data.getKey() : "null");
+		map.put("moduleList", data.getModuleList() != null ? data.getModuleList() : "null");
+		map.put("moduleStatus", Integer.toHexString(data.getModuleStatus()));
 		template.opsForHash().putAll(uid, map);
 		template.expire(uid, 3, TimeUnit.SECONDS);
 	}
