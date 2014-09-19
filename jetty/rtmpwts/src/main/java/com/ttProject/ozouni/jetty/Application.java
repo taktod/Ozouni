@@ -91,21 +91,6 @@ public class Application implements IApplication {
 		videoModule.setWorkModule(feederWorkModule);
 		rtmpInputModule.setAsyncMode(true);
 		rtmpInputModule.start(); // 開始するけど、このままだと、rtmpの転送がおわるまでずっとうごきっぱになってるはず。
-		// コンテキストはおわったときにcloseする
-//		context.close();
-			// uniqueIdは、決定できません。
-/*			logger.info("ターゲットpath:" + paths[paths.length - 1]);
-			context = new AnnotationConfigApplicationContext(AppConfig.class);
-			FeederWorkModule workModule = context.getBean(FeederWorkModule.class);
-			workModule.setApplication(this);
-			FrameInputModule inputModule = context.getBean(FrameInputModule.class);
-			inputModule.setTargetId(paths[paths.length - 1]);
-			try {
-				inputModule.start();
-				// TODO 切断された場合の通知がほしいところ
-			}
-			catch(Exception e) {
-			}*/
 	}
 	/**
 	 * {@inheritDoc}
