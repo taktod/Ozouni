@@ -78,7 +78,6 @@ public class FrameOutputModule implements IOutputModule {
 			return;
 		}
 		else if(frame instanceof VideoMultiFrame) {
-			logger.info("映像のmulti");
 			VideoMultiFrame multiFrame = (VideoMultiFrame)frame;
 			for(IVideoFrame videoFrame : multiFrame.getFrameList()) {
 				pushFrame(videoFrame, id);
@@ -125,7 +124,6 @@ public class FrameOutputModule implements IOutputModule {
 		CodecType codecType = frame.getCodecType();
 		// trackIdを作成する必要がある。
 		ShareFrameData shareFrameData = new ShareFrameData(codecType, new Bit8(), frame, id);
-		logger.info(shareFrameData.getCodecType());
 		ByteBuffer buffer = null;
 		if(codecType == CodecType.H264) { // h265でも同じようなことしないとだめかもしれない。
 			buffer = frame.getPackBuffer();
