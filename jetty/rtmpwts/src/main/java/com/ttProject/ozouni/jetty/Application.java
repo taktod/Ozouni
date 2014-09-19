@@ -9,6 +9,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.apache.log4j.Logger;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import com.flazr.rtmp.client.ClientOptions;
+import com.ttProject.ozouni.base.IWorkModule;
+import com.ttProject.ozouni.input.RtmpInputModule;
+import com.ttProject.ozouni.work.FeederWorkModule;
+import com.ttProject.ozouni.work.XuggleAudioWorkModule;
+import com.ttProject.ozouni.work.XuggleVideoWorkModule;
 
 /**
  * アプリケーション
@@ -24,7 +33,7 @@ public class Application implements IApplication {
 	 * @param path
 	 * @return
 	 */
-	public static IApplication getInstance(String host, String port, String app, String stream) {
+	public static IApplication getInstance(String host, String port, String app, String stream) throws Exception {
 		// 今回この部分はpathでわけてありましたが、rtmpのurlで分けた方がよさそうですね。
 		return appMonitor.getApplication(host, port, app, stream);
 //		return null;
@@ -46,20 +55,42 @@ public class Application implements IApplication {
 	private long expire = 10000L; // 10秒たったらexpireになったものとして扱う(最終ユーザーがアクセスしてから)
 	private long lastClientRemoveTime = -1; // クライアントが最後にアクセスしていた時刻保持
 	private boolean closed = false;
-//	private ConfigurableApplicationContext context = null;
+	private ConfigurableApplicationContext context = null;
 	/**
 	 * コンストラクタ
 	 * @param path
 	 */
-	protected Application(String host, String port, String app, String stream) {
+	protected Application(String host, String port, String app, String stream) throws Exception {
 		this.host = host;
 		this.port = port;
 		this.app = app;
 		this.stream = stream;
 		// このタイミングでspringのcontextを読み込んでおきたい。
-//		context = new ClassPathXmlApplicationContext();
+		context = new ClassPathXmlApplicationContext("rtmpdownload.xml");
 		logger.info("ここまできたので、rtmpのダウンロード処理を開始したりします。");
 		// このタイミングでxmlのデータをロードして、動作しなければいけない感じか？
+		logger.info(host + port + app + stream);
+		context = new ClassPathXmlApplicationContext("rtmpdownload.xml");
+		String[] options = new String[7];
+		options[0] = "-host";
+		options[1] = host;
+		options[2] = "-port";
+		options[3] = port;
+		options[4] = "-app";
+		options[5] = app;
+		options[6] = stream;
+		RtmpInputModule rtmpInputModule = context.getBean(RtmpInputModule.class);
+		ClientOptions clientOptions = rtmpInputModule.getClientOptions();
+		if(!clientOptions.parseCli(options)) {
+			throw new Exception("アクセスアドレスデータをパースすることができませんでした。");
+		}
+		IWorkModule feederWorkModule = new FeederWorkModule();
+		XuggleAudioWorkModule audioModule = context.getBean(XuggleAudioWorkModule.class);
+		audioModule.setWorkModule(feederWorkModule);
+		XuggleVideoWorkModule videoModule = context.getBean(XuggleVideoWorkModule.class);
+		videoModule.setWorkModule(feederWorkModule);
+		rtmpInputModule.start(); // 開始するけど、このままだと、rtmpの転送がおわるまでずっとうごきっぱになってるはず。
+		context.close();
 			// uniqueIdは、決定できません。
 /*			logger.info("ターゲットpath:" + paths[paths.length - 1]);
 			context = new AnnotationConfigApplicationContext(AppConfig.class);

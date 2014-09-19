@@ -45,7 +45,6 @@ public class Client implements IClient {
 			connection.close(); // 強制切断しておわらせる
 			return;
 		}
-		logger.info("ここまできましたけど・・・");
 		this.connection = new WeakReference<Connection>(connection);
 		((Application)app).addClient(this);
 		// 接続時イベント発行

@@ -38,11 +38,17 @@ public class WtsServlet extends WebSocketServlet {
 		if(stream == null || stream.equals("")) {
 			return null;
 		}
-		IApplication appInst = Application.getInstance(host, port, app, stream);
-		// 取得できたappInstance
-		logger.info(appInst);
-		IClient client = new Client(appInst);
-		// この段階でport番号がなかったら1935にしておく。
-		return client;
+		try {
+			IApplication appInst = Application.getInstance(host, port, app, stream);
+			// 取得できたappInstance
+			logger.info(appInst);
+			IClient client = new Client(appInst);
+			// この段階でport番号がなかったら1935にしておく。
+			return client;
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

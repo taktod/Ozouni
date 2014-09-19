@@ -13,6 +13,5 @@ public class NullReportHandler implements IReportHandler {
 	}
 	@Override
 	public void reportData(String uid, ReportData data) {
-		
 	}
 }

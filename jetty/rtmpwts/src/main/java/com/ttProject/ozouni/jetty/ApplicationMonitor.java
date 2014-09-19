@@ -62,7 +62,7 @@ public class ApplicationMonitor {
 	 * @param path
 	 * @return
 	 */
-	public IApplication getApplication(String host, String port, String app, String stream) {
+	public IApplication getApplication(String host, String port, String app, String stream) throws Exception {
 		String path = makePath(host, port, app, stream);
 		IApplication inst = applications.get(path);
 		if(inst == null) {
