@@ -9,6 +9,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.ttProject.frame.AudioFrame;
 import com.ttProject.frame.IAudioFrame;
@@ -18,7 +19,9 @@ import com.ttProject.frame.aac.AacFrame;
 import com.ttProject.frame.mp3.Mp3Frame;
 import com.ttProject.frame.nellymoser.NellymoserFrame;
 import com.ttProject.frame.speex.SpeexFrame;
+import com.ttProject.ozouni.base.ISignalModule;
 import com.ttProject.ozouni.base.IWorkModule;
+import com.ttProject.ozouni.base.ReportData;
 import com.ttProject.ozouni.frame.IFrameReader;
 import com.ttProject.ozouni.frame.IFrameWriter;
 import com.ttProject.ozouni.frame.worker.IFrameListener;
@@ -59,6 +62,11 @@ public class FfmpegAudioWorkModule implements IWorkModule {
 	private IFrameReader reader = null;
 	/** 次のworkModule */
 	private IWorkModule workModule = null;
+	/** モジュールのID番号 */
+	private int moduleId = 0;
+	/** アクセスシグナルモジュール */
+	@Autowired
+	private ISignalModule signalWorker;
 	/**
 	 * コマンドの設定
 	 * @param command
@@ -108,7 +116,15 @@ public class FfmpegAudioWorkModule implements IWorkModule {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void start(int num) throws Exception {
+	public void start() throws Exception {
+		if(moduleId != 0) {
+			return;
+		}
+		ReportData reportData = signalWorker.getReportData();
+		moduleId = reportData.getNextModuleId();
+		String moduleData = moduleId + ":" + getClass().getSimpleName();
+		reportData.addModule(moduleData);
+		workModule.start();
 	}
 	/**
 	 * コンストラクタ
@@ -254,6 +270,7 @@ public class FfmpegAudioWorkModule implements IWorkModule {
 						@Override
 						public void receiveFrame(IFrame frame) {
 							try {
+								signalWorker.getReportData().reportWorkStatus(moduleId);
 								workModule.pushFrame(frame, id);
 							}
 							catch(Exception e) {

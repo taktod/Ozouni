@@ -5,12 +5,15 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.ttProject.frame.IAudioFrame;
 import com.ttProject.frame.IFrame;
 import com.ttProject.frame.IVideoFrame;
 import com.ttProject.frame.extra.AudioMultiFrame;
+import com.ttProject.ozouni.base.ISignalModule;
 import com.ttProject.ozouni.base.IWorkModule;
+import com.ttProject.ozouni.base.ReportData;
 import com.ttProject.xuggle.frameutil.Depacketizer;
 import com.ttProject.xuggle.frameutil.Packetizer;
 import com.xuggle.xuggler.IAudioResampler;
@@ -64,6 +67,11 @@ public class XuggleAudioWorkModule implements IWorkModule {
 
 	/** 次に処理するモジュール */
 	private IWorkModule workModule = null;
+	/** モジュールのID番号 */
+	private int moduleId = 0;
+	/** アクセスシグナルモジュール */
+	@Autowired
+	private ISignalModule signalWorker;
 	/**
 	 * {@inheritDoc}
 	 */
@@ -75,8 +83,15 @@ public class XuggleAudioWorkModule implements IWorkModule {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void start(int num) throws Exception {
-		
+	public void start() throws Exception {
+		if(moduleId != 0) {
+			return;
+		}
+		ReportData reportData = signalWorker.getReportData();
+		moduleId = reportData.getNextModuleId();
+		String moduleData = moduleId + ":" + getClass().getSimpleName();
+		reportData.addModule(moduleData);
+		workModule.start();
 	}
 	/**
 	 * チャンネルを設定
@@ -291,6 +306,7 @@ public class XuggleAudioWorkModule implements IWorkModule {
 			sampleConsumed += retval;
 			if(packet.isComplete()) {
 				IFrame frame = depacketizer.getFrame(encoder, packet);
+				signalWorker.getReportData().reportWorkStatus(moduleId);
 				if(workModule != null) {
 					if(frame instanceof AudioMultiFrame) {
 						AudioMultiFrame multiFrame = (AudioMultiFrame)frame;

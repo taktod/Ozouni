@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.ttProject.frame.Frame;
 import com.ttProject.frame.IAudioFrame;
@@ -11,7 +12,9 @@ import com.ttProject.frame.IFrame;
 import com.ttProject.frame.IVideoFrame;
 import com.ttProject.frame.extra.AudioMultiFrame;
 import com.ttProject.frame.extra.VideoMultiFrame;
+import com.ttProject.ozouni.base.ISignalModule;
 import com.ttProject.ozouni.base.IWorkModule;
+import com.ttProject.ozouni.base.ReportData;
 
 /**
  * ffmpegやxuggleに変換を促すために、入力frameをミリ秒による単純増加データにソートします。
@@ -28,6 +31,11 @@ public class OneLineWorkModule implements IWorkModule {
 	private long resetInterval = 1000L;
 	/** 次の処理に回すリスト */
 	private List<IWorkModule> workModules = new ArrayList<IWorkModule>();
+	/** モジュールのID番号 */
+	private int moduleId = 0;
+	/** アクセスシグナルモジュール */
+	@Autowired
+	private ISignalModule signalWorker;
 	/**
 	 * {@inheritDoc}
 	 */
@@ -40,8 +48,17 @@ public class OneLineWorkModule implements IWorkModule {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void start(int num) throws Exception {
-		
+	public void start() throws Exception {
+		if(moduleId != 0) {
+			return;
+		}
+		ReportData reportData = signalWorker.getReportData();
+		moduleId = reportData.getNextModuleId();
+		String moduleData = moduleId + ":" + getClass().getSimpleName();
+		reportData.addModule(moduleData);
+		for(IWorkModule workModule : workModules) {
+			workModule.start();
+		}
 	}
 	/**
 	 * 複数のworkModuleを一括して付加するためのプロパティ
@@ -90,6 +107,7 @@ public class OneLineWorkModule implements IWorkModule {
 		Frame f = (Frame)frame;
 		f.setPts(pts);
 		f.setTimebase(1000); // timebaseミリ秒を強制していますが、flv以外を扱うなら微妙かも・・・
+		signalWorker.getReportData().reportWorkStatus(moduleId);
 		for(IWorkModule workModule : workModules) {
 			workModule.pushFrame(frame, id);
 		}

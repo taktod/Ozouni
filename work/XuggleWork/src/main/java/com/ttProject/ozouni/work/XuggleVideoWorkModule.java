@@ -8,12 +8,15 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.ttProject.frame.IAudioFrame;
 import com.ttProject.frame.IFrame;
 import com.ttProject.frame.IVideoFrame;
 import com.ttProject.frame.extra.VideoMultiFrame;
+import com.ttProject.ozouni.base.ISignalModule;
 import com.ttProject.ozouni.base.IWorkModule;
+import com.ttProject.ozouni.base.ReportData;
 import com.ttProject.xuggle.frameutil.Depacketizer;
 import com.ttProject.xuggle.frameutil.Packetizer;
 import com.xuggle.xuggler.ICodec;
@@ -73,6 +76,11 @@ public class XuggleVideoWorkModule implements IWorkModule {
 
 	/** 次の処理として割り当てておくworkModule */
 	private IWorkModule workModule = null;
+	/** モジュールのID番号 */
+	private int moduleId = 0;
+	/** アクセスシグナルモジュール */
+	@Autowired
+	private ISignalModule signalWorker;
 	/**
 	 * {@inheritDoc}
 	 */
@@ -84,8 +92,15 @@ public class XuggleVideoWorkModule implements IWorkModule {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void start(int num) throws Exception {
-		
+	public void start() throws Exception {
+		if(moduleId != 0) {
+			return;
+		}
+		ReportData reportData = signalWorker.getReportData();
+		moduleId = reportData.getNextModuleId();
+		String moduleData = moduleId + ":" + getClass().getSimpleName();
+		reportData.addModule(moduleData);
+		workModule.start();
 	}
 	/**
 	 * groupOfPicture(keyFrame間隔)を設定
@@ -301,6 +316,7 @@ public class XuggleVideoWorkModule implements IWorkModule {
 		if(packet.isComplete()) {
 			IFrame frame = depacketizer.getFrame(encoder, packet);
 //			logger.info(frame.getCodecType() + " " + frame.getPts() + " / " + frame.getTimebase());
+			signalWorker.getReportData().reportWorkStatus(moduleId);
 			if(workModule != null) {
 				if(frame instanceof VideoMultiFrame) {
 					VideoMultiFrame multiFrame = (VideoMultiFrame)frame;

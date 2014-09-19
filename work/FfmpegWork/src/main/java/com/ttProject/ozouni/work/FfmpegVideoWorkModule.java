@@ -9,6 +9,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.ttProject.frame.CodecType;
 import com.ttProject.frame.Frame;
@@ -16,7 +17,9 @@ import com.ttProject.frame.IAudioFrame;
 import com.ttProject.frame.IFrame;
 import com.ttProject.frame.IVideoFrame;
 import com.ttProject.frame.h264.SliceFrame;
+import com.ttProject.ozouni.base.ISignalModule;
 import com.ttProject.ozouni.base.IWorkModule;
+import com.ttProject.ozouni.base.ReportData;
 import com.ttProject.ozouni.frame.IFrameReader;
 import com.ttProject.ozouni.frame.IFrameWriter;
 import com.ttProject.ozouni.frame.worker.IFrameListener;
@@ -55,6 +58,11 @@ public class FfmpegVideoWorkModule implements IWorkModule {
 	private IFrameReader reader = null;
 	/** 次のworkModule */
 	private IWorkModule workModule = null;
+	/** モジュールのID番号 */
+	private int moduleId = 0;
+	/** アクセスシグナルモジュール */
+	@Autowired
+	private ISignalModule signalWorker;
 	/** すでに変換が開始しているか確認するフラグ */
 	private boolean converted = false;
 	/**
@@ -98,7 +106,15 @@ public class FfmpegVideoWorkModule implements IWorkModule {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void start(int num) throws Exception {
+	public void start() throws Exception {
+		if(moduleId != 0) {
+			return;
+		}
+		ReportData reportData = signalWorker.getReportData();
+		moduleId = reportData.getNextModuleId();
+		String moduleData = moduleId + ":" + getClass().getSimpleName();
+		reportData.addModule(moduleData);
+		workModule.start();
 	}
 	/**
 	 * コンストラクタ
@@ -214,9 +230,11 @@ public class FfmpegVideoWorkModule implements IWorkModule {
 								// ここでframeデータが転送されてこなかったら、リセットを書け直すというのがある必要があると思う。
 								// これについては、映像or音声があれば、okみたいな感じにしたいところだが・・・
 								converted = true;
+								signalWorker.getReportData().reportWorkStatus(moduleId);
 								workModule.pushFrame(frame, id);
 							}
 							catch(Exception e) {
+								logger.error("フレームの取得動作で例外が発生しました", e);
 							}
 						}
 					});
