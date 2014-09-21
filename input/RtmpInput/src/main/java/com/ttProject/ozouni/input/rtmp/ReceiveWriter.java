@@ -95,6 +95,7 @@ public class ReceiveWriter implements IReceiveWriter {
 			for(FlvTag t : orderModel.getAudioCompleteTag()) {
 				if(t instanceof AudioTag) {
 					AudioTag aTag = (AudioTag)t;
+					logger.info("{}", aTag);
 /*					if(pts != -1 && pts > aTag.getPts()) {
 						logger.info("flip検出");
 					}
@@ -105,6 +106,7 @@ public class ReceiveWriter implements IReceiveWriter {
 			for(FlvTag t : orderModel.getVideoCompleteTag()) {
 				if(t instanceof VideoTag) {
 					VideoTag vTag = (VideoTag)t;
+					logger.info("{}", vTag);
 					workModule.pushFrame(vTag.getFrame(), 0x09);
 				}
 			}

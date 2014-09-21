@@ -165,11 +165,13 @@ public class XuggleAudioWorkModule implements IWorkModule {
 		if(!(frame instanceof IVideoFrame)) {
 			return true;
 		}
-		if(frame.getPts() > passedPts + allowedDelay) {
+		long pts = 1000L * frame.getPts() / frame.getTimebase();
+		logger.info("checkVideo passedPts:" + passedPts + " pts:" + pts + " allowedDelay:" + allowedDelay);
+		if(pts > passedPts + allowedDelay) {
 			// frameのptsが経過pts + 許容delayよりも大きい場合
 			// こっちでは挿入する必要あり、ffmpegでは、フレームを適当に挿入してやると、変換を強制することが可能なため
 			// この部分でIAudioSamplesをつかった変換を促す動作が必要になる。
-			insertNoSound(frame.getPts() - allowedDelay); // ここまでデータをうめておく
+			insertNoSound(pts - allowedDelay); // ここまでデータをうめておく
 		}
 		return false;
 	}
@@ -200,10 +202,12 @@ public class XuggleAudioWorkModule implements IWorkModule {
 		// ここから先を別threadにやらせておけばいいと思う
 		// timebaseは1000強制になっている
 		long filledSampleNum = (pts * encoder.getSampleRate() / 1000 - passedSampleNum);
-		if(filledSampleNum == 0) {
+		logger.info("filledSampleNum:" + filledSampleNum + " pts:" + pts + " passedSampleNum:" + passedSampleNum);
+		if(filledSampleNum <= 0) {
 			// 特に埋める必要がないなら、処理しない
 			return;
 		}
+		logger.info("insertを実行します。:" + filledSampleNum);
 		passedSampleNum += filledSampleNum;
 		final IAudioSamples samples = IAudioSamples.make(encoder.getSampleRate(), encoder.getChannels(), encoder.getSampleFormat());
 		samples.setComplete(true, filledSampleNum, encoder.getSampleRate(), encoder.getChannels(), encoder.getSampleFormat(), passedPts);
@@ -226,6 +230,7 @@ public class XuggleAudioWorkModule implements IWorkModule {
 	 */
 	private void decodeSound(IAudioFrame aFrame) throws Exception {
 		// このフレームをデコードして、何サンプル取得できたか確認しておきたいところ。
+		logger.info("pre:" + (aFrame.getPts() * 1000L / aFrame.getTimebase()));
 		decoder = packetizer.getDecoder(aFrame, decoder);
 		if(decoder == null) {
 			logger.warn("フレームのデコーダーが決定できませんでした。");
@@ -255,7 +260,19 @@ public class XuggleAudioWorkModule implements IWorkModule {
 				samples = getResampled(samples);
 				// このサンプルデータを処理にまわしておけばよさげ。
 				passedSampleNum += samples.getNumSamples();
-				encodeSound(samples);
+				final IAudioSamples aSamples = samples;
+				exec.execute(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							encodeSound(aSamples);
+						}
+						catch(Exception e) {
+							logger.error("無音音声の追記処理で例外が発生しました", e);
+						}
+					}
+				});
+//				encodeSound(samples);
 			}
 		}
 	}
@@ -306,6 +323,7 @@ public class XuggleAudioWorkModule implements IWorkModule {
 			sampleConsumed += retval;
 			if(packet.isComplete()) {
 				IFrame frame = depacketizer.getFrame(encoder, packet);
+				logger.info("post:" + (frame.getPts() * 1000L / frame.getTimebase()));
 				if(signalWorker != null) {
 					signalWorker.getReportData().reportWorkStatus(moduleId);
 				}
@@ -373,8 +391,11 @@ public class XuggleAudioWorkModule implements IWorkModule {
 		}
 		// 特に問題ないので、このframeを書き込む
 		final IAudioFrame aFrame = (IAudioFrame) frame;
-		insertNoSound(aFrame.getPts());
-		exec.execute(new Runnable() {
+		// 今回のframeの位置まで無音を挿入する必要があれb
+		insertNoSound(1000L * aFrame.getPts() / aFrame.getTimebase());
+		// TODO ここはdecodeとresampleまでは、普通に処理した方がいいかも・・・
+		decodeSound(aFrame);
+/*		exec.execute(new Runnable() {
 			@Override
 			public void run() {
 				try {
@@ -384,7 +405,7 @@ public class XuggleAudioWorkModule implements IWorkModule {
 					logger.error("デコード処理で例外が発生しました。", e);
 				}
 			}
-		});
+		});*/
 		passedPts = aFrame.getPts() + 1000 * aFrame.getSampleNum() / aFrame.getSampleRate();
 	}
 }

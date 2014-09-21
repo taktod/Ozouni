@@ -1,0 +1,86 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.ttProject.streaming</groupId>
+    <artifactId>Ozouni</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <relativePath>../..</relativePath>
+  </parent>
+  <artifactId>rtmpwebm</artifactId>
+  <licenses>
+    <license>
+      <name>The MIT License</name>
+      <url>http://www.opensource.org/licenses/mit-license.php</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <name>rtmpweb</name>
+  <description>webmのhttpによるダウンロードストリームを利用して、
+vp8 + vorbisによるライブストリーミングを実施するプログラムをつくりたいと思う。
+
+http://localhost:8080/webm/test.webm?host=localhost&amp;port=1935&amp;app=live&amp;stream=test
+みたいな感じでアクセスすると、該当のrtmpサーバーのストリームをwebmのライブストリーミングとして視聴できるようにしておきたい。
+</description>
+  <dependencies>
+    <dependency>
+      <groupId>com.ttProject.streaming</groupId>
+      <artifactId>OzouniBase</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-websocket</artifactId>
+      <version>8.1.15.v20140411</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>3.0-alpha-1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.ttProject.streaming</groupId>
+      <artifactId>SignalWorker</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.ttProject.streaming.ozouni</groupId>
+      <artifactId>RtmpInput</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.ttProject.streaming</groupId>
+      <artifactId>XuggleWork</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>com.ttProject.streaming</groupId>
+      <artifactId>OneLineWork</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+    	<groupId>com.ttProject</groupId>
+    	<artifactId>myLib.container.webm</artifactId>
+    	<version>0.0.2-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+  <packaging>war</packaging>
+  <build>
+    <finalName>iOSLiveTurbo</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>8.1.15.v20140411</version>
+      </plugin>
+    </plugins>
+  </build>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>1.4.2</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+</project>

@@ -57,6 +57,7 @@ library: システムとやりとりするライブラリ
     <module>jetty/wts</module>
     <module>jetty/webm</module>
     <module>jetty/rtmpwts</module>
+    <module>jetty/rtmpwebm</module>
     <module>EasyRestServer</module>
   </modules>
   <dependencies>
