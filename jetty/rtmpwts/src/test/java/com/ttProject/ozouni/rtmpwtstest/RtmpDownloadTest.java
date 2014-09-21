@@ -20,14 +20,13 @@ public class RtmpDownloadTest {
 	private Logger logger = Logger.getLogger(RtmpDownloadTest.class);
 	/**
 	 * 動作開始
-	 * @throws Excetion
 	 */
 //	@Test
 	public void test() {
 		try {
 			logger.info("動作テスト開始");
 			String host, port, app, stream;
-			host = "49.212.39.17";
+			host = "localhost";
 			port = "1935";
 			app = "live";
 			stream = "test";
