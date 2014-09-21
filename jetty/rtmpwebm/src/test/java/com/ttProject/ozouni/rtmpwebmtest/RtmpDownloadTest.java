@@ -25,7 +25,7 @@ public class RtmpDownloadTest {
 	/**
 	 * 動作開始
 	 */
-	@Test
+//	@Test
 	public void test() {
 		try {
 			logger.info("動作テスト開始");
