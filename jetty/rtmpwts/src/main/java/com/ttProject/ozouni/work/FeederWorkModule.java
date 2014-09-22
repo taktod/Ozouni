@@ -1,6 +1,9 @@
 package com.ttProject.ozouni.work;
 
 import java.nio.ByteBuffer;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 import org.apache.log4j.Logger;
 
@@ -23,12 +26,22 @@ public class FeederWorkModule implements IWorkModule {
 	private Logger logger = Logger.getLogger(FeederWorkModule.class);
 	// 送信先のapplicationについて保持しておけば良い感じかね？
 	private final IApplication app;
+	private Executor exec = null;
 	/**
 	 * コンストラクタ
 	 * @param app
 	 */
 	public FeederWorkModule(IApplication app) {
 		this.app = app;
+		ThreadFactory factory = new ThreadFactory() {
+			@Override
+			public Thread newThread(Runnable r) {
+				Thread t = new Thread(r);
+				t.setName("FeederWorkThread:" + t.hashCode());
+				return t;
+			}
+		};
+		this.exec = Executors.newSingleThreadExecutor(factory);
 	}
 	/**
 	 * {@inheritDoc}
@@ -48,47 +61,56 @@ public class FeederWorkModule implements IWorkModule {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void pushFrame(IFrame frame, int id) throws Exception {
-		// フレームをうけいれた場合の動作
-		Bit32 timestamp = new Bit32();
-		Bit8 type = new Bit8();
-		long pts = 1000L * frame.getPts() / frame.getTimebase();
-		timestamp.setLong(pts); // 端数部分は抜け落ちるけど、とりあえず仕方ない
-		if(frame instanceof AdpcmImaWavFrame) {
-			// 音声
-			AdpcmImaWavFrame audioFrame = (AdpcmImaWavFrame)frame;
-			switch(audioFrame.getSampleRate()) {
-			case 44100:
-				type.set(0);
-				break;
-			case 22050:
-				type.set(1);
-				break;
-			case 11025:
-				type.set(2);
-				break;
-			case 5512:
-				type.set(3);
-				break;
-			default:
-				return;
+	public void pushFrame(final IFrame frame, final int id) throws Exception {
+		exec.execute(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					// フレームをうけいれた場合の動作
+					Bit32 timestamp = new Bit32();
+					Bit8 type = new Bit8();
+					long pts = 1000L * frame.getPts() / frame.getTimebase();
+					timestamp.setLong(pts); // 端数部分は抜け落ちるけど、とりあえず仕方ない
+					if(frame instanceof AdpcmImaWavFrame) {
+						// 音声
+						AdpcmImaWavFrame audioFrame = (AdpcmImaWavFrame)frame;
+						switch(audioFrame.getSampleRate()) {
+						case 44100:
+							type.set(0);
+							break;
+						case 22050:
+							type.set(1);
+							break;
+						case 11025:
+							type.set(2);
+							break;
+						case 5512:
+							type.set(3);
+							break;
+						default:
+							return;
+						}
+					}
+					else if(frame instanceof MjpegFrame) {
+						// 映像
+						type.set(4);
+					}
+					else {
+						logger.error("想定外のフレームを取得しました。:" + frame.getClass());
+	//					throw new RuntimeException("想定外のフレームを取得しました");
+						return;
+					}
+					BitConnector connector = new BitConnector();
+					ByteBuffer sendData = BufferUtil.connect(
+							connector.connect(timestamp, type),
+							frame.getData()
+					);
+					app.sendMessage(sendData);
+				}
+				catch(Exception e) {
+					logger.error("アプリケーションにデータを転送しようとおもったらエラーがでました。", e);
+				}
 			}
-		}
-		else if(frame instanceof MjpegFrame) {
-			// 映像
-			type.set(4);
-		}
-		else {
-			logger.error("想定外のフレームを取得しました。:" + frame.getClass());
-//			throw new RuntimeException("想定外のフレームを取得しました");
-			return;
-		}
-		logger.info(frame.getClass() + ":" + pts);
-		BitConnector connector = new BitConnector();
-		ByteBuffer sendData = BufferUtil.connect(
-				connector.connect(timestamp, type),
-				frame.getData()
-		);
-		app.sendMessage(sendData);
+		});
 	}
 }
