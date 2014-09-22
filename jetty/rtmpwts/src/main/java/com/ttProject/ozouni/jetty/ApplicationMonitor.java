@@ -51,7 +51,8 @@ public class ApplicationMonitor {
 				for(IApplication app : applications.values()) {
 					Application application = (Application)app;
 					if(application.isExpired()) {
-						removeApplication(app);
+						app.close();
+//						removeApplication(app);
 					}
 				}
 			}
