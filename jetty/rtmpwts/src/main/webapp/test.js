@@ -213,6 +213,12 @@ function Process(ev) {
 			if(imageBuffers.length > 5 && aPos % 100 == 0) {
 				aPos ++;
 			}
+			else if(imageBuffers.length > 10 && aPos % 30 == 0) {
+				aPos ++;
+			}
+			else if(imageBuffers.length > 30 && aPos % 10 == 0) {
+				aPos ++;
+			}
 			if(currentBuffer.length <= aPos) {
 				currentBuffer = null; // いままでのバッファがなくなったので、破棄しておく。
 			}
@@ -250,6 +256,7 @@ function Play() {
 		ws.close(); // 前の接続は殺しておく。
 	}
 	audioBuffers = [];
+	ats = 0; // 初期化しておく。
 	imageBuffers = [];
 	if(typeof(audioctx.createOscillator) !== "undefined") {
 		osc = audioctx.createOscillator();
