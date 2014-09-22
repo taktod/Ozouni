@@ -145,7 +145,6 @@ public class Application implements IApplication {
 	public void sendMessage(ByteBuffer buffer) throws Exception {
 		// 接続しているclientすべてにメッセージ
 		for(IClient client : clients) {
-			logger.info(client + ":にデータおくるぜ");
 			client.sendMessage(buffer);
 		}
 	}
