@@ -1,7 +1,6 @@
 package com.ttProject.ozouni.rtmpwebmtest;
 
 import org.apache.log4j.Logger;
-import org.junit.Test;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -30,7 +29,7 @@ public class RtmpDownloadTest {
 		try {
 			logger.info("動作テスト開始");
 			String host, port, app, stream;
-			host = "49.212.39.17";
+			host = "localhost";
 			port = "1935";
 			app = "live";
 			stream = "test";
