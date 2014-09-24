@@ -19,7 +19,7 @@ window.requestAnimationFrame = (function(){
 })();
 
 // 処理バッファサイズ
-var bufsize = 1024;
+var bufsize = 2048;
 // 再生中かどうかフラグ
 var play = 0;
 // audioContextを初期化します
@@ -106,7 +106,7 @@ var ws = null;
  */
 function getFloat32PcmArray(audioBuffer) {
 	// この部分で処理しておく。
-	var size = (audioBuffer.length - 4) * 2; // 先頭の2byteがpredictor 1byteがfirstIndex 次の1byteは0x00(この部分に関しては圧縮によって変動する予定)
+	var size = (audioBuffer.length - 4) * 2 + 1; // 先頭の2byteがpredictor 1byteがfirstIndex 次の1byteは0x00(この部分に関しては圧縮によって変動する予定)
 	var result = new Float32Array(size);
 	var pos = 0; // 設置するデータの位置
 	var predictor = (audioBuffer[1] << 8) | audioBuffer[0];
@@ -114,7 +114,7 @@ function getFloat32PcmArray(audioBuffer) {
 		predictor = predictor - 0x010000;
 	}
 //	result[pos] = predictor / 100000;
-//	pos ++;
+	pos ++;
 	var index = audioBuffer[2];
 	var step = imaStepTable[index];
 	var nibble = 0; // 偏差フラグ値
@@ -124,18 +124,22 @@ function getFloat32PcmArray(audioBuffer) {
 		index = nextIndex(index, nibble);
 		predictor = nextPredictor(index, nibble, predictor, step);
 		step = imaStepTable[index];
-		result[pos] = predictor / 100000;
+		result[pos] = predictor / 200000;
+//		if(result[pos] > 1) {
+//			overflow = true;
+//		}
 		pos ++;
 		// low 4bitやっておく
 		nibble = (audioBuffer[bPos]) & 0x0F;
 		index = nextIndex(index, nibble);
 		predictor = nextPredictor(index, nibble, predictor, step);
 		step = imaStepTable[index];
-		result[pos] = predictor / 100000;
+		result[pos] = predictor / 200000;
+//		if(result[pos] > 1) {
+//			overflow = true;
+//		}
 		pos ++;
 	}
-//	prodec = size;
-//	prodec = pos;
 	return result;
 }
 
@@ -157,7 +161,8 @@ var onMessage = function(evt) {
 		case 0: // 44100Hz
 			var currentAdpcm = uint8ArrayView.subarray(5);
 			// ここでadpcmをpcmに変換してfloatのArrayにしておきたいと思います。
-			audioBuffers.push({ts:timestamp, buf:currentAdpcm, decoded:false});
+//			audioBuffers.push({ts:timestamp, buf:getFloat32PcmArray(currentAdpcm)});
+			audioBuffers.push({ts:timestamp, buf:currentAdpcm});
 			// 取得した瞬間に、Buffersのデータに変換してやる必要あり。
 			break;
 		case 1: // 22050Hz
@@ -186,7 +191,6 @@ var onMessage = function(evt) {
 var currentBuffer = null;
 /** 現在処理中のbufferの処理データ位置 */
 var aPos = 0;
-var prodec = false;
 function Process(ev) {
 	var buf0 = ev.outputBuffer.getChannelData(0);
 	var buf1 = ev.outputBuffer.getChannelData(1);
@@ -203,26 +207,21 @@ function Process(ev) {
 			}
 			else {
 				ats = data.ts;
-				if(!data.decoded) {
-					currentBuffer = getFloat32PcmArray(data.buf);
-				}
-				else {
-					currentBuffer = data.buf;
-				}
-//				prodec = currentBuffer.length;
+				currentBuffer = getFloat32PcmArray(data.buf);
+//				currentBuffer = data.buf;
 				aPos = 0; // 位置を0から開始にしておく。
 			}
 		}
 		// ここでコピーを実行しておく
 		if(currentBuffer == null) {
-			prodec = true;
 			buf0[i] = buf1[i] = 0;
+//			buf0[i] = 0;
 		}
 		else {
-			buf0[i] = currentBuffer[aPos];
-			buf1[i] = currentBuffer[aPos];
+			buf0[i] = buf1[i] = currentBuffer[aPos];
+//			buf0[i] = currentBuffer[aPos];
 			aPos ++; // 位置を１つずらしておく
-/*			if(imageBuffers.length > 30 && aPos % 100 == 0) {
+			if(imageBuffers.length > 30 && aPos % 100 == 0) {
 				aPos ++;
 			}
 			else if(imageBuffers.length > 50 && aPos % 50 == 0) {
@@ -233,8 +232,8 @@ function Process(ev) {
 			}
 			else if(imageBuffers.length > 100 && aPos % 10 == 0) {
 				aPos ++;
-			}*/
-			if(currentBuffer.length < aPos) {
+			}
+			if(currentBuffer.length <= aPos) {
 				currentBuffer = null; // いままでのバッファがなくなったので、破棄しておく。
 			}
 		}
@@ -258,23 +257,8 @@ var imageUpdate = function() {
 	}
 	if(img != null) {
 		ctx.drawImage(img, 0, 0);
-	}
-	document.querySelector("div").innerHTML = "prodec" + prodec + " audio:" + audioBuffers.length + " / video:" + imageBuffers.length + " ats:" + ats + " / vts:" + ts;
-	prodec = false;
-//	overflow = false;
-	if(audioBuffers.length != 0) {
-		var length = audioBuffers.length;
-		if(length > 3) {
-			length = 3;
-		}
-		for(var i = 0;i < length;i ++) {
-			if(!audioBuffers[i].decoded) {
-				var data = audioBuffers[i];
-				data.decoded = true;
-				data.buf = getFloat32PcmArray(data.buf);
-				audioBuffers[i] = data;
-			}
-		}
+//		document.querySelector("div").innerHTML = "audio:" + audioBuffers.length + " / video:" + imageBuffers.length + " ats:" + ats + " / vts:" + ts;
+//		overflow = false;
 	}
 	// このタイミングでwebsocketにheartBeatのデータをおくっておく必要あり。
 	// heartBeatをここで送る必要があるが・・・
@@ -302,15 +286,11 @@ function Play() {
 	if(ws != null) {
 		ws.close(); // 前の接続は殺しておく。
 	}
-	if(osc != null) {
-		osc.disconnect(scrproc);
-	}
 	audioBuffers = [];
 	ats = 0; // 初期化しておく。
 	imageBuffers = [];
 	if(typeof(audioctx.createOscillator) !== "undefined") {
 		osc = audioctx.createOscillator();
-		osc.frequency.value=440;
 		osc.connect(scrproc);
 		osc.start(0);
 		// 開始するときにrtmpサーバーの接続先を指定して動作させておく。
