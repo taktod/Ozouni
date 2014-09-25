@@ -164,6 +164,8 @@ public class Application implements IApplication {
 	 */
 	protected void addClient(IClient client) {
 		clients.add(client);
+		// これをやっておかないと、クライアントがぬけてしばらくしたらあとで別のクライアントが接続してきても、処理がとまってしまう。
+		lastClientRemoveTime = -1; // -1で再度初期化しておく。
 	}
 	/**
 	 * クライアントを削除
@@ -188,9 +190,11 @@ public class Application implements IApplication {
 	 */
 	protected boolean isExpired() {
 		if(isClosed()) {
+			logger.info("isClosed is true");
 			return true;
 		}
 		if(lastClientRemoveTime == -1 || System.currentTimeMillis() - lastClientRemoveTime < expire) {
+			logger.info("time check:" + lastClientRemoveTime + " / " + expire + " / " + System.currentTimeMillis());
 			return false;
 		}
 		return true;
