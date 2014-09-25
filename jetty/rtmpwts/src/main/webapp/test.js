@@ -171,6 +171,7 @@ var onMessage = function(evt) {
 			var imageArray = uint8ArrayView.subarray(5);
 			var blob = new Blob([imageArray], {type:"image/jpeg"});
 			var img = new Image();
+			// イメージのロードは別のところで実施するようにしようか・・・
 			img.onload = function() {
 				imageBuffers.push({ts:timestamp, img: img});
 			};
@@ -222,13 +223,13 @@ function Process(ev) {
 			buf0[i] = currentBuffer[aPos];
 			buf1[i] = currentBuffer[aPos];
 			aPos ++; // 位置を１つずらしておく
-/*			if(imageBuffers.length > 30 && aPos % 100 == 0) {
+			if(imageBuffers.length > 30 && aPos % 100 == 0) {
 				aPos ++;
 			}
 			else if(imageBuffers.length > 50 && aPos % 50 == 0) {
 				aPos ++;
 			}
-			else if(imageBuffers.length > 80 && aPos % 30 == 0) {
+/*			else if(imageBuffers.length > 80 && aPos % 30 == 0) {
 				aPos ++;
 			}
 			else if(imageBuffers.length > 100 && aPos % 10 == 0) {
@@ -258,9 +259,9 @@ var imageUpdate = function() {
 	}
 	if(img != null) {
 		ctx.drawImage(img, 0, 0);
+		document.querySelector("div").innerHTML = "prodec" + prodec + " audio:" + audioBuffers.length + " / video:" + imageBuffers.length + " ats:" + ats + " / vts:" + ts;
+		prodec = false;
 	}
-	document.querySelector("div").innerHTML = "prodec" + prodec + " audio:" + audioBuffers.length + " / video:" + imageBuffers.length + " ats:" + ats + " / vts:" + ts;
-	prodec = false;
 //	overflow = false;
 	if(audioBuffers.length != 0) {
 		var length = audioBuffers.length;
