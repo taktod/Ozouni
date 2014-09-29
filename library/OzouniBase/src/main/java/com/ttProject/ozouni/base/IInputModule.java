@@ -14,4 +14,5 @@ public interface IInputModule {
 	 * 開始動作
 	 */
 	public void start() throws Exception;
+	public void stop() throws Exception;
 }

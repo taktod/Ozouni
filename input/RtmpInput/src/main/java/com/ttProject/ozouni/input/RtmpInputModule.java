@@ -114,6 +114,7 @@ public class RtmpInputModule implements IInputModule {
 	/**
 	 * 動作を停止させます。
 	 */
+	@Override
 	public void stop() {
 		client.close();
 	}

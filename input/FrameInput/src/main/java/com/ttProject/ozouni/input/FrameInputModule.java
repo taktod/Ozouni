@@ -200,4 +200,11 @@ public class FrameInputModule implements IInputModule {
 		signalWorker.getReportData().reportWorkStatus(moduleId);
 		workModule.pushFrame(frame, shareFrameData.getTrackId());
 	}
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void stop() throws Exception {
+		
+	}
 }
