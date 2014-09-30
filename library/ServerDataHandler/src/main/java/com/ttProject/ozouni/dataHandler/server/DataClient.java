@@ -80,15 +80,21 @@ public class DataClient {
 		future.getChannel().getCloseFuture().awaitUninterruptibly();
 		// リソースを解放しておく。
 		bootstrap.releaseExternalResources();
+		future = null;
+		bootstrap = null;
 	}
 	/**
 	 * 閉じる
 	 */
 	public void close() {
 		// その場で接続を閉じます。
-		future.getChannel().close();
+		if(future != null) {
+			future.getChannel().close();
+		}
 		// リソースを解放しておく。
-		bootstrap.releaseExternalResources();
+		if(bootstrap != null) {
+			bootstrap.releaseExternalResources();
+		}
 	}
 	/**
 	 * イベントリスナーを追加する

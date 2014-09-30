@@ -50,6 +50,8 @@ public class FrameInputModule implements IInputModule {
 	/** アクセスシグナルモジュール */
 	@Autowired
 	private ISignalModule signalWorker;
+	/** 非同期処理フラグ */
+	private boolean asyncFlag = false;
 	/**
 	 * コンストラクタ
 	 */
@@ -84,6 +86,13 @@ public class FrameInputModule implements IInputModule {
 	 */
 	public void setTargetId(String targetId) {
 		this.targetId = targetId;
+	}
+	/**
+	 * 非同期処理フラグを設定
+	 * @param flag
+	 */
+	public void setAsyncMode(boolean flag) {
+		asyncFlag = flag;
 	}
 	/**
 	 * 開始処理
@@ -127,7 +136,13 @@ public class FrameInputModule implements IInputModule {
 			}
 		});
 		receiveDataHandler.setKey(reportData.getKey());
-		receiveDataHandler.start(); // 起動します。
+//		receiveDataHandler.start(); // 起動します。
+		if(!receiveDataHandler.connect()) {
+			receiveDataHandler.close();
+		}
+		if(!asyncFlag) {
+			receiveDataHandler.waitForClose();
+		}
 	}
 	/**
 	 * 音声データの処理をつづける
@@ -205,6 +220,6 @@ public class FrameInputModule implements IInputModule {
 	 */
 	@Override
 	public void stop() throws Exception {
-		
+		receiveDataHandler.close();
 	}
 }

@@ -69,19 +69,20 @@ public class ServerReceiveDataHandler2 implements IReceiveDataHandler {
 	 * むしろ終わるまでまたないやつがほしい。
 	 */
 	@Override
-	public void start() throws Exception {
+	public boolean connect() throws Exception {
 		logger.info("動作を開始します。");
 		client = new DataClient();
 		for(IDataListener listener : listeners) {
 			client.addEventListener(listener);
 		}
-		client.connect(server, port);
-		logger.info("終わるまで待機します。");
+		return client.connect(server, port);
 	}
-	/**
-	 * 停止する
-	 */
-	public void stop() {
+	@Override
+	public void close() throws Exception {
 		client.close();
+	}
+	@Override
+	public void waitForClose() throws Exception {
+		client.waitForClose();
 	}
 }
