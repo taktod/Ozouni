@@ -13,7 +13,6 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 import com.ttProject.ozouni.input.FrameInputModule;
 import com.ttProject.ozouni.webm.AppConfig;
-import com.ttProject.ozouni.work.FeederWorkModule;
 
 /**
  * webmのライブストリーミング用のservlet
@@ -36,7 +35,7 @@ public class WebMServlet extends HttpServlet {
 		// コンテクストをつくる必要あり
 		ConfigurableApplicationContext context = null;
 		context = new AnnotationConfigApplicationContext(AppConfig.class);
-		FeederWorkModule workModule = context.getBean(FeederWorkModule.class);
+//		FeederWorkModule workModule = context.getBean(FeederWorkModule.class);
 //		workModule.setApplicatino();
 		FrameInputModule inputModule = context.getBean(FrameInputModule.class);
 		inputModule.setTargetId("456");
