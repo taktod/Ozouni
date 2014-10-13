@@ -20,6 +20,7 @@ import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 
 import com.flazr.rtmp.client.ClientHandshakeHandler;
 import com.flazr.rtmp.client.ClientOptions;
+import com.ttProject.flazr.client.Amf3Handler;
 import com.ttProject.flazr.client.ClientOptionsEx;
 import com.ttProject.flazr.rtmp.RtmpDecoderEx;
 import com.ttProject.flazr.rtmp.RtmpEncoderEx;
@@ -100,6 +101,7 @@ public class RtmpClient {
 				pipeline.addLast("handshaker", new ClientHandshakeHandler(options));
 				pipeline.addLast("decoder", new RtmpDecoderEx());
 				pipeline.addLast("encoder", new RtmpEncoderEx());
+				pipeline.addLast("hook",    new Amf3Handler());
 				pipeline.addLast("handler", new ClientHandlerEx(options));
 				return pipeline;
 			}
