@@ -43,6 +43,7 @@ library: システムとやりとりするライブラリ
     <module>library/EhcacheReportHandler</module>
     <module>library/ServerDataHandler</module>
     <module>library/FrameHandler</module>
+    <module>library/AviFrameHandler</module>
     <module>library/FlvFrameHandler</module>
     <module>library/MkvFrameHandler</module>
     <module>entry/Entry</module>
