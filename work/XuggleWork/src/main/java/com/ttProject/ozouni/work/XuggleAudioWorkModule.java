@@ -207,7 +207,6 @@ public class XuggleAudioWorkModule implements IWorkModule {
 			// TODO 負の数になることもあるみたいですが、おかしくないかな・・・負の数になるということはデータが先攻しすぎているということなんだが・・・
 			return;
 		}
-		logger.info("insertを実行します。:" + filledSampleNum);
 		passedSampleNum += filledSampleNum;
 		final IAudioSamples samples = IAudioSamples.make(encoder.getSampleRate(), encoder.getChannels(), encoder.getSampleFormat());
 		samples.setComplete(true, filledSampleNum, encoder.getSampleRate(), encoder.getChannels(), encoder.getSampleFormat(), passedPts);
