@@ -98,56 +98,111 @@ var onMessage = function(evt) {
 	fr.readAsArrayBuffer(blob);
 };
 /** 現在処理中のbuffer */
-var current = null; // currentBuffer object(buf pos left)
+var currentBuffer = null;
+/** 現在処理中のbufferの処理データ位置 */
+var aPos = 0;
 var prodec = false;
-function Process(ev) {
+function Process_new(ev) {
 	// もともとforループでコピーしていましたが、やめます。
 	// arrayBufferのset関数つかった方が高速に動作できそうです。
 	var buf0 = ev.outputBuffer.getChannelData(0);
 	var buf1 = ev.outputBuffer.getChannelData(1);
-	var target = {buf0:buf0, buf1:buf1, pos:0, left:buf0.length};
+	// bufferの追記位置:pos 必要量:length
+	var pos = 0;
+	var length = buf0.length; // 必要なデータ量を調べる。
 	do {
-		if(current == null) {
+		if(currentBuffer == null) {
 			var data = audioBuffers.shift();
 			if(data == null) {
-				current = null;
+				currentBuffer = null;
 			}
 			else {
 				ats = data.ts;
 				if(!data.decoded) {
-					current = {buf: getFloat32PcmArray(data.buf), pos: 0, left:data.length};
+					currentBuffer = getFloat32PcmArray(data.buf);
 				}
 				else {
-					current = {buf: data.buf, pos: 0, left:data.buf.length};
+					currentBuffer = data.buf;
 				}
 			}
+			aPos = 0;
 		}
-		if(current == null) {
+		if(currentBuffer == null) {
 			// このタイミングでnullBufferで埋めてしまう。
 			
-			target.buf0.set(zeroBuffer.subarray(0, target.left), target.pos);
-			target.buf1.set(zeroBuffer.subarray(0, target.left), target.pos);
+			buf0.set(zeroBuffer.subarray(0, length), pos);
+			buf1.set(zeroBuffer.subarray(0, length), pos);
 			prodec = true;
 			break;
 		}
 		else {
-			var copyLength = current.left;
-			if(current.left > target.left) {
+			var left = currentBuffer.length - aPos;
+			var copyLength = left;
+			if(left > length) {
 				// 残りデータの方が必要データより多い場合は・・・
-				copyLength = target.left;
+				copyLength = length;
 			}
-			var copyBuf = current.buf.subarray(current.pos, copyLength + current.pos);
-			current.pos += copyLength;
-			current.left -= copyLength;
-			if(current.left == 0) {
-				current = null;
-			}
-			target.buf0.set(copyBuf, target.pos);
-			target.buf1.set(copyBuf, target.pos);
-			target.pos += copyLength;
-			target.left -= copyLength;
+			var copyBuf = currentBuffer.subarray(aPos, copyLength);
+			buf0.set(copyBuf, pos);
+			buf1.set(copyBuf, pos);
+			pos += copyLength;
+			length -= copyLength;
+			currentBuffer = null;
 		}
-	} while(target.left > 0);
+	} while(length > 0);
+}
+function Process(ev) {
+	var buf0 = ev.outputBuffer.getChannelData(0);
+	var buf1 = ev.outputBuffer.getChannelData(1);
+	// 映像のlengthが3を越えている場合はある程度データを除去したいところ。
+	// 映像がないデータの場合は音声のたまり具合でなんとかしないとだめだが・・・
+	// buf0とbuf1にデータを設定すれば、それが再生される
+	for(var i = 0;i < bufsize;i ++) {
+		if(currentBuffer == null) {
+			// データがない
+			var data = audioBuffers.shift();
+			if(data == null) {
+				// データをnullでうめておきたい。
+				currentBuffer = null;
+			}
+			else {
+				ats = data.ts;
+				if(!data.decoded) {
+					currentBuffer = getFloat32PcmArray(data.buf);
+				}
+				else {
+					currentBuffer = data.buf;
+				}
+//				prodec = currentBuffer.length;
+				aPos = 0; // 位置を0から開始にしておく。
+			}
+		}
+		// ここでコピーを実行しておく
+		if(currentBuffer == null) {
+			prodec = true;
+			buf0[i] = buf1[i] = 0;
+		}
+		else {
+			buf0[i] = currentBuffer[aPos];
+			buf1[i] = currentBuffer[aPos];
+			aPos ++; // 位置を１つずらしておく
+			if(imageBuffers.length > 30 && aPos % 100 == 0) {
+				aPos ++;
+			}
+			else if(imageBuffers.length > 50 && aPos % 50 == 0) {
+				aPos ++;
+			}
+/*			else if(imageBuffers.length > 80 && aPos % 30 == 0) {
+				aPos ++;
+			}
+			else if(imageBuffers.length > 100 && aPos % 10 == 0) {
+				aPos ++;
+			}*/
+			if(currentBuffer.length < aPos) {
+				currentBuffer = null; // いままでのバッファがなくなったので、破棄しておく。
+			}
+		}
+	}
 }
 
 /** 最終更新 */
