@@ -85,7 +85,7 @@ public class Application implements IApplication {
 			throw new Exception("アクセスアドレスデータをパースすることができませんでした。");
 		}
 		IWorkModule feederWorkModule = new FeederWorkModule(this);
-		XuggleAudioWorkModule audioModule = context.getBean(XuggleAudioWorkModule.class);
+		XuggleAudioWorkModule audioModule = (XuggleAudioWorkModule)context.getBean("audioConvert2");
 		audioModule.setWorkModule(feederWorkModule);
 		XuggleVideoWorkModule videoModule = context.getBean(XuggleVideoWorkModule.class);
 		videoModule.setWorkModule(feederWorkModule);

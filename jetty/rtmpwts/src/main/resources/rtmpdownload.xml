@@ -16,10 +16,18 @@
   <!-- 一定時間ごとのレポート動作 -->
   <bean class="com.ttProject.ozouni.worker.SignalWorker"/>
   <!-- 変換モジュール -->
-  <bean id="audioConvert" class="com.ttProject.ozouni.work.XuggleAudioWorkModule">
+  <bean id="audioConvert2" class="com.ttProject.ozouni.work.XuggleAudioWorkModule">
     <property name="Id" value="8"/>
     <property name="Codec" value="CODEC_ID_ADPCM_IMA_WAV"/>
     <property name="Channels" value="1"/>
+  </bean>
+  <!-- 変換モジュール -->
+  <bean id="audioConvert" class="com.ttProject.ozouni.work.XuggleAudioWorkModule">
+    <property name="Id" value="8"/>
+    <property name="Codec" value="CODEC_ID_MP3"/>
+    <property name="Channels" value="1"/>
+    <property name="BitRate" value="64000"/>
+    <property name="WorkModule" ref="audioConvert2"/>
   </bean>
   <bean id="videoConvert" class="com.ttProject.ozouni.work.XuggleVideoWorkModule">
     <property name="Id" value="9"/>
